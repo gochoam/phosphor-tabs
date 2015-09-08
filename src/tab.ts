@@ -13,37 +13,37 @@ import {
 
 
 /**
- * The class name added to Tab instances.
+ * `p-Tab`: the class name added to Tab instances.
  */
 export
 const TAB_CLASS = 'p-Tab';
 
 /**
- * The class name assigned to a tab text sub element.
+ * `p-Tab-text`: the class name assigned to a tab text node.
  */
 export
 const TEXT_CLASS = 'p-Tab-text';
 
 /**
- * The class name assigned to a tab icon sub element.
+ * `p-Tab-icon`: the class name assigned to a tab icon node.
  */
 export
 const ICON_CLASS = 'p-Tab-icon';
 
 /**
- * The class name assigned to a tab close icon sub element.
+ * `p-Tab-close-icon`: the class name assigned to a tab close icon node.
  */
 export
 const CLOSE_ICON_CLASS = 'p-Tab-close-icon';
 
 /**
- * The class name added to the selected tab.
+ * `p-mod-selected`: the class name added to a selected tab.
  */
 export
 const SELECTED_CLASS = 'p-mod-selected';
 
 /**
- * The class name added to a closable tab.
+ * `p-mod-closable`: the class name added to a closable tab.
  */
 export
 const CLOSABLE_CLASS = 'p-mod-closable';
