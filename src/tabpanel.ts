@@ -6,9 +6,3 @@
 | The full license is in the file LICENSE, distributed with this software.
 |----------------------------------------------------------------------------*/
 'use strict';
-
-export * from './tab';
-export * from './tabbar';
-export * from './tabpanel';
-
-import './index.css';
