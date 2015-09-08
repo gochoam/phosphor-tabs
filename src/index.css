@@ -5,3 +5,71 @@
 |
 | The full license is in the file LICENSE, distributed with this software.
 |----------------------------------------------------------------------------*/
+.p-TabBar {
+  position: relative;
+}
+
+
+.p-TabBar-header {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 0;
+}
+
+
+.p-TabBar-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: row;
+}
+
+
+.p-TabBar-footer {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+
+.p-Tab {
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+
+.p-Tab-icon,
+.p-Tab-close-icon {
+  flex: 0 0 auto;
+}
+
+
+.p-Tab-text {
+  flex: 1 1 auto;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+
+.p-TabBar.p-mod-dragging > .p-TabBar-content > .p-Tab {
+  position: relative;
+  left: 0;
+  transition: left 150ms ease;
+}
+
+
+.p-TabBar.p-mod-dragging > .p-TabBar-content > .p-Tab.p-mod-active {
+  transition: none;
+}
