@@ -3,18 +3,18 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>phosphor-tabs</title>
+	<title>ITabIndexArgs | phosphor-tabs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="assets/css/main.css">
-	<script src="assets/js/modernizr.js"></script>
+	<link rel="stylesheet" href="../assets/css/main.css">
+	<script src="../assets/js/modernizr.js"></script>
 </head>
 <body>
 <header>
 	<div class="tsd-page-toolbar">
 		<div class="container">
 			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
 					<div class="field">
 						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
 						<input id="tsd-search-field" type="text" />
@@ -23,7 +23,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">phosphor-tabs</a>
+					<a href="../index.html" class="title">phosphor-tabs</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -54,154 +54,166 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="globals.html">Globals</a>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="itabindexargs.html">ITabIndexArgs</a>
 				</li>
 			</ul>
-			<h1> phosphor-tabs</h1>
+			<h1>Interface ITabIndexArgs</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<div class="tsd-panel tsd-typography">
-				<h1 id="phosphor-tabs">phosphor-tabs</h1>
-				<p><a href="https://travis-ci.org/phosphorjs/phosphor-tabs?branch=master"><img src="https://travis-ci.org/phosphorjs/phosphor-tabs.svg" alt="Build Status"></a>
-				<a href="https://coveralls.io/github/phosphorjs/phosphor-tabs?branch=master"><img src="https://coveralls.io/repos/phosphorjs/phosphor-tabs/badge.svg?branch=master&amp;service=github" alt="Coverage Status"></a></p>
-				<p>Phosphor widgets for creating tab bars and tab panels.</p>
-				<p><a href="http://phosphorjs.github.io/phosphor-tabs/api/">API Docs</a></p>
-				<h2 id="package-install">Package Install</h2>
-				<p><strong>Prerequisites</strong></p>
-				<ul>
-					<li><a href="http://nodejs.org/">node</a></li>
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>The arguments object for various tab bar signals</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">ITabIndexArgs</span>
+					</li>
 				</ul>
-				<pre><code class="lang-bash">npm install --save phosphor-tabs
-</code></pre>
-				<h2 id="source-build">Source Build</h2>
-				<p><strong>Prerequisites</strong></p>
-				<ul>
-					<li><a href="http://git-scm.com/">git</a></li>
-					<li><a href="http://nodejs.org/">node</a></li>
-				</ul>
-				<pre><code class="lang-bash">git <span class="hljs-built_in">clone</span> https://github.com/phosphorjs/phosphor-tabs.git
-<span class="hljs-built_in">cd</span> phosphor-tabs
-npm install
-</code></pre>
-				<p><strong>Rebuild</strong></p>
-				<pre><code class="lang-bash">npm run clean
-npm run build
-</code></pre>
-				<h2 id="run-tests">Run Tests</h2>
-				<p>Follow the source build instructions first.</p>
-				<pre><code class="lang-bash"><span class="hljs-comment"># run tests in Firefox</span>
-npm <span class="hljs-built_in">test</span>
-
-<span class="hljs-comment"># run tests in Chrome</span>
-npm run <span class="hljs-built_in">test</span>:chrome
-
-<span class="hljs-comment"># run tests in IE</span>
-npm run <span class="hljs-built_in">test</span>:ie
-</code></pre>
-				<h2 id="build-docs">Build Docs</h2>
-				<p>Follow the source build instructions first.</p>
-				<pre><code class="lang-bash">npm run docs
-</code></pre>
-				<p>Navigate to <code>docs/index.html</code>.</p>
-				<h2 id="build-example">Build Example</h2>
-				<p>Follow the source build instructions first.</p>
-				<pre><code class="lang-bash">npm run build:example
-</code></pre>
-				<p>Navigate to <code>example/index.html</code>.</p>
-				<h2 id="supported-runtimes">Supported Runtimes</h2>
-				<p>The runtime versions which are currently <em>known to work</em> are listed below.
-				Earlier versions may also work, but come with no guarantees.</p>
-				<ul>
-					<li>IE 11+</li>
-					<li>Firefox 32+</li>
-					<li>Chrome 38+</li>
-				</ul>
-				<h2 id="bundle-for-the-browser">Bundle for the Browser</h2>
-				<p>Follow the package install instructions first.</p>
-				<pre><code class="lang-bash">npm install --save-dev browserify browserify-css
-browserify -g browserify-css myapp.js -o mybundle.js
-</code></pre>
-				<h2 id="usage-examples">Usage Examples</h2>
-				<p><strong>Note:</strong> This module is fully compatible with Node/Babel/ES6/ES5. Simply
-				omit the type declarations when using a language other than TypeScript.</p>
-			</div>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section tsd-is-external">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="itabindexargs.html#index" class="tsd-kind-icon">index</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="itabindexargs.html#tab" class="tsd-kind-icon">tab</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-external">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+					<a name="index" class="tsd-anchor"></a>
+					<h3>index</h3>
+					<div class="tsd-signature tsd-kind-icon">index<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L141">tabbar.ts:141</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The index associated with the tab.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+					<a name="tab" class="tsd-anchor"></a>
+					<h3>tab</h3>
+					<div class="tsd-signature tsd-kind-icon">tab<span class="tsd-signature-symbol">:</span> <a href="../classes/tab.html" class="tsd-signature-type">Tab</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L146">tabbar.ts:146</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The tab associated with the signal.</p>
+						</div>
+					</div>
+				</section>
+			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
 					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
+						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-is-external">
-						<a href="classes/tab.html" class="tsd-kind-icon">Tab</a>
+						<a href="../classes/tab.html" class="tsd-kind-icon">Tab</a>
 					</li>
 					<li class=" tsd-kind-class tsd-is-external">
-						<a href="classes/tabbar.html" class="tsd-kind-icon">Tab<wbr>Bar</a>
+						<a href="../classes/tabbar.html" class="tsd-kind-icon">Tab<wbr>Bar</a>
 					</li>
 					<li class=" tsd-kind-class tsd-is-external">
-						<a href="classes/tabpanel.html" class="tsd-kind-icon">Tab<wbr>Panel</a>
+						<a href="../classes/tabpanel.html" class="tsd-kind-icon">Tab<wbr>Panel</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-is-external">
-						<a href="interfaces/itabdetachargs.html" class="tsd-kind-icon">ITab<wbr>Detach<wbr>Args</a>
+						<a href="itabdetachargs.html" class="tsd-kind-icon">ITab<wbr>Detach<wbr>Args</a>
 					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-is-external">
+						<a href="itabindexargs.html" class="tsd-kind-icon">ITab<wbr>Index<wbr>Args</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+								<a href="itabindexargs.html#index" class="tsd-kind-icon">index</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+								<a href="itabindexargs.html#tab" class="tsd-kind-icon">tab</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-is-external">
-						<a href="interfaces/itabindexargs.html" class="tsd-kind-icon">ITab<wbr>Index<wbr>Args</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-is-external">
-						<a href="interfaces/itabmoveargs.html" class="tsd-kind-icon">ITab<wbr>Move<wbr>Args</a>
+						<a href="itabmoveargs.html" class="tsd-kind-icon">ITab<wbr>Move<wbr>Args</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#active_class" class="tsd-kind-icon">ACTIVE_<wbr>CLASS</a>
+						<a href="../globals.html#active_class" class="tsd-kind-icon">ACTIVE_<wbr>CLASS</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#closable_class" class="tsd-kind-icon">CLOSABLE_<wbr>CLASS</a>
+						<a href="../globals.html#closable_class" class="tsd-kind-icon">CLOSABLE_<wbr>CLASS</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#close_icon_class" class="tsd-kind-icon">CLOSE_<wbr>ICON_<wbr>CLASS</a>
+						<a href="../globals.html#close_icon_class" class="tsd-kind-icon">CLOSE_<wbr>ICON_<wbr>CLASS</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#content_class" class="tsd-kind-icon">CONTENT_<wbr>CLASS</a>
+						<a href="../globals.html#content_class" class="tsd-kind-icon">CONTENT_<wbr>CLASS</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#dragging_class" class="tsd-kind-icon">DRAGGING_<wbr>CLASS</a>
+						<a href="../globals.html#dragging_class" class="tsd-kind-icon">DRAGGING_<wbr>CLASS</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#first_class" class="tsd-kind-icon">FIRST_<wbr>CLASS</a>
+						<a href="../globals.html#first_class" class="tsd-kind-icon">FIRST_<wbr>CLASS</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#footer_class" class="tsd-kind-icon">FOOTER_<wbr>CLASS</a>
+						<a href="../globals.html#footer_class" class="tsd-kind-icon">FOOTER_<wbr>CLASS</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#header_class" class="tsd-kind-icon">HEADER_<wbr>CLASS</a>
+						<a href="../globals.html#header_class" class="tsd-kind-icon">HEADER_<wbr>CLASS</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#icon_class" class="tsd-kind-icon">ICON_<wbr>CLASS</a>
+						<a href="../globals.html#icon_class" class="tsd-kind-icon">ICON_<wbr>CLASS</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#last_class" class="tsd-kind-icon">LAST_<wbr>CLASS</a>
+						<a href="../globals.html#last_class" class="tsd-kind-icon">LAST_<wbr>CLASS</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#selected_class" class="tsd-kind-icon">SELECTED_<wbr>CLASS</a>
+						<a href="../globals.html#selected_class" class="tsd-kind-icon">SELECTED_<wbr>CLASS</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#tab_bar_class" class="tsd-kind-icon">TAB_<wbr>BAR_<wbr>CLASS</a>
+						<a href="../globals.html#tab_bar_class" class="tsd-kind-icon">TAB_<wbr>BAR_<wbr>CLASS</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#tab_class" class="tsd-kind-icon">TAB_<wbr>CLASS</a>
+						<a href="../globals.html#tab_class" class="tsd-kind-icon">TAB_<wbr>CLASS</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#tab_panel_class" class="tsd-kind-icon">TAB_<wbr>PANEL_<wbr>CLASS</a>
+						<a href="../globals.html#tab_panel_class" class="tsd-kind-icon">TAB_<wbr>PANEL_<wbr>CLASS</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#text_class" class="tsd-kind-icon">TEXT_<wbr>CLASS</a>
+						<a href="../globals.html#text_class" class="tsd-kind-icon">TEXT_<wbr>CLASS</a>
 					</li>
 				</ul>
 			</nav>
@@ -271,7 +283,7 @@ browserify -g browserify-css myapp.js -o mybundle.js
 	<p>Generated using <a href="http://typedoc.io" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
-<script src="assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>
