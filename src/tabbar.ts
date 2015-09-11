@@ -1141,7 +1141,7 @@ function shouldDetach(rect: ClientRect, event: MouseEvent): boolean {
     (event.clientX < rect.left - DETACH_THRESHOLD) ||
     (event.clientX >= rect.right + DETACH_THRESHOLD) ||
     (event.clientY < rect.top - DETACH_THRESHOLD) ||
-    (event.clientY >= rect.top + DETACH_THRESHOLD)
+    (event.clientY >= rect.bottom + DETACH_THRESHOLD)
   );
 }
 
