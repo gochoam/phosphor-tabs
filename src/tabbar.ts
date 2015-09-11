@@ -301,6 +301,18 @@ class TabBar extends Widget {
   }
 
   /**
+   * Get the previously selected tab.
+   *
+   * #### Notes
+   * This is a read-only property.
+   *
+   * This will be `null` if there is no valid previous tab.
+   */
+  get previousTab(): Tab {
+    return this._previousTab;
+  }
+
+  /**
    * Get the selected tab.
    *
    * #### Notes
