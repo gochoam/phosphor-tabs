@@ -3,9 +3,11 @@ module.exports = function (config) {
     browsers: ['Firefox'],
     frameworks: ['browserify', 'mocha'],
     reporters: ['mocha', 'coverage'],
-    preprocessors: { 'build/index.js': ['browserify'] },
-    browserify: { debug: true, transform: ['browserify-istanbul'] },
-    files: ['build/index.js'],
+    preprocessors: { 'build/*.js': ['browserify'] },
+    browserify: { debug: true, 
+                  transform: ['browserify-css', 'browserify-istanbul']
+                },
+    files: ['build/*.js'],
     coverageReporter: {
       reporters : [
         { 'type': 'text' },
