@@ -11,6 +11,7 @@
     "../../typings/expect.js/expect.js.d.ts",
     "../../typings/mocha/mocha.d.ts",
     "tab.ts",
-    "tabbar.ts"
+    "tabbar.ts",
+    "tabpanel.ts"
   ]
 }
