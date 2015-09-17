@@ -58,11 +58,9 @@ class LogTabBar extends TabBar {
   }
 }
 
-function triggerMouseEvent (node: HTMLElement, eventType: string) {
-  var rect = node.getBoundingClientRect();
-  var clickEvent = new MouseEvent(eventType, 
-                                  { clientX: rect.left, 
-                                    clientY: rect.top });
+function triggerMouseEvent (node: HTMLElement, eventType: string, options: any={}) {
+  options.bubbles = true;
+  var clickEvent = new MouseEvent(eventType, options);
   node.dispatchEvent(clickEvent);
 }
 
@@ -224,8 +222,11 @@ describe('phosphor-tabs', () => {
 
       it('should dispose of the resources held by the widget', () => {
         var tabBar = new TabBar();
-        var tab = new Tab();
-        tabBar.tabs = [tab];
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        tabBar.tabs = [tab0];
+        // trigger some drag data to be disposed
+        expect(tabBar.attachTab(tab1, 150)).to.be(true);
         tabBar.dispose();
         expect(tabBar.tabs.length).to.be(0);
       });
@@ -278,6 +279,51 @@ describe('phosphor-tabs', () => {
         expect(called).to.be(true);
       });
 
+      it('should be not emitted if it is not the left button', () => {
+        var called = false;
+        var tabBar = new TabBar();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        tabBar.tabs = [tab0, tab1];
+        tabBar.tabCloseRequested.connect(() => { called = true; });
+        tab0.closable = true;
+        tab0.selected = true;
+        attachWidget(tabBar, document.body);              
+        triggerMouseEvent(tab0.closeIconNode, 'click', { button: 1 });
+        expect(called).to.be(false);
+      });
+
+      it('should be not emitted if the click is not on the tabbar', () => {
+        var called = false;
+        var tabBar = new TabBar();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        tabBar.tabs = [tab0, tab1];
+        tabBar.tabCloseRequested.connect(() => { called = true; });
+        tab0.closable = true;
+        tab0.selected = true;
+        attachWidget(tabBar, document.body);
+        var rect = tabBar.node.getBoundingClientRect();
+        triggerMouseEvent(tabBar.node, 'click', 
+                          { clientX: rect.left - 1, 
+                            clientY: rect.top });
+        expect(called).to.be(false);
+      });
+
+      it('should be not emitted if the tab is not closable', () => {
+        var called = false;
+        var tabBar = new TabBar();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        tabBar.tabs = [tab0, tab1];
+        tabBar.tabCloseRequested.connect(() => { called = true; });
+        tab0.closable = false;
+        tab0.selected = true;
+        attachWidget(tabBar, document.body);
+        tab0.closeIconNode.click();
+        expect(called).to.be(false);
+      });
+
     });
 
     describe('#tabDetachRequested', () => {
@@ -291,16 +337,98 @@ describe('phosphor-tabs', () => {
         attachWidget(tabBar, document.body);
         tabBar.tabDetachRequested.connect(() => { called = true; });
         var rect = tab0.node.getBoundingClientRect();
-        var down = new MouseEvent('mousedown', 
-                                  { clientX: rect.left, 
-                                    clientY: rect.top });
-        tabBar.node.dispatchEvent(down);
-        var move = new MouseEvent('mousemove', 
-                                  { clientX: -DETACH_THRESHOLD - 1,
-                                    clientY: rect.bottom });
-        tabBar.node.dispatchEvent(move);
+        triggerMouseEvent(tab0.node, 'mousedown', 
+                          { clientY: rect.top });
+        triggerMouseEvent(tab0.node, 'mousemove', 
+                          { clientX: -DETACH_THRESHOLD - 1,
+                            clientY: rect.bottom });
         setTimeout(() => {
           expect(called).to.be(true);
+          done();
+        }, TRANSITION_DURATION);
+      });
+
+      it('should be not emitted when a tab is not moved far enough', (done) => {
+        var called = false;
+        var tabBar = new TabBar();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        tabBar.tabs = [tab0, tab1];
+        attachWidget(tabBar, document.body);
+        tabBar.tabDetachRequested.connect(() => { called = true; });
+        var rect = tab0.node.getBoundingClientRect();
+        triggerMouseEvent(tab0.node, 'mousedown', 
+                          { clientX: rect.left, 
+                            clientY: rect.top });
+        triggerMouseEvent(tabBar.node, 'mousemove', 
+                          { clientX: rect.left,
+                            clientY: rect.top });
+        setTimeout(() => {
+          expect(called).to.be(false);
+          done();
+        }, TRANSITION_DURATION);
+      });
+
+      it('should be not emitted when a the left button is not used', (done) => {
+        var called = false;
+        var tabBar = new TabBar();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        tabBar.tabs = [tab0, tab1];
+        attachWidget(tabBar, document.body);
+        tabBar.tabDetachRequested.connect(() => { called = true; });
+        var rect = tab0.node.getBoundingClientRect();
+        triggerMouseEvent(tabBar.node, 'mousedown', 
+                          { clientX: rect.left, 
+                            clientY: rect.top,
+                            button: 1 });
+        triggerMouseEvent(tabBar.node, 'mousemove', 
+                          { clientX: rect.left,
+                            clientY: rect.top,
+                            button: 1 });
+        setTimeout(() => {
+          expect(called).to.be(false);
+          done();
+        }, TRANSITION_DURATION);
+      });
+
+      it('should be ingore further mousedowns while a tab is being detached', (done) => {
+        var called = false;
+        var tabBar = new TabBar();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        tabBar.tabs = [tab0, tab1];
+        attachWidget(tabBar, document.body);
+        tabBar.tabDetachRequested.connect(() => { called = true; });
+        var rect = tab0.node.getBoundingClientRect();
+        triggerMouseEvent(tabBar.node, 'mousedown', 
+                          { clientX: rect.left, 
+                            clientY: rect.top });
+        triggerMouseEvent(tabBar.node, 'mousedown');
+        triggerMouseEvent(tabBar.node, 'mousemove', 
+                          { clientX: -DETACH_THRESHOLD - 1,
+                            clientY: rect.bottom });
+        setTimeout(() => {
+          expect(called).to.be(true);
+          done();
+        }, TRANSITION_DURATION);
+      });
+
+      it('should be not emitted when the tab is not selected', (done) => {
+        var called = false;
+        var tabBar = new TabBar();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        tabBar.tabs = [tab0, tab1];
+        attachWidget(tabBar, document.body);
+        tabBar.tabDetachRequested.connect(() => { called = true; });
+        var rect = tab0.node.getBoundingClientRect();
+        triggerMouseEvent(tabBar.node, 'mousedown', { clientX: -10 });
+        triggerMouseEvent(tabBar.node, 'mousemove', 
+                          { clientX: -DETACH_THRESHOLD - 1,
+                            clientY: rect.bottom });
+        setTimeout(() => {
+          expect(called).to.be(false);
           done();
         }, TRANSITION_DURATION);
       });
