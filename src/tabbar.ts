@@ -715,6 +715,7 @@ class TabBar extends Widget {
   private _evtMouseMove(event: MouseEvent): void {
     // Mouse move events are never propagated since this handler
     // is only installed when during a left mouse drag operation.
+    console.log('***mouse move');
     event.preventDefault();
     event.stopPropagation();
 
@@ -722,14 +723,17 @@ class TabBar extends Widget {
     if (!this._dragData) {
       return;
     }
+    console.log('***mouse move 2');
 
     // Check to see if the drag threshold has been exceeded, and
     // start the tab drag operation the first time that occurrs.
     var data = this._dragData;
     if (!data.dragActive) {
+      console.log('***mouse move 3');
       var dx = Math.abs(event.clientX - data.pressX);
       var dy = Math.abs(event.clientY - data.pressY);
       if (dx < DRAG_THRESHOLD && dy < DRAG_THRESHOLD) {
+        console.log('***failed to meet threshold');
         return;
       }
 
@@ -748,8 +752,10 @@ class TabBar extends Widget {
     // Check to see if the detach threshold has been exceeded, and
     // emit the detach request signal the first time that occurrs.
     // If the drag data gets set to null, the mouse was released.
+    console.log('***checking for detach');
     if (!data.detachRequested && shouldDetach(data.contentRect, event)) {
       data.detachRequested = true;
+      console.log('***should detach');
       this.tabDetachRequested.emit({
         tab: data.tab,
         index: data.tabIndex,

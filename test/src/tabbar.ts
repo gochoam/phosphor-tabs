@@ -10,6 +10,10 @@
 import expect = require('expect.js');
 
 import {
+  Message
+} from 'phosphor-messaging';
+
+import {
   Property
 } from 'phosphor-properties';
 
@@ -18,13 +22,49 @@ import {
 } from 'phosphor-signaling';
 
 import {
-  attachWidget
+  attachWidget, detachWidget
 } from 'phosphor-widget';
 
 import {
   ACTIVE_CLASS, CONTENT_CLASS, DRAGGING_CLASS, FIRST_CLASS, FOOTER_CLASS, 
   HEADER_CLASS, LAST_CLASS, TAB_BAR_CLASS, Tab, TabBar
 } from '../../lib/index';
+
+import './index.css';
+
+
+/**
+ * The start drag distance threshold.
+ */
+const DRAG_THRESHOLD = 5;
+
+/**
+ * The detach distance threshold.
+ */
+const DETACH_THRESHOLD = 20;
+
+/**
+ * The tab transition duration. Keep in sync with CSS.
+ */
+const TRANSITION_DURATION = 150;
+
+
+class LogTabBar extends TabBar {
+  messages: string[] = [];
+
+  processMessage(msg: Message): void {
+    super.processMessage(msg);
+    this.messages.push(msg.type);
+  }
+}
+
+function triggerMouseEvent (node: HTMLElement, eventType: string) {
+  var rect = node.getBoundingClientRect();
+  var clickEvent = new MouseEvent(eventType, 
+                                  { clientX: rect.left, 
+                                    clientY: rect.top });
+  node.dispatchEvent(clickEvent);
+}
 
 
 describe('phosphor-tabs', () => {
@@ -197,8 +237,8 @@ describe('phosphor-tabs', () => {
       it('should be emitted when a tab is moved', () => {
         var called = false;
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
         tabBar.tabMoved.connect(() => { called = true; })
         tabBar.moveTab(1, 0);
@@ -212,8 +252,8 @@ describe('phosphor-tabs', () => {
       it('should be emitted when a tab is moved', () => {
         var called = false;
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
         tabBar.tabSelected.connect(() => { called = true; })
         tabBar.selectedTab = tab1;
@@ -227,16 +267,14 @@ describe('phosphor-tabs', () => {
       it('should be emitted when a tab is closed', () => {
         var called = false;
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
         tabBar.tabCloseRequested.connect(() => { called = true; });
         tab0.closable = true;
         tab0.selected = true;
         attachWidget(tabBar, document.body);
         tab0.closeIconNode.click();
-        // TODO: hook this up
-        return;
         expect(called).to.be(true);
       });
 
@@ -244,15 +282,27 @@ describe('phosphor-tabs', () => {
 
     describe('#tabDetachRequested', () => {
 
-      it('should be emitted when a tab is detached', () => {
+      it('should be emitted when a tab is detached', (done) => {
         var called = false;
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
-        tabBar.tabDetachRequested.connect(() => { called = true; })
-        // TODO: simulate a mouse click
-        return;
+        attachWidget(tabBar, document.body);
+        tabBar.tabDetachRequested.connect(() => { called = true; });
+        var rect = tab0.node.getBoundingClientRect();
+        var down = new MouseEvent('mousedown', 
+                                  { clientX: rect.left, 
+                                    clientY: rect.top });
+        tabBar.node.dispatchEvent(down);
+        var move = new MouseEvent('mousemove', 
+                                  { clientX: -DETACH_THRESHOLD - 1,
+                                    clientY: rect.bottom});
+        tabBar.node.dispatchEvent(move);
+        setTimeout(() => {
+          expect(called).to.be(true);
+          done();
+        }, TRANSITION_DURATION);
         expect(called).to.be(true);
       });
     });
@@ -261,8 +311,8 @@ describe('phosphor-tabs', () => {
 
       it('should give the previous tab', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
         tabBar.selectedTab = tab1;
         tabBar.selectedTab = tab0;
@@ -280,8 +330,8 @@ describe('phosphor-tabs', () => {
 
       it('should give the selected tab', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
         expect(tabBar.selectedTab).to.be(tab0);
         tabBar.selectedTab = tab1;
@@ -290,8 +340,8 @@ describe('phosphor-tabs', () => {
 
       it('should be a pure delegate to the selectedTabProperty', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
         expect(tabBar.selectedTab).to.be(tab0);
         expect(TabBar.selectedTabProperty.get(tabBar)).to.eql(tab0);
@@ -305,8 +355,8 @@ describe('phosphor-tabs', () => {
 
       it('should be a read/write boolean', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
         expect(tabBar.tabsMovable).to.be(true);
         tabBar.tabsMovable = false;
@@ -315,8 +365,8 @@ describe('phosphor-tabs', () => {
 
       it('should be a pure delegate to the tabsMovableProperty', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
         expect(tabBar.tabsMovable).to.be(true);
         expect(TabBar.tabsMovableProperty.get(tabBar)).to.be(true);
@@ -330,8 +380,8 @@ describe('phosphor-tabs', () => {
 
       it('should be a list of tab objects', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
         expect(tabBar.tabs.length).to.be(2);
         tabBar.tabs = [tab1];
@@ -344,8 +394,8 @@ describe('phosphor-tabs', () => {
 
       it('should the current number of tabs', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
         expect(tabBar.tabCount).to.be(2);
         tabBar.tabs = [tab1];
@@ -363,8 +413,8 @@ describe('phosphor-tabs', () => {
 
       it('should return the tab at the given index', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
         expect(tabBar.tabAt(0)).to.eql(tab0);
         expect(tabBar.tabAt(1)).to.eql(tab1);
@@ -372,8 +422,8 @@ describe('phosphor-tabs', () => {
 
       it('should return `undefined` in the index is out of range', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
         expect(tabBar.tabAt(2)).to.be(void 0);
         expect(tabBar.tabAt(-1)).to.be(void 0);
@@ -385,8 +435,8 @@ describe('phosphor-tabs', () => {
 
       it('should return index the given tab', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
         expect(tabBar.tabIndex(tab0)).to.be(0);
         expect(tabBar.tabIndex(tab1)).to.be(1);
@@ -394,8 +444,8 @@ describe('phosphor-tabs', () => {
 
       it('should return `-1` if the tab is not in the bar', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
         tabBar.tabs = [tab0];
         expect(tabBar.tabIndex(tab1)).to.be(-1);
       });
@@ -406,8 +456,8 @@ describe('phosphor-tabs', () => {
 
       it('should add a tab to the bar end of the bar', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
         tabBar.tabs = [tab0];
         var index = tabBar.addTab(tab1);
         expect(index).to.be(1);
@@ -416,9 +466,9 @@ describe('phosphor-tabs', () => {
 
       it('should move an existing tab to the end', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
-        var tab2 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        var tab2 = new Tab('2');
         tabBar.tabs = [tab0, tab1, tab2];
         var index = tabBar.addTab(tab0);
         expect(index).to.be(2)
@@ -431,9 +481,9 @@ describe('phosphor-tabs', () => {
 
       it('should add a tab to the bar at the given index', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
-        var tab2 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        var tab2 = new Tab('2');
         tabBar.tabs = [tab0];
         var index = tabBar.insertTab(0, tab1);
         expect(index).to.be(0);
@@ -445,9 +495,9 @@ describe('phosphor-tabs', () => {
 
       it('should move an existing tab to the index', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
-        var tab2 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        var tab2 = new Tab('2');
         tabBar.tabs = [tab0, tab1, tab2];
         var index = tabBar.insertTab(0, tab2);
         expect(index).to.be(0);
@@ -456,9 +506,9 @@ describe('phosphor-tabs', () => {
 
       it('should clamp to the bounds of the tabs', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab();
-        var tab1 = new Tab();
-        var tab2 = new Tab();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        var tab2 = new Tab('2');
         tabBar.tabs = [tab0];
         var index = tabBar.insertTab(-1, tab1);
         expect(index).to.be(0);
@@ -474,9 +524,9 @@ describe('phosphor-tabs', () => {
 
       it('should move a tab within the bar', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab('1');
-        var tab1 = new Tab('2');
-        var tab2 = new Tab('3');
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        var tab2 = new Tab('2');
         tabBar.tabs = [tab0, tab1, tab2];
         var success = tabBar.moveTab(0, 1);
         expect(success).to.be(true);
@@ -488,13 +538,148 @@ describe('phosphor-tabs', () => {
 
       it('should return `false` if out of range', () => {
         var tabBar = new TabBar();
-        var tab0 = new Tab('1');
-        var tab1 = new Tab('2');
-        var tab2 = new Tab('3');
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        var tab2 = new Tab('2');
         tabBar.tabs = [tab0, tab1, tab2];
         expect(tabBar.moveTab(0, -1)).to.be(false);
         expect(tabBar.moveTab(3, 0)).to.be(false);
       });
+    });
+
+    describe('#removeTabAt()', () => {
+
+      it('should remove the tab by index', () => {
+        var tabBar = new TabBar();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        var tab2 = new Tab('2');
+        tabBar.tabs = [tab0, tab1, tab2];
+        var tab = tabBar.removeTabAt(0);
+        expect(tab).to.eql(tab0);
+        tab = tabBar.removeTabAt(1);
+        expect(tab).to.eql(tab2);
+      });
+
+      it('should return `undefined` if out of range', () => {
+        var tabBar = new TabBar();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        var tab2 = new Tab('2');
+        tabBar.tabs = [tab0, tab1, tab2];
+        expect(tabBar.removeTabAt(-1)).to.be(void 0);
+        expect(tabBar.removeTabAt(3)).to.be(void 0);
+      });
+    });
+
+    describe('#removeTab()', () => {
+
+      it('should remove the specified tab', () => {
+        var tabBar = new TabBar();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        var tab2 = new Tab('2');
+        tabBar.tabs = [tab0, tab1, tab2];
+        var index = tabBar.removeTab(tab0);
+        expect(index).to.be(0);
+        index = tabBar.removeTab(tab2);
+        expect(index).to.be(1);
+      });
+
+      it('should return `-1` if not contained in the bar', () => {
+        var tabBar = new TabBar();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        var tab2 = new Tab('2');
+        tabBar.tabs = [tab0, tab1];
+        expect(tabBar.removeTab(tab2)).to.be(-1);
+      });
+    });
+
+    describe('#clearTabs()', () => {
+
+      it('should clear all tabs', () => {
+        var tabBar = new TabBar();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        var tab2 = new Tab('2');
+        tabBar.tabs = [tab0, tab1, tab2];
+        tabBar.clearTabs();
+        expect(tabBar.tabs).to.eql([]);
+      });
+
+    });
+
+    describe('#attachTab()', () => {
+
+      it('should attach at the given clientX position', (done) => {
+        var tabBar = new TabBar();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        var tab2 = new Tab('2');
+        tabBar.tabs = [tab0, tab2];
+        attachWidget(tabBar, document.body);
+        expect(tabBar.attachTab(tab1, 150)).to.be(true);
+        triggerMouseEvent(tab1.node, 'mouseup');
+        setTimeout(() => {
+          expect(tabBar.tabIndex(tab1)).to.be(1);
+          done();
+        }, TRANSITION_DURATION);
+      });
+
+      it('should be a no-op if the tabs are not movable', () => {
+        var tabBar = new TabBar();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        var tab2 = new Tab('2');
+        tabBar.tabs = [tab0, tab2];
+        attachWidget(tabBar, document.body);
+        tabBar.tabsMovable = false
+        expect(tabBar.attachTab(tab1, 150)).to.be(false);
+      });
+
+      it('should be a no-op if the tab is already in the bar', () => {
+        var tabBar = new TabBar();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        var tab2 = new Tab('2');
+        tabBar.tabs = [tab0, tab2];
+        attachWidget(tabBar, document.body);
+        expect(tabBar.attachTab(tab2, 150)).to.be(false);
+      });
+
+      it('should be a no-op if a drag is in progress', () => {
+        var tabBar = new TabBar();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        var tab2 = new Tab('2');
+        tabBar.tabs = [tab0, tab2];
+        attachWidget(tabBar, document.body);
+        triggerMouseEvent(tab0.node, 'mousedown');
+        expect(tabBar.attachTab(tab2, 150)).to.be(false);
+      });
+
+    });
+
+    describe('#onAfterAttach()', () => {
+
+      it('should be invoked just after the tabbar is attached', () => {
+        var tabBar = new LogTabBar();
+        attachWidget(tabBar, document.body);
+        expect(tabBar.messages.indexOf('after-attach')).to.not.be(-1);
+      });
+
+    });
+
+    describe('#onBeforeDetach()', () => {
+
+      it('should be invoked just after the tabbar is detached', () => {
+        var tabBar = new LogTabBar();
+        attachWidget(tabBar, document.body);
+        detachWidget(tabBar);
+        expect(tabBar.messages.indexOf('before-detach')).to.not.be(-1);
+      });
+
     });
 
   });
