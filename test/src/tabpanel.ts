@@ -32,8 +32,6 @@ import {
 
 function createContent(title: string): Widget {
   var widget = new Widget();
-  widget.addClass('content');
-  widget.addClass(title.toLowerCase());
   TabPanel.setTab(widget, new Tab(title));
   return widget;
 }

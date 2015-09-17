@@ -82,12 +82,16 @@ describe('phosphor-tabs', () => {
 
     describe('#constructor()', () => {
 
-     it('should accept no arguments or a string argument', () => {
-        var tab0 = new Tab();
-        expect(tab0 instanceof Tab).to.be(true);
-        expect(tab0.text).to.be('');
-        var tab1 = new Tab('foo');
-        expect(tab1.text).to.be('foo');
+     it('should accept no arguments', () => {
+        var tab = new Tab();
+        expect(tab instanceof Tab).to.be(true);
+        expect(tab.text).to.be('');
+
+     });
+
+     it('should accept a string argument', () => {
+        var tab = new Tab('foo');
+        expect(tab.text).to.be('foo');
      });
 
      it('should add the TAB_CLASS', () => {
@@ -99,9 +103,14 @@ describe('phosphor-tabs', () => {
 
     describe('#text', () => {
 
-      it('should be a read/write string reflecting the text span', () => {
+      it('should be a string reflecting the text span', () => {
         var tab = new Tab('hello');
         expect(tab.text).to.be('hello');
+        expect(tab.node.children[1].textContent).to.be('hello');
+      });
+
+      it('should be writable', () => {
+        var tab = new Tab();
         tab.text = 'goodbye';
         expect(tab.text).to.be('goodbye');
         expect(tab.node.children[1].textContent).to.be('goodbye');
@@ -111,10 +120,14 @@ describe('phosphor-tabs', () => {
 
     describe('#selected', () => {
 
-      it('should be read/write and reflect the SELECTED_CLASS', () => {
+      it('should reflect SELECTED_CLASS', () => {
         var tab = new Tab();
         expect(tab.selected).to.be(false);
         expect(tab.hasClass(SELECTED_CLASS)).to.be(false);
+      });
+
+      it('should be writable', () => {
+        var tab = new Tab();
         tab.selected = true;
         expect(tab.hasClass(SELECTED_CLASS)).to.be(true);
       });
@@ -140,6 +153,13 @@ describe('phosphor-tabs', () => {
         var node = tab.closeIconNode;
         expect(node.classList.contains(CLOSE_ICON_CLASS)).to.be(true);
       });
+
+      it('should be read-only', () => {
+        var tab = new Tab();
+        var node = tab.closeIconNode;
+        expect(() => { tab.closeIconNode = null; }).to.throwError();
+      });
+
     });
 
   });

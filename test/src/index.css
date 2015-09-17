@@ -79,28 +79,3 @@ body {
   border: 1px solid #C0C0C0;
   border-top: none;
 }
-
-
-.content {
-  border: 1px solid black;
-}
-
-
-.red {
-  background: #E74C3C;
-}
-
-
-.yellow {
-  background: #F1C40F;
-}
-
-
-.green {
-  background: #27AE60;
-}
-
-
-.blue {
-  background: #3498DB;
-}

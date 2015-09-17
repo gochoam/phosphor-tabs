@@ -32,20 +32,9 @@ import {
 
 import './index.css';
 
-
 /**
- * The start drag distance threshold.
- */
-const DRAG_THRESHOLD = 5;
-
-/**
- * The detach distance threshold.
- */
-const DETACH_THRESHOLD = 20;
-
-/**
- * The tab transition duration. Keep in sync with CSS.
- */
++ * The tab transition duration. Keep in sync with source file.
++ */
 const TRANSITION_DURATION = 150;
 
 
@@ -57,6 +46,7 @@ class LogTabBar extends TabBar {
     this.messages.push(msg.type);
   }
 }
+
 
 function triggerMouseEvent (node: HTMLElement, eventType: string, options: any={}) {
   options.bubbles = true;
@@ -328,7 +318,7 @@ describe('phosphor-tabs', () => {
 
     describe('#tabDetachRequested', () => {
 
-      it('should be emitted when a tab is detached', (done) => {
+      it('should be emitted when a tab is detached', () => {
         var called = false;
         var tabBar = new TabBar();
         var tab0 = new Tab('0');
@@ -340,15 +330,12 @@ describe('phosphor-tabs', () => {
         triggerMouseEvent(tab0.node, 'mousedown', 
                           { clientY: rect.top });
         triggerMouseEvent(tab0.node, 'mousemove', 
-                          { clientX: -DETACH_THRESHOLD - 1,
+                          { clientX: -200,
                             clientY: rect.bottom });
-        setTimeout(() => {
-          expect(called).to.be(true);
-          done();
-        }, TRANSITION_DURATION);
+        expect(called).to.be(true);
       });
 
-      it('should be not emitted when a tab is not moved far enough', (done) => {
+      it('should be not emitted when a tab is not moved far enough', () => {
         var called = false;
         var tabBar = new TabBar();
         var tab0 = new Tab('0');
@@ -363,13 +350,10 @@ describe('phosphor-tabs', () => {
         triggerMouseEvent(tabBar.node, 'mousemove', 
                           { clientX: rect.left,
                             clientY: rect.top });
-        setTimeout(() => {
-          expect(called).to.be(false);
-          done();
-        }, TRANSITION_DURATION);
+        expect(called).to.be(false);
       });
 
-      it('should be not emitted when a the left button is not used', (done) => {
+      it('should be not emitted when a the left button is not used', () => {
         var called = false;
         var tabBar = new TabBar();
         var tab0 = new Tab('0');
@@ -386,13 +370,10 @@ describe('phosphor-tabs', () => {
                           { clientX: rect.left,
                             clientY: rect.top,
                             button: 1 });
-        setTimeout(() => {
-          expect(called).to.be(false);
-          done();
-        }, TRANSITION_DURATION);
+        expect(called).to.be(false);
       });
 
-      it('should be ingore further mousedowns while a tab is being detached', (done) => {
+      it('should be ingore further mousedowns while a tab is being detached', () => {
         var called = false;
         var tabBar = new TabBar();
         var tab0 = new Tab('0');
@@ -406,15 +387,12 @@ describe('phosphor-tabs', () => {
                             clientY: rect.top });
         triggerMouseEvent(tabBar.node, 'mousedown');
         triggerMouseEvent(tabBar.node, 'mousemove', 
-                          { clientX: -DETACH_THRESHOLD - 1,
+                          { clientX: -200,
                             clientY: rect.bottom });
-        setTimeout(() => {
-          expect(called).to.be(true);
-          done();
-        }, TRANSITION_DURATION);
+        expect(called).to.be(true);
       });
 
-      it('should be not emitted when the tab is not selected', (done) => {
+      it('should be not emitted when the tab is not selected', () => {
         var called = false;
         var tabBar = new TabBar();
         var tab0 = new Tab('0');
@@ -425,12 +403,9 @@ describe('phosphor-tabs', () => {
         var rect = tab0.node.getBoundingClientRect();
         triggerMouseEvent(tabBar.node, 'mousedown', { clientX: -10 });
         triggerMouseEvent(tabBar.node, 'mousemove', 
-                          { clientX: -DETACH_THRESHOLD - 1,
+                          { clientX: -200,
                             clientY: rect.bottom });
-        setTimeout(() => {
-          expect(called).to.be(false);
-          done();
-        }, TRANSITION_DURATION);
+        expect(called).to.be(false);
       });
     });
 
