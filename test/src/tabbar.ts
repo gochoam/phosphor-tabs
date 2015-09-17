@@ -297,13 +297,12 @@ describe('phosphor-tabs', () => {
         tabBar.node.dispatchEvent(down);
         var move = new MouseEvent('mousemove', 
                                   { clientX: -DETACH_THRESHOLD - 1,
-                                    clientY: rect.bottom});
+                                    clientY: rect.bottom });
         tabBar.node.dispatchEvent(move);
         setTimeout(() => {
           expect(called).to.be(true);
           done();
         }, TRANSITION_DURATION);
-        expect(called).to.be(true);
       });
     });
 
