@@ -10,7 +10,7 @@
 import expect = require('expect.js');
 
 import {
-   CLOSABLE_CLASS, CLOSE_ICON_CLASS, ICON_CLASS, SELECTED_CLASS, TAB_CLASS, 
+   CLOSABLE_CLASS, CLOSE_ICON_CLASS, ICON_CLASS, SELECTED_CLASS, TAB_CLASS,
    TEXT_CLASS, Tab
 } from '../../lib/index';
 
@@ -86,7 +86,6 @@ describe('phosphor-tabs', () => {
         var tab = new Tab();
         expect(tab instanceof Tab).to.be(true);
         expect(tab.text).to.be('');
-
      });
 
      it('should accept a string argument', () => {
@@ -136,10 +135,14 @@ describe('phosphor-tabs', () => {
 
     describe('#closable', () => {
 
-      it('should be read/write and reflect the CLOSABLE_CLASS', () => {
+      it('should reflect CLOSABLE_CLASS', () => {
         var tab = new Tab();
         expect(tab.closable).to.be(false);
         expect(tab.hasClass(CLOSABLE_CLASS)).to.be(false);
+      });
+
+      it('should be writable', () => {
+        var tab = new Tab();
         tab.closable = true;
         expect(tab.hasClass(CLOSABLE_CLASS)).to.be(true);
       });

@@ -83,8 +83,8 @@ describe('phosphor-tabs', () => {
         var tabPanel = new TabPanel();
         var tab = new Tab('1');
         TabPanel.tabProperty.set(tabPanel, tab);
-        expect(TabPanel.getTab(tabPanel)).to.eql(tab);   
-        expect(TabPanel.tabProperty.get(tabPanel)).to.eql(tab);   
+        expect(TabPanel.getTab(tabPanel)).to.eql(tab);
+        expect(TabPanel.tabProperty.get(tabPanel)).to.eql(tab);
       });
 
     });
@@ -123,8 +123,8 @@ describe('phosphor-tabs', () => {
 
      it('should add a TabBar and a StackPanel', () => {
         var tabPanel = new TabPanel();
-        expect(tabPanel.children[0] instanceof TabBar).to.be(true);
-        expect(tabPanel.children[1] instanceof StackedPanel).to.be(true);
+        expect(tabPanel.childAt(0) instanceof TabBar).to.be(true);
+        expect(tabPanel.childAt(1) instanceof StackedPanel).to.be(true);
      });
 
     });
@@ -210,7 +210,7 @@ describe('phosphor-tabs', () => {
         tabPanel.widgets = [widget1, widget0]
         expect(tabPanel.widgets).to.eql([widget1, widget0]);
       });
-      
+
     });
 
     describe('#widgetCount', () => {
@@ -226,7 +226,7 @@ describe('phosphor-tabs', () => {
       it('should be ready-only', () => {
         var tabPanel = new TabPanel();
         expect(() => { tabPanel.widgetCount = 0; }).to.throwError();
-      });   
+      });
 
     });
 
@@ -247,9 +247,9 @@ describe('phosphor-tabs', () => {
         var tabPanel = new TabPanel();
         tabPanel.widgets = [widget0, widget1];
         expect(tabPanel.widgetAt(-1)).to.be(void 0);
-        expect(tabPanel.widgetAt(3)).to.be(void 0);  
+        expect(tabPanel.widgetAt(3)).to.be(void 0);
       });
-      
+
     });
 
     describe('#widgetIndex()', () => {
@@ -270,7 +270,7 @@ describe('phosphor-tabs', () => {
         tabPanel.widgets = [widget0];
         expect(tabPanel.widgetIndex(widget1)).to.be(-1);
       });
-      
+
     });
 
     describe('#addWidget()', () => {
@@ -339,7 +339,7 @@ describe('phosphor-tabs', () => {
         tabPanel.moveWidget(0, 2);
         expect(tabPanel.widgetIndex(widget0)).to.be(2);
       });
-      
+
       it('should return `false` if index out of range', () => {
         var widget0 = createContent('red');
         var widget1 = createContent('green');
@@ -374,7 +374,7 @@ describe('phosphor-tabs', () => {
         expect(tabPanel.removeWidgetAt(3)).to.be(void 0);
         expect(tabPanel.widgets.length).to.be(3);
       });
-      
+
     });
 
     describe('#removeWidget()', () => {
@@ -386,7 +386,7 @@ describe('phosphor-tabs', () => {
         var tabPanel = new TabPanel();
         tabPanel.widgets = [widget0, widget1, widget2];
         expect(tabPanel.removeWidget(widget1)).to.eql(1);
-        expect(tabPanel.widgets.length).to.be(2);       
+        expect(tabPanel.widgets.length).to.be(2);
       });
 
       it('should return `-1` if not contained in the panel', () => {
@@ -397,6 +397,7 @@ describe('phosphor-tabs', () => {
         tabPanel.widgets = [widget0, widget2];
         expect(tabPanel.removeWidget(widget1)).to.be(-1);
       });
+
     });
 
     describe('#clearWidgets()', () => {
@@ -408,9 +409,28 @@ describe('phosphor-tabs', () => {
         var tabPanel = new TabPanel();
         tabPanel.widgets = [widget0, widget1, widget2];
         tabPanel.clearWidgets();
-        expect(tabPanel.widgets.length).to.be(0);   
+        expect(tabPanel.widgets.length).to.be(0);
       });
-      
+
+    });
+
+    context('when the `tabCloseRequested` signal is emitted', () => {
+
+      it('should close the targeted widget', () => {
+        var widget0 = createContent('red');
+        var widget1 = createContent('green');
+        var widget2 = createContent('blue');
+        var tabPanel = new TabPanel();
+        var tab = TabPanel.getTab(widget1);
+        var tabBar = tabPanel.childAt(0) as TabBar;
+        tabPanel.widgets = [widget0, widget1, widget2];
+        tabBar.tabCloseRequested.emit({ index: 1, tab: tab });
+        requestAnimationFrame(() => {
+          expect(tabPanel.widgets).to.eql([widget0, widget2]);
+        });
+
+      });
+
     });
 
   });

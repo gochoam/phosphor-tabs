@@ -26,19 +26,15 @@ import {
 } from 'phosphor-widget';
 
 import {
-  ACTIVE_CLASS, CONTENT_CLASS, DRAGGING_CLASS, FIRST_CLASS, FOOTER_CLASS, 
+  ACTIVE_CLASS, CONTENT_CLASS, DRAGGING_CLASS, FIRST_CLASS, FOOTER_CLASS,
   HEADER_CLASS, LAST_CLASS, TAB_BAR_CLASS, Tab, TabBar
 } from '../../lib/index';
 
 import './index.css';
 
-/**
-+ * The tab transition duration. Keep in sync with source file.
-+ */
-const TRANSITION_DURATION = 150;
-
 
 class LogTabBar extends TabBar {
+
   messages: string[] = [];
 
   processMessage(msg: Message): void {
@@ -48,7 +44,7 @@ class LogTabBar extends TabBar {
 }
 
 
-function triggerMouseEvent (node: HTMLElement, eventType: string, options: any={}) {
+function triggerMouseEvent(node: HTMLElement, eventType: string, options: any = {}) {
   options.bubbles = true;
   var clickEvent = new MouseEvent(eventType, options);
   node.dispatchEvent(clickEvent);
@@ -278,7 +274,7 @@ describe('phosphor-tabs', () => {
         tabBar.tabCloseRequested.connect(() => { called = true; });
         tab0.closable = true;
         tab0.selected = true;
-        attachWidget(tabBar, document.body);              
+        attachWidget(tabBar, document.body);
         triggerMouseEvent(tab0.closeIconNode, 'click', { button: 1 });
         expect(called).to.be(false);
       });
@@ -294,9 +290,8 @@ describe('phosphor-tabs', () => {
         tab0.selected = true;
         attachWidget(tabBar, document.body);
         var rect = tabBar.node.getBoundingClientRect();
-        triggerMouseEvent(tabBar.node, 'click', 
-                          { clientX: rect.left - 1, 
-                            clientY: rect.top });
+        var opts = { clientX: rect.left - 1, clientY: rect.top };
+        triggerMouseEvent(tabBar.node, 'click', opts);
         expect(called).to.be(false);
       });
 
@@ -327,11 +322,10 @@ describe('phosphor-tabs', () => {
         attachWidget(tabBar, document.body);
         tabBar.tabDetachRequested.connect(() => { called = true; });
         var rect = tab0.node.getBoundingClientRect();
-        triggerMouseEvent(tab0.node, 'mousedown', 
-                          { clientY: rect.top });
-        triggerMouseEvent(tab0.node, 'mousemove', 
-                          { clientX: -200,
-                            clientY: rect.bottom });
+        var opts1 = { clientY: rect.top };
+        var opts2 = { clientX: -200, clientY: rect.bottom };
+        triggerMouseEvent(tab0.node, 'mousedown', opts1);
+        triggerMouseEvent(tab0.node, 'mousemove', opts2);
         expect(called).to.be(true);
       });
 
@@ -344,12 +338,9 @@ describe('phosphor-tabs', () => {
         attachWidget(tabBar, document.body);
         tabBar.tabDetachRequested.connect(() => { called = true; });
         var rect = tab0.node.getBoundingClientRect();
-        triggerMouseEvent(tab0.node, 'mousedown', 
-                          { clientX: rect.left, 
-                            clientY: rect.top });
-        triggerMouseEvent(tabBar.node, 'mousemove', 
-                          { clientX: rect.left,
-                            clientY: rect.top });
+        var opts = { clientX: rect.left, clientY: rect.top };
+        triggerMouseEvent(tab0.node, 'mousedown', opts);
+        triggerMouseEvent(tabBar.node, 'mousemove', opts);
         expect(called).to.be(false);
       });
 
@@ -362,14 +353,10 @@ describe('phosphor-tabs', () => {
         attachWidget(tabBar, document.body);
         tabBar.tabDetachRequested.connect(() => { called = true; });
         var rect = tab0.node.getBoundingClientRect();
-        triggerMouseEvent(tabBar.node, 'mousedown', 
-                          { clientX: rect.left, 
-                            clientY: rect.top,
-                            button: 1 });
-        triggerMouseEvent(tabBar.node, 'mousemove', 
-                          { clientX: rect.left,
-                            clientY: rect.top,
-                            button: 1 });
+        var opts1 = { clientX: rect.left, clientY: rect.top, button: 1 };
+        var opts2 = { clientX: -200, clientY: rect.bottom, button: 1 };
+        triggerMouseEvent(tabBar.node, 'mousedown', opts1);
+        triggerMouseEvent(tabBar.node, 'mousemove', opts2);
         expect(called).to.be(false);
       });
 
@@ -382,13 +369,11 @@ describe('phosphor-tabs', () => {
         attachWidget(tabBar, document.body);
         tabBar.tabDetachRequested.connect(() => { called = true; });
         var rect = tab0.node.getBoundingClientRect();
-        triggerMouseEvent(tabBar.node, 'mousedown', 
-                          { clientX: rect.left, 
-                            clientY: rect.top });
+        var opts1 = { clientX: rect.left, clientY: rect.top };
+        var opts2 = { clientX: -200, clientY: rect.bottom };
+        triggerMouseEvent(tabBar.node, 'mousedown', opts1);
         triggerMouseEvent(tabBar.node, 'mousedown');
-        triggerMouseEvent(tabBar.node, 'mousemove', 
-                          { clientX: -200,
-                            clientY: rect.bottom });
+        triggerMouseEvent(tabBar.node, 'mousemove', opts2);
         expect(called).to.be(true);
       });
 
@@ -401,12 +386,13 @@ describe('phosphor-tabs', () => {
         attachWidget(tabBar, document.body);
         tabBar.tabDetachRequested.connect(() => { called = true; });
         var rect = tab0.node.getBoundingClientRect();
-        triggerMouseEvent(tabBar.node, 'mousedown', { clientX: -10 });
-        triggerMouseEvent(tabBar.node, 'mousemove', 
-                          { clientX: -200,
-                            clientY: rect.bottom });
+        var opts1 = { clientX: -10 };
+        var opts2 = { clientX: -200, clientY: rect.bottom };
+        triggerMouseEvent(tabBar.node, 'mousedown', opts1);
+        triggerMouseEvent(tabBar.node, 'mousemove', opts2);
         expect(called).to.be(false);
       });
+
     });
 
     describe('#previousTab', () => {
@@ -726,7 +712,7 @@ describe('phosphor-tabs', () => {
         setTimeout(() => {
           expect(tabBar.tabIndex(tab1)).to.be(1);
           done();
-        }, TRANSITION_DURATION);
+        }, 300);
       });
 
       it('should be a no-op if the tabs are not movable', () => {
