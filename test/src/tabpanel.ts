@@ -26,7 +26,7 @@ import {
 } from 'phosphor-widget';
 
 import {
-  TAB_PANEL_CLASS, Tab, TabBar, TabPanel
+  Tab, TabBar, TabPanel
 } from '../../lib/index';
 
 
@@ -39,15 +39,15 @@ function createContent(title: string): Widget {
 
 describe('phosphor-tabs', () => {
 
-  describe('TAB_PANEL_CLASS', () => {
-
-    it('should be `p-TabPanel`', () => {
-      expect(TAB_PANEL_CLASS).to.be('p-TabPanel');
-    });
-
-  });
-
   describe('TabPanel', () => {
+
+    describe('.p_TabPanel', () => {
+
+      it('should be `p-TabPanel`', () => {
+        expect(TabPanel.p_TabPanel).to.be('p-TabPanel');
+      });
+
+    });
 
     describe('.currentChangedSignal', () => {
 
@@ -116,9 +116,9 @@ describe('phosphor-tabs', () => {
         expect(tabPanel instanceof TabPanel).to.be(true);
      });
 
-     it('should add the TAB_PANELCLASS', () => {
+     it('should add the `p-TabPanel` class', () => {
         var tabPanel = new TabPanel();
-        expect(tabPanel.hasClass(TAB_PANEL_CLASS)).to.be(true);
+        expect(tabPanel.hasClass(TabPanel.p_TabPanel)).to.be(true);
      });
 
      it('should add a TabBar and a StackPanel', () => {
