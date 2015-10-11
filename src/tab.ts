@@ -13,47 +13,40 @@ import {
 
 
 /**
- * `p-Tab`: the class name added to Tab instances.
- */
-export
-const TAB_CLASS = 'p-Tab';
-
-/**
- * `p-Tab-text`: the class name assigned to a tab text node.
- */
-export
-const TEXT_CLASS = 'p-Tab-text';
-
-/**
- * `p-Tab-icon`: the class name assigned to a tab icon node.
- */
-export
-const ICON_CLASS = 'p-Tab-icon';
-
-/**
- * `p-Tab-close-icon`: the class name assigned to a tab close icon node.
- */
-export
-const CLOSE_ICON_CLASS = 'p-Tab-close-icon';
-
-/**
- * `p-mod-selected`: the class name added to a selected tab.
- */
-export
-const SELECTED_CLASS = 'p-mod-selected';
-
-/**
- * `p-mod-closable`: the class name added to a closable tab.
- */
-export
-const CLOSABLE_CLASS = 'p-mod-closable';
-
-
-/**
  * An object which manages a node for a tab bar.
  */
 export
 class Tab extends NodeWrapper {
+  /**
+   * The class name added to Tab instances.
+   */
+  static p_Tab = 'p-Tab';
+
+  /**
+   * The class name added to a tab text node.
+   */
+  static p_Tab_text = 'p-Tab-text';
+
+  /**
+   * The class name added to a tab icon node.
+   */
+  static p_Tab_icon = 'p-Tab-icon';
+
+  /**
+   * The class name added to a tab close node.
+   */
+  static p_Tab_close = 'p-Tab-close';
+
+  /**
+   * The class name added to a selected tab.
+   */
+  static p_mod_selected = 'p-mod-selected';
+
+  /**
+   * The class name added to a closable tab.
+   */
+  static p_mod_closable = 'p-mod-closable';
+
   /**
    * Create the DOM node for a tab.
    */
@@ -61,13 +54,13 @@ class Tab extends NodeWrapper {
     var node = document.createElement('div');
     var icon = document.createElement('span');
     var text = document.createElement('span');
-    var closeIcon = document.createElement('span');
-    icon.className = ICON_CLASS;
-    text.className = TEXT_CLASS;
-    closeIcon.className = CLOSE_ICON_CLASS;
+    var close = document.createElement('span');
+    icon.className = Tab.p_Tab_icon;
+    text.className = Tab.p_Tab_text;
+    close.className = Tab.p_Tab_close;
     node.appendChild(icon);
     node.appendChild(text);
-    node.appendChild(closeIcon);
+    node.appendChild(close);
     return node;
   }
 
@@ -78,7 +71,7 @@ class Tab extends NodeWrapper {
    */
   constructor(text?: string) {
     super();
-    this.addClass(TAB_CLASS);
+    this.addClass(Tab.p_Tab);
     if (text) this.text = text;
   }
 
@@ -100,28 +93,28 @@ class Tab extends NodeWrapper {
    * Get whether the tab is selected.
    */
   get selected(): boolean {
-    return this.hasClass(SELECTED_CLASS);
+    return this.hasClass(Tab.p_mod_selected);
   }
 
   /**
    * Set whether the tab is selected.
    */
   set selected(selected: boolean) {
-    this.toggleClass(SELECTED_CLASS, selected);
+    this.toggleClass(Tab.p_mod_selected, selected);
   }
 
   /**
    * Get whether the tab is closable.
    */
   get closable(): boolean {
-    return this.hasClass(CLOSABLE_CLASS);
+    return this.hasClass(Tab.p_mod_closable);
   }
 
   /**
    * Set whether the tab is closable.
    */
   set closable(closable: boolean) {
-    this.toggleClass(CLOSABLE_CLASS, closable);
+    this.toggleClass(Tab.p_mod_closable, closable);
   }
 
   /**
