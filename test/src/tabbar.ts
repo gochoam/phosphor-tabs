@@ -54,79 +54,15 @@ describe('phosphor-tabs', () => {
 
   describe('Tabbar', () => {
 
-    describe('.p_TabBar', () => {
-
-      it('should be `p-TabBar`', () => {
-        expect(TabBar.p_TabBar).to.be('p-TabBar');
-      });
-
-    });
-
-    describe('.p_TabBar_header', () => {
-
-      it('should be `p-TabBar-header`', () => {
-        expect(TabBar.p_TabBar_header).to.be('p-TabBar-header');
-      });
-
-    });
-
-    describe('.p_TabBar_content', () => {
-
-      it('should be `p-TabBar-content`', () => {
-        expect(TabBar.p_TabBar_content).to.be('p-TabBar-content');
-      });
-
-    });
-
-    describe('.p_TabBar_footer', () => {
-
-      it('should be `p-TabBar-footer`', () => {
-        expect(TabBar.p_TabBar_footer).to.be('p-TabBar-footer');
-      });
-
-    });
-
-    describe('.p_mod_dragging', () => {
-
-      it('should be `p-mod-dragging`', () => {
-        expect(TabBar.p_mod_dragging).to.be('p-mod-dragging');
-      });
-
-    });
-
-    describe('.p_mod_active', () => {
-
-      it('should be `p-mod-active`', () => {
-        expect(TabBar.p_mod_active).to.be('p-mod-active');
-      });
-
-    });
-
-    describe('.p_mod_first', () => {
-
-      it('should be `p-mod-first`', () => {
-        expect(TabBar.p_mod_first).to.be('p-mod-first');
-      });
-
-    });
-
-    describe('.p_mod_last', () => {
-
-      it('should be `p-mod-last`', () => {
-        expect(TabBar.p_mod_last).to.be('p-mod-last');
-      });
-
-    });
-
     describe('.createNode()', () => {
 
       it('should create a DOM node for a tabbar', () => {
         var node = TabBar.createNode();
         var children = node.children;
         expect(children.length).to.be(3);
-        expect(children[0].classList.contains(TabBar.p_TabBar_header)).to.be(true);
-        expect(children[1].classList.contains(TabBar.p_TabBar_content)).to.be(true);
-        expect(children[2].classList.contains(TabBar.p_TabBar_footer)).to.be(true);
+        expect(children[0].classList.contains('p-TabBar-header')).to.be(true);
+        expect(children[1].classList.contains('p-TabBar-content')).to.be(true);
+        expect(children[2].classList.contains('p-TabBar-footer')).to.be(true);
       });
 
     });
@@ -198,7 +134,7 @@ describe('phosphor-tabs', () => {
 
       it('should add the `p-TabBar` class', () => {
        var tabBar = new TabBar();
-       expect(tabBar.hasClass(TabBar.p_TabBar)).to.be(true);
+       expect(tabBar.hasClass('p-TabBar')).to.be(true);
       });
 
     });

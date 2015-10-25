@@ -40,19 +40,59 @@ import {
 
 
 /**
+ * The class name added to TabBar instances.
+ */
+var TAB_BAR_CLASS = 'p-TabBar';
+
+/**
+ * The class name added to the tab bar header div.
+ */
+var HEADER_CLASS = 'p-TabBar-header';
+
+/**
+ * The class name added to the tab bar content div.
+ */
+var CONTENT_CLASS = 'p-TabBar-content';
+
+/**
+ * The class name added to the tab bar footer div.
+ */
+var FOOTER_CLASS = 'p-TabBar-footer';
+
+/**
+ * A class name added to the tab bar when dragging.
+ */
+var DRAGGING_CLASS = 'p-mod-dragging';
+
+/**
+ * A class name added to the active drag tab.
+ */
+var ACTIVE_CLASS = 'p-mod-active';
+
+/**
+ * A class name added to the first tab in the tab bar.
+ */
+var FIRST_CLASS = 'p-mod-first';
+
+/**
+ * A class name adde to the last tab in the tab bar.
+ */
+var LAST_CLASS = 'p-mod-last';
+
+/**
  * The start drag distance threshold.
  */
-const DRAG_THRESHOLD = 5;
+var DRAG_THRESHOLD = 5;
 
 /**
  * The detach distance threshold.
  */
-const DETACH_THRESHOLD = 20;
+var DETACH_THRESHOLD = 20;
 
 /**
  * The tab transition duration. Keep in sync with CSS.
  */
-const TRANSITION_DURATION = 150;
+var TRANSITION_DURATION = 150;
 
 
 /**
@@ -126,46 +166,6 @@ interface ITabMoveArgs {
 export
 class TabBar extends Widget {
   /**
-   * The class name added to TabBar instances.
-   */
-  static p_TabBar = 'p-TabBar';
-
-  /**
-   * The class name added to the tab bar header div.
-   */
-  static p_TabBar_header = 'p-TabBar-header';
-
-  /**
-   * The class name added to the tab bar content div.
-   */
-  static p_TabBar_content = 'p-TabBar-content';
-
-  /**
-   * The class name added to the tab bar footer div.
-   */
-  static p_TabBar_footer = 'p-TabBar-footer';
-
-  /**
-   * A class name added to the tab bar when dragging.
-   */
-  static p_mod_dragging = 'p-mod-dragging';
-
-  /**
-   * A class name added to the active drag tab.
-   */
-  static p_mod_active = 'p-mod-active';
-
-  /**
-   * A class name added to the first tab in the tab bar.
-   */
-  static p_mod_first = 'p-mod-first';
-
-  /**
-   * A class name adde to the last tab in the tab bar.
-   */
-  static p_mod_last = 'p-mod-last';
-
-  /**
    * Create the DOM node for a tab bar.
    */
   static createNode(): HTMLElement {
@@ -173,9 +173,9 @@ class TabBar extends Widget {
     var header = document.createElement('div');
     var content = document.createElement('div');
     var footer = document.createElement('div');
-    header.className = TabBar.p_TabBar_header;
-    content.className = TabBar.p_TabBar_content;
-    footer.className = TabBar.p_TabBar_footer;
+    header.className = HEADER_CLASS;
+    content.className = CONTENT_CLASS;
+    footer.className = FOOTER_CLASS;
     node.appendChild(header);
     node.appendChild(content);
     node.appendChild(footer);
@@ -239,7 +239,7 @@ class TabBar extends Widget {
    */
   constructor() {
     super();
-    this.addClass(TabBar.p_TabBar);
+    this.addClass(TAB_BAR_CLASS);
   }
 
   /**
@@ -572,8 +572,8 @@ class TabBar extends Widget {
     document.addEventListener('mousemove', <any>this, true);
 
     // Add the dragging style classes.
-    tab.addClass(TabBar.p_mod_active);
-    this.addClass(TabBar.p_mod_dragging);
+    tab.addClass(ACTIVE_CLASS);
+    this.addClass(DRAGGING_CLASS);
 
     // Update the drag tab position.
     this._updateDragPosition(clientX);
@@ -733,8 +733,8 @@ class TabBar extends Widget {
       data.dragActive = true;
 
       // Add the dragging style classes.
-      data.tab.addClass(TabBar.p_mod_active);
-      this.addClass(TabBar.p_mod_dragging);
+      data.tab.addClass(ACTIVE_CLASS);
+      this.addClass(DRAGGING_CLASS);
     }
 
     // Check to see if the detach threshold has been exceeded, and
@@ -807,7 +807,7 @@ class TabBar extends Widget {
     data.tab.node.style.left = adjustedLeft + 'px';
 
     // Remove the active class from the tab so it can be transitioned.
-    data.tab.removeClass(TabBar.p_mod_active);
+    data.tab.removeClass(ACTIVE_CLASS);
 
     // Complete the release on a timer to allow the tab to transition.
     setTimeout(() => {
@@ -826,8 +826,8 @@ class TabBar extends Widget {
 
       // Clear the cursor grab and drag styles.
       data.cursorGrab.dispose();
-      data.tab.removeClass(TabBar.p_mod_active);
-      this.removeClass(TabBar.p_mod_dragging);
+      data.tab.removeClass(ACTIVE_CLASS);
+      this.removeClass(DRAGGING_CLASS);
 
       // Finally, move the drag tab to its final index location.
       if (data.tabTargetIndex !== -1) {
@@ -908,8 +908,8 @@ class TabBar extends Widget {
 
     // Clear the cursor grab and drag styles.
     data.cursorGrab.dispose();
-    data.tab.removeClass(TabBar.p_mod_active);
-    this.removeClass(TabBar.p_mod_dragging);
+    data.tab.removeClass(ACTIVE_CLASS);
+    this.removeClass(DRAGGING_CLASS);
   }
 
   /**
@@ -970,9 +970,9 @@ class TabBar extends Widget {
     tab.selected = false;
     tab.node.style.left = '';
     tab.node.style.zIndex = '';
-    tab.removeClass(TabBar.p_mod_active);
-    tab.removeClass(TabBar.p_mod_first);
-    tab.removeClass(TabBar.p_mod_last);
+    tab.removeClass(ACTIVE_CLASS);
+    tab.removeClass(FIRST_CLASS);
+    tab.removeClass(LAST_CLASS);
 
     // Update the selected tab. If the removed tab was the selected tab,
     // select the next best tab by starting with the previous tab, then
@@ -1003,8 +1003,8 @@ class TabBar extends Widget {
     for (var i = 0, n = this._tabs.length, k = n - 1; i < n; ++i) {
       var tab = this._tabs[i];
       var style = tab.node.style;
-      tab.removeClass(TabBar.p_mod_first);
-      tab.removeClass(TabBar.p_mod_last);
+      tab.removeClass(FIRST_CLASS);
+      tab.removeClass(LAST_CLASS);
       style.order = i + '';
       if (tab === selectedTab) {
         style.zIndex = n + '';
@@ -1012,8 +1012,8 @@ class TabBar extends Widget {
         style.zIndex = k-- + '';
       }
     }
-    this._tabs[0].addClass(TabBar.p_mod_first);
-    this._tabs[n - 1].addClass(TabBar.p_mod_last);
+    this._tabs[0].addClass(FIRST_CLASS);
+    this._tabs[n - 1].addClass(LAST_CLASS);
   }
 
   /**

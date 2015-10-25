@@ -41,14 +41,6 @@ describe('phosphor-tabs', () => {
 
   describe('TabPanel', () => {
 
-    describe('.p_TabPanel', () => {
-
-      it('should be `p-TabPanel`', () => {
-        expect(TabPanel.p_TabPanel).to.be('p-TabPanel');
-      });
-
-    });
-
     describe('.currentChangedSignal', () => {
 
       it('should be a Signal', () => {
@@ -111,21 +103,21 @@ describe('phosphor-tabs', () => {
 
     describe('#constructor()', () => {
 
-     it('should accept no arguments', () => {
+      it('should accept no arguments', () => {
         var tabPanel = new TabPanel();
         expect(tabPanel instanceof TabPanel).to.be(true);
-     });
+      });
 
-     it('should add the `p-TabPanel` class', () => {
+      it('should add the `p-TabPanel` class', () => {
         var tabPanel = new TabPanel();
-        expect(tabPanel.hasClass(TabPanel.p_TabPanel)).to.be(true);
-     });
+        expect(tabPanel.hasClass('p-TabPanel')).to.be(true);
+      });
 
-     it('should add a TabBar and a StackPanel', () => {
+      it('should add a TabBar and a StackPanel', () => {
         var tabPanel = new TabPanel();
         expect(tabPanel.childAt(0) instanceof TabBar).to.be(true);
         expect(tabPanel.childAt(1) instanceof StackedPanel).to.be(true);
-     });
+      });
 
     });
 

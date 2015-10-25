@@ -37,6 +37,12 @@ import {
 
 
 /**
+ * The class name added to TabPanel instances.
+ */
+var TAB_PANEL_CLASS = 'p-TabPanel';
+
+
+/**
  * A panel which provides a tabbed layout for child widgets.
  *
  * The `TabPanel` provides a convenient combination of a `TabBar` and
@@ -50,10 +56,7 @@ import {
  */
 export
 class TabPanel extends BoxPanel {
-  /**
-   * The class name added to TabPanel instances.
-   */
-  static p_TabPanel = 'p-TabPanel';
+
 
   /**
    * A signal emitted when the current widget is changed.
@@ -113,7 +116,7 @@ class TabPanel extends BoxPanel {
    */
   constructor() {
     super();
-    this.addClass(TabPanel.p_TabPanel);
+    this.addClass(TAB_PANEL_CLASS);
 
     var tabs = new TabBar();
     tabs.tabMoved.connect(this._onTabMoved, this);
