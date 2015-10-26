@@ -211,6 +211,19 @@ class TabBar extends Widget {
   static tabDetachRequestedSignal = new Signal<TabBar, ITabDetachArgs>();
 
   /**
+   * The property descriptor for the previous tab.
+   *
+   * This controls which tab is selected after if selected tab is
+   * removed. It is typically updated automatically.
+   *
+   * **See also:** [[previousTab]]
+   */
+  static previousTabProperty = new Property<TabBar, Tab>({
+    value: null,
+    coerce: (owner, val) => (val && owner.tabIndex(val) !== -1) ? val : null,
+  });
+
+  /**
    * The property descriptor for the selected tab.
    *
    * This controls which tab is selected in the tab bar.
@@ -226,7 +239,7 @@ class TabBar extends Widget {
   /**
    * The property descriptor for the tabs movable property
    *
-   * THis controls whether tabs are movable by the user.
+   * This controls whether tabs are movable by the user.
    *
    * **See also:** [[tabsMovable]]
    */
@@ -247,7 +260,6 @@ class TabBar extends Widget {
    */
   dispose(): void {
     this._releaseMouse();
-    this._previousTab = null;
     this._tabs.length = 0;
     super.dispose();
   }
@@ -296,12 +308,20 @@ class TabBar extends Widget {
    * Get the previously selected tab.
    *
    * #### Notes
-   * This is a read-only property.
-   *
-   * This will be `null` if there is no valid previous tab.
+   * This is a pure delegate to the [[previousTabProperty]].
    */
   get previousTab(): Tab {
-    return this._previousTab;
+    return TabBar.previousTabProperty.get(this);
+  }
+
+  /**
+   * Set the previously selected tab.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[previousTabProperty]].
+   */
+  set previousTab(value: Tab) {
+    TabBar.previousTabProperty.set(this, value);
   }
 
   /**
@@ -979,11 +999,11 @@ class TabBar extends Widget {
     // the next sibling, and finally the previous sibling. Otherwise,
     // update the state and tab ordering as appropriate.
     if (tab === this.selectedTab) {
-      var next = this._previousTab || this._tabs[i] || this._tabs[i - 1];
+      var next = this.previousTab || this._tabs[i] || this._tabs[i - 1];
       this.selectedTab = next;
-      this._previousTab = null;
-    } else if (tab === this._previousTab) {
-      this._previousTab =  null;
+      this.previousTab = null;
+    } else if (tab === this.previousTab) {
+      this.previousTab =  null;
       this._updateTabOrdering();
     } else {
       this._updateTabOrdering();
@@ -1022,13 +1042,12 @@ class TabBar extends Widget {
   private _onSelectedTabChanged(old: Tab, tab: Tab): void {
     if (old) old.selected = false;
     if (tab) tab.selected = true;
-    this._previousTab = old;
+    this.previousTab = old;
     this._updateTabOrdering();
     this.tabSelected.emit({ index: this.tabIndex(tab), tab: tab });
   }
 
   private _tabs: Tab[] = [];
-  private _previousTab: Tab = null;
   private _dragData: DragData = null;
 }
 

@@ -56,8 +56,6 @@ var TAB_PANEL_CLASS = 'p-TabPanel';
  */
 export
 class TabPanel extends BoxPanel {
-
-
   /**
    * A signal emitted when the current widget is changed.
    *
