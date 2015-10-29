@@ -74,3 +74,18 @@
 .p-TabBar.p-mod-dragging > .p-TabBar-content > .p-Tab.p-mod-active {
   transition: none;
 }
+
+
+.p-TabPanel {
+  z-index: 0;
+}
+
+
+.p-TabPanel > .p-TabBar {
+  z-index: 1;
+}
+
+
+.p-TabPanel > .p-StackedPanel {
+  z-index: 0;
+}
