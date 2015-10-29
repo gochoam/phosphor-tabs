@@ -42,57 +42,57 @@ import {
 /**
  * The class name added to TabBar instances.
  */
-var TAB_BAR_CLASS = 'p-TabBar';
+const TAB_BAR_CLASS = 'p-TabBar';
 
 /**
  * The class name added to the tab bar header div.
  */
-var HEADER_CLASS = 'p-TabBar-header';
+const HEADER_CLASS = 'p-TabBar-header';
 
 /**
  * The class name added to the tab bar content div.
  */
-var CONTENT_CLASS = 'p-TabBar-content';
+const CONTENT_CLASS = 'p-TabBar-content';
 
 /**
  * The class name added to the tab bar footer div.
  */
-var FOOTER_CLASS = 'p-TabBar-footer';
+const FOOTER_CLASS = 'p-TabBar-footer';
 
 /**
  * A class name added to the tab bar when dragging.
  */
-var DRAGGING_CLASS = 'p-mod-dragging';
+const DRAGGING_CLASS = 'p-mod-dragging';
 
 /**
  * A class name added to the active drag tab.
  */
-var ACTIVE_CLASS = 'p-mod-active';
+const ACTIVE_CLASS = 'p-mod-active';
 
 /**
  * A class name added to the first tab in the tab bar.
  */
-var FIRST_CLASS = 'p-mod-first';
+const FIRST_CLASS = 'p-mod-first';
 
 /**
  * A class name adde to the last tab in the tab bar.
  */
-var LAST_CLASS = 'p-mod-last';
+const LAST_CLASS = 'p-mod-last';
 
 /**
  * The start drag distance threshold.
  */
-var DRAG_THRESHOLD = 5;
+const DRAG_THRESHOLD = 5;
 
 /**
  * The detach distance threshold.
  */
-var DETACH_THRESHOLD = 20;
+const DETACH_THRESHOLD = 20;
 
 /**
  * The tab transition duration. Keep in sync with CSS.
  */
-var TRANSITION_DURATION = 150;
+const TRANSITION_DURATION = 150;
 
 
 /**
@@ -169,10 +169,10 @@ class TabBar extends Widget {
    * Create the DOM node for a tab bar.
    */
   static createNode(): HTMLElement {
-    var node = document.createElement('div');
-    var header = document.createElement('div');
-    var content = document.createElement('div');
-    var footer = document.createElement('div');
+    let node = document.createElement('div');
+    let header = document.createElement('div');
+    let content = document.createElement('div');
+    let footer = document.createElement('div');
     header.className = HEADER_CLASS;
     content.className = CONTENT_CLASS;
     footer.className = FOOTER_CLASS;
@@ -521,7 +521,7 @@ class TabBar extends Widget {
    */
   removeTab(tab: Tab): number {
     this._releaseMouse();
-    var i = this._tabs.indexOf(tab);
+    let i = this._tabs.indexOf(tab);
     if (i !== -1) this._removeTab(i);
     return i;
   }
@@ -567,14 +567,14 @@ class TabBar extends Widget {
     }
 
     // Insert and select the new tab.
-    var index = this._tabs.length;
+    let index = this._tabs.length;
     this._insertTab(index, tab);
     this.selectedTab = tab;
 
     // Setup the drag data object.
-    var content = <HTMLElement>this.node.firstChild.nextSibling;
-    var tabRect = tab.node.getBoundingClientRect();
-    var data = this._dragData = new DragData();
+    let content = <HTMLElement>this.node.firstChild.nextSibling;
+    let tabRect = tab.node.getBoundingClientRect();
+    let data = this._dragData = new DragData();
     data.tab = tab;
     data.tabIndex = index;
     data.tabLeft = tab.node.offsetLeft;
@@ -654,7 +654,7 @@ class TabBar extends Widget {
     }
 
     // Do nothing if the click is not on a tab.
-    var index = hitTestTabs(this._tabs, event.clientX, event.clientY);
+    let index = hitTestTabs(this._tabs, event.clientX, event.clientY);
     if (index < 0) {
       return;
     }
@@ -665,8 +665,8 @@ class TabBar extends Widget {
 
     // If the click was on a node contained by the close icon node
     // of a closable tab, emit the `tabCloseRequested` signal.
-    var tab = this._tabs[index];
-    var target = <HTMLElement>event.target;
+    let tab = this._tabs[index];
+    let target = <HTMLElement>event.target;
     if (tab.closable && tab.closeIconNode.contains(target)) {
       this.tabCloseRequested.emit({ index: index, tab: tab });
     }
@@ -687,7 +687,7 @@ class TabBar extends Widget {
     }
 
     // Do nothing of the press is not on a tab.
-    var index = hitTestTabs(this._tabs, event.clientX, event.clientY);
+    let index = hitTestTabs(this._tabs, event.clientX, event.clientY);
     if (index < 0) {
       return;
     }
@@ -697,15 +697,15 @@ class TabBar extends Widget {
     event.stopPropagation();
 
     // Do nothing further if the press was on the tab close icon.
-    var tab = this._tabs[index];
+    let tab = this._tabs[index];
     if (tab.closeIconNode.contains(<HTMLElement>event.target)) {
       return;
     }
 
     // Setup the drag if the tabs are movable.
     if (this.tabsMovable) {
-      var tabRect = tab.node.getBoundingClientRect();
-      var data = this._dragData = new DragData();
+      let tabRect = tab.node.getBoundingClientRect();
+      let data = this._dragData = new DragData();
       data.tab = tab;
       data.tabIndex = index;
       data.tabLeft = tab.node.offsetLeft;
@@ -737,16 +737,16 @@ class TabBar extends Widget {
 
     // Check to see if the drag threshold has been exceeded, and
     // start the tab drag operation the first time that occurrs.
-    var data = this._dragData;
+    let data = this._dragData;
     if (!data.dragActive) {
-      var dx = Math.abs(event.clientX - data.pressX);
-      var dy = Math.abs(event.clientY - data.pressY);
+      let dx = Math.abs(event.clientX - data.pressX);
+      let dy = Math.abs(event.clientY - data.pressY);
       if (dx < DRAG_THRESHOLD && dy < DRAG_THRESHOLD) {
         return;
       }
 
       // Fill in the remaining drag data.
-      var content = <HTMLElement>this.node.firstChild.nextSibling;
+      let content = <HTMLElement>this.node.firstChild.nextSibling;
       data.tabLayout = snapTabLayout(this._tabs);
       data.contentRect = content.getBoundingClientRect();
       data.cursorGrab = overrideCursor('default');
@@ -801,7 +801,7 @@ class TabBar extends Widget {
     document.removeEventListener('mousemove', <any>this, true);
 
     // Store a local reference to the drag data.
-    var data = this._dragData;
+    let data = this._dragData;
 
     // If the drag is not active, clear the reference and bail.
     if (!data.dragActive) {
@@ -810,20 +810,20 @@ class TabBar extends Widget {
     }
 
     // Compute the approximate final relative tab offset.
-    var idealLeft: number;
+    let idealLeft: number;
     if (data.tabTargetIndex === data.tabIndex) {
       idealLeft = 0;
     } else if (data.tabTargetIndex > data.tabIndex) {
-      var tl = data.tabLayout[data.tabTargetIndex];
+      let tl = data.tabLayout[data.tabTargetIndex];
       idealLeft = tl.left + tl.width - data.tabWidth - data.tabLeft;
     } else {
-      var tl = data.tabLayout[data.tabTargetIndex];
+      let tl = data.tabLayout[data.tabTargetIndex];
       idealLeft = tl.left - data.tabLeft;
     }
 
     // Position the tab to its final position, subject to limits.
-    var maxLeft = data.contentRect.width - (data.tabLeft + data.tabWidth);
-    var adjustedLeft = Math.max(-data.tabLeft, Math.min(idealLeft, maxLeft));
+    let maxLeft = data.contentRect.width - (data.tabLeft + data.tabWidth);
+    let adjustedLeft = Math.max(-data.tabLeft, Math.min(idealLeft, maxLeft));
     data.tab.node.style.left = adjustedLeft + 'px';
 
     // Remove the active class from the tab so it can be transitioned.
@@ -840,7 +840,7 @@ class TabBar extends Widget {
       this._dragData = null;
 
       // Clear the relative tab positions.
-      for (var i = 0, n = this._tabs.length; i < n; ++i) {
+      for (let i = 0, n = this._tabs.length; i < n; ++i) {
         this._tabs[i].node.style.left = '';
       }
 
@@ -863,24 +863,24 @@ class TabBar extends Widget {
    */
   private _updateDragPosition(clientX: number): void {
     // Bail if there is not an active drag.
-    var data = this._dragData;
+    let data = this._dragData;
     if (!data || !data.dragActive) {
       return;
     }
 
     // Compute the target bounds of the drag tab.
-    var offsetLeft = clientX - data.contentRect.left;
-    var targetLeft = offsetLeft - data.tabPressX;
-    var targetRight = targetLeft + data.tabWidth;
+    let offsetLeft = clientX - data.contentRect.left;
+    let targetLeft = offsetLeft - data.tabPressX;
+    let targetRight = targetLeft + data.tabWidth;
 
     // Reset the target tab index.
     data.tabTargetIndex = data.tabIndex;
 
     // Update the non-drag tab positions and the tab target index.
-    for (var i = 0, n = this._tabs.length; i < n; ++i) {
-      var style = this._tabs[i].node.style;
-      var layout = data.tabLayout[i];
-      var threshold = layout.left + (layout.width >> 1);
+    for (let i = 0, n = this._tabs.length; i < n; ++i) {
+      let style = this._tabs[i].node.style;
+      let layout = data.tabLayout[i];
+      let threshold = layout.left + (layout.width >> 1);
       if (i < data.tabIndex && targetLeft < threshold) {
         style.left = data.tabWidth + data.tabLayout[i + 1].margin + 'px';
         data.tabTargetIndex = Math.min(data.tabTargetIndex, i);
@@ -893,9 +893,9 @@ class TabBar extends Widget {
     }
 
     // Update the drag tab position
-    var idealLeft = clientX - data.pressX;
-    var maxLeft = data.contentRect.width - (data.tabLeft + data.tabWidth);
-    var adjustedLeft = Math.max(-data.tabLeft, Math.min(idealLeft, maxLeft));
+    let idealLeft = clientX - data.pressX;
+    let maxLeft = data.contentRect.width - (data.tabLeft + data.tabWidth);
+    let adjustedLeft = Math.max(-data.tabLeft, Math.min(idealLeft, maxLeft));
     data.tab.node.style.left = adjustedLeft + 'px';
   }
 
@@ -913,7 +913,7 @@ class TabBar extends Widget {
     document.removeEventListener('mousemove', <any>this, true);
 
     // Clear the drag data reference.
-    var data = this._dragData;
+    let data = this._dragData;
     this._dragData = null;
 
     // If the drag is not active, there's nothing left to do.
@@ -922,7 +922,7 @@ class TabBar extends Widget {
     }
 
     // Reset the positions of the tabs.
-    for (var i = 0, n = this._tabs.length; i < n; ++i) {
+    for (let i = 0, n = this._tabs.length; i < n; ++i) {
       this._tabs[i].node.style.left = '';
     }
 
@@ -941,8 +941,8 @@ class TabBar extends Widget {
    */
   private _insertTab(index: number, tab: Tab): number {
     tab.selected = false;
-    var i = arrays.insert(this._tabs, index, tab);
-    var content = <HTMLElement>this.node.firstChild.nextSibling;
+    let i = arrays.insert(this._tabs, index, tab);
+    let content = <HTMLElement>this.node.firstChild.nextSibling;
     content.appendChild(tab.node);
     if (!this.selectedTab) {
       this.selectedTab = tab;
@@ -958,8 +958,8 @@ class TabBar extends Widget {
    * The mouse should be released before calling this method.
    */
   private _moveTab(fromIndex: number, toIndex: number): boolean {
-    var i = fromIndex | 0;
-    var j = toIndex | 0;
+    let i = fromIndex | 0;
+    let j = toIndex | 0;
     if (!arrays.move(this._tabs, i, j)) {
       return false;
     }
@@ -978,14 +978,14 @@ class TabBar extends Widget {
    */
   private _removeTab(index: number): Tab {
     // Bail if the index is invalid.
-    var i = index | 0;
-    var tab = arrays.removeAt(this._tabs, i);
+    let i = index | 0;
+    let tab = arrays.removeAt(this._tabs, i);
     if (!tab) {
       return void 0;
     }
 
     // Remove the tab from the DOM and reset its style.
-    var content = <HTMLElement>this.node.firstChild.nextSibling;
+    let content = <HTMLElement>this.node.firstChild.nextSibling;
     content.removeChild(tab.node);
     tab.selected = false;
     tab.node.style.left = '';
@@ -999,7 +999,7 @@ class TabBar extends Widget {
     // the next sibling, and finally the previous sibling. Otherwise,
     // update the state and tab ordering as appropriate.
     if (tab === this.selectedTab) {
-      var next = this.previousTab || this._tabs[i] || this._tabs[i - 1];
+      let next = this.previousTab || this._tabs[i] || this._tabs[i - 1];
       this.selectedTab = next;
       this.previousTab = null;
     } else if (tab === this.previousTab) {
@@ -1019,10 +1019,10 @@ class TabBar extends Widget {
     if (this._tabs.length === 0) {
       return;
     }
-    var selectedTab = this.selectedTab;
-    for (var i = 0, n = this._tabs.length, k = n - 1; i < n; ++i) {
-      var tab = this._tabs[i];
-      var style = tab.node.style;
+    let selectedTab = this.selectedTab;
+    for (let i = 0, n = this._tabs.length, k = n - 1; i < n; ++i) {
+      let tab = this._tabs[i];
+      let style = tab.node.style;
       tab.removeClass(FIRST_CLASS);
       tab.removeClass(LAST_CLASS);
       style.order = i + '';
@@ -1033,7 +1033,7 @@ class TabBar extends Widget {
       }
     }
     this._tabs[0].addClass(FIRST_CLASS);
-    this._tabs[n - 1].addClass(LAST_CLASS);
+    this._tabs[this._tabs.length - 1].addClass(LAST_CLASS);
   }
 
   /**
@@ -1161,7 +1161,7 @@ function shouldDetach(rect: ClientRect, event: MouseEvent): boolean {
  * Get the index of the tab which intersect the client point, or -1.
  */
 function hitTestTabs(tabs: Tab[], clientX: number, clientY: number): number {
-  for (var i = 0, n = tabs.length; i < n; ++i) {
+  for (let i = 0, n = tabs.length; i < n; ++i) {
     if (hitTest(tabs[i].node, clientX, clientY)) {
       return i;
     }
@@ -1174,13 +1174,13 @@ function hitTestTabs(tabs: Tab[], clientX: number, clientY: number): number {
  * Snap an array of the current tab layout values.
  */
 function snapTabLayout(tabs: Tab[]): ITabLayout[] {
-  var layout = new Array<ITabLayout>(tabs.length);
-  for (var i = 0, n = tabs.length; i < n; ++i) {
-    var node = tabs[i].node;
-    var left = node.offsetLeft;
-    var width = node.offsetWidth;
-    var cstyle = window.getComputedStyle(tabs[i].node);
-    var margin = parseInt(cstyle.marginLeft, 10) || 0;
+  let layout = new Array<ITabLayout>(tabs.length);
+  for (let i = 0, n = tabs.length; i < n; ++i) {
+    let node = tabs[i].node;
+    let left = node.offsetLeft;
+    let width = node.offsetWidth;
+    let cstyle = window.getComputedStyle(tabs[i].node);
+    let margin = parseInt(cstyle.marginLeft, 10) || 0;
     layout[i] = { margin: margin, left: left, width: width };
   }
   return layout;

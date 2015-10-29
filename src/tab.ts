@@ -15,32 +15,32 @@ import {
 /**
  * The class name added to Tab instances.
  */
-var TAB_CLASS = 'p-Tab';
+const TAB_CLASS = 'p-Tab';
 
 /**
  * The class name added to a tab text node.
  */
-var TEXT_CLASS = 'p-Tab-text';
+const TEXT_CLASS = 'p-Tab-text';
 
 /**
  * The class name added to a tab icon node.
  */
-var ICON_CLASS = 'p-Tab-icon';
+const ICON_CLASS = 'p-Tab-icon';
 
 /**
  * The class name added to a tab close node.
  */
-var CLOSE_CLASS = 'p-Tab-close';
+const CLOSE_CLASS = 'p-Tab-close';
 
 /**
  * The class name added to a selected tab.
  */
-var SELECTED_CLASS = 'p-mod-selected';
+const SELECTED_CLASS = 'p-mod-selected';
 
 /**
  * The class name added to a closable tab.
  */
-var CLOSABLE_CLASS = 'p-mod-closable';
+const CLOSABLE_CLASS = 'p-mod-closable';
 
 
 /**
@@ -52,10 +52,10 @@ class Tab extends NodeWrapper {
    * Create the DOM node for a tab.
    */
   static createNode(): HTMLElement {
-    var node = document.createElement('div');
-    var icon = document.createElement('span');
-    var text = document.createElement('span');
-    var close = document.createElement('span');
+    let node = document.createElement('div');
+    let icon = document.createElement('span');
+    let text = document.createElement('span');
+    let close = document.createElement('span');
     icon.className = ICON_CLASS;
     text.className = TEXT_CLASS;
     close.className = CLOSE_CLASS;

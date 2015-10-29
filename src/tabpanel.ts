@@ -39,7 +39,7 @@ import {
 /**
  * The class name added to TabPanel instances.
  */
-var TAB_PANEL_CLASS = 'p-TabPanel';
+const TAB_PANEL_CLASS = 'p-TabPanel';
 
 
 /**
@@ -116,24 +116,21 @@ class TabPanel extends BoxPanel {
     super();
     this.addClass(TAB_PANEL_CLASS);
 
-    var tabs = new TabBar();
-    tabs.tabMoved.connect(this._onTabMoved, this);
-    tabs.tabSelected.connect(this._onTabSelected, this);
-    tabs.tabCloseRequested.connect(this._onTabCloseRequested, this);
+    this._tabs.tabMoved.connect(this._onTabMoved, this);
+    this._tabs.tabSelected.connect(this._onTabSelected, this);
+    this._tabs.tabCloseRequested.connect(this._onTabCloseRequested, this);
 
-    var stack = new StackedPanel();
-    stack.currentChanged.connect(this._onCurrentChanged, this);
-    stack.widgetRemoved.connect(this._onWidgetRemoved, this);
+    this._stack.currentChanged.connect(this._onCurrentChanged, this);
+    this._stack.widgetRemoved.connect(this._onWidgetRemoved, this);
 
-    BoxPanel.setStretch(tabs, 0);
-    BoxPanel.setStretch(stack, 1);
+    BoxPanel.setStretch(this._tabs, 0);
+    BoxPanel.setStretch(this._stack, 1);
+
     this.direction = BoxPanel.TopToBottom;
     this.spacing = 0;
 
-    this._tabs = tabs;
-    this._stack = stack;
-    this.addChild(tabs);
-    this.addChild(stack);
+    this.addChild(this._tabs);
+    this.addChild(this._stack);
   }
 
   /**
@@ -166,7 +163,7 @@ class TabPanel extends BoxPanel {
    * Set the currently selected widget.
    */
   set currentWidget(widget: Widget) {
-    var i = this._stack.childIndex(widget);
+    let i = this._stack.childIndex(widget);
     this._tabs.selectedTab = this._tabs.tabAt(i);
   }
 
@@ -300,9 +297,9 @@ class TabPanel extends BoxPanel {
    * **See also:** [[addWidget]], [[moveWidget]]
    */
   insertWidget(index: number, widget: Widget): number {
-    var tab = TabPanel.getTab(widget);
+    let tab = TabPanel.getTab(widget);
     if (!tab) throw new Error('`TabPanel.tab` property not set');
-    var i = this._stack.insertChild(index, widget);
+    let i = this._stack.insertChild(index, widget);
     return this._tabs.insertTab(i, tab);
   }
 
@@ -397,6 +394,6 @@ class TabPanel extends BoxPanel {
     this._tabs.removeTabAt(args.index);
   }
 
-  private _tabs: TabBar;
-  private _stack: StackedPanel;
+  private _tabs = new TabBar();
+  private _stack = new StackedPanel();
 }
