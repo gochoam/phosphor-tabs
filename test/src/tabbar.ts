@@ -22,7 +22,7 @@ import {
 } from 'phosphor-signaling';
 
 import {
-  attachWidget, detachWidget
+  Widget
 } from 'phosphor-widget';
 
 import {
@@ -191,7 +191,7 @@ describe('phosphor-tabs', () => {
         tabBar.tabCloseRequested.connect(() => { called = true; });
         tab0.closable = true;
         tab0.selected = true;
-        attachWidget(tabBar, document.body);
+        Widget.attach(tabBar, document.body);
         tab0.closeIconNode.click();
         expect(called).to.be(true);
       });
@@ -205,7 +205,7 @@ describe('phosphor-tabs', () => {
         tabBar.tabCloseRequested.connect(() => { called = true; });
         tab0.closable = true;
         tab0.selected = true;
-        attachWidget(tabBar, document.body);
+        Widget.attach(tabBar, document.body);
         triggerMouseEvent(tab0.closeIconNode, 'click', { button: 1 });
         expect(called).to.be(false);
       });
@@ -219,7 +219,7 @@ describe('phosphor-tabs', () => {
         tabBar.tabCloseRequested.connect(() => { called = true; });
         tab0.closable = true;
         tab0.selected = true;
-        attachWidget(tabBar, document.body);
+        Widget.attach(tabBar, document.body);
         var rect = tabBar.node.getBoundingClientRect();
         var opts = { clientX: rect.left - 1, clientY: rect.top };
         triggerMouseEvent(tabBar.node, 'click', opts);
@@ -235,7 +235,7 @@ describe('phosphor-tabs', () => {
         tabBar.tabCloseRequested.connect(() => { called = true; });
         tab0.closable = false;
         tab0.selected = true;
-        attachWidget(tabBar, document.body);
+        Widget.attach(tabBar, document.body);
         tab0.closeIconNode.click();
         expect(called).to.be(false);
       });
@@ -250,7 +250,7 @@ describe('phosphor-tabs', () => {
         var tab0 = new Tab('0');
         var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
-        attachWidget(tabBar, document.body);
+        Widget.attach(tabBar, document.body);
         tabBar.tabDetachRequested.connect(() => { called = true; });
         var rect = tab0.node.getBoundingClientRect();
         var opts1 = { clientY: rect.top };
@@ -266,7 +266,7 @@ describe('phosphor-tabs', () => {
         var tab0 = new Tab('0');
         var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
-        attachWidget(tabBar, document.body);
+        Widget.attach(tabBar, document.body);
         tabBar.tabDetachRequested.connect(() => { called = true; });
         var rect = tab0.node.getBoundingClientRect();
         var opts = { clientX: rect.left, clientY: rect.top };
@@ -281,7 +281,7 @@ describe('phosphor-tabs', () => {
         var tab0 = new Tab('0');
         var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
-        attachWidget(tabBar, document.body);
+        Widget.attach(tabBar, document.body);
         tabBar.tabDetachRequested.connect(() => { called = true; });
         var rect = tab0.node.getBoundingClientRect();
         var opts1 = { clientX: rect.left, clientY: rect.top, button: 1 };
@@ -297,7 +297,7 @@ describe('phosphor-tabs', () => {
         var tab0 = new Tab('0');
         var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
-        attachWidget(tabBar, document.body);
+        Widget.attach(tabBar, document.body);
         tabBar.tabDetachRequested.connect(() => { called = true; });
         var rect = tab0.node.getBoundingClientRect();
         var opts1 = { clientX: rect.left, clientY: rect.top };
@@ -314,7 +314,7 @@ describe('phosphor-tabs', () => {
         var tab0 = new Tab('0');
         var tab1 = new Tab('1');
         tabBar.tabs = [tab0, tab1];
-        attachWidget(tabBar, document.body);
+        Widget.attach(tabBar, document.body);
         tabBar.tabDetachRequested.connect(() => { called = true; });
         var rect = tab0.node.getBoundingClientRect();
         var opts1 = { clientX: -10 };
@@ -338,9 +338,16 @@ describe('phosphor-tabs', () => {
         expect(tabBar.previousTab).to.eql(tab1);
       });
 
-      it('should be read-only', () => {
+      it('should be a pure delegate to the `previousTabProperty`', () => {
         var tabBar = new TabBar();
-        expect(() => { tabBar.previousTab = null } ).to.throwError();
+        var tab0 = new Tab('0');
+        var tab1 = new Tab('1');
+        tabBar.tabs = [tab0, tab1];
+        tabBar.previousTab = tab0;
+        expect(tabBar.previousTab).to.be(tab0);
+        expect(TabBar.previousTabProperty.get(tabBar)).to.eql(tab0);
+        TabBar.previousTabProperty.set(tabBar, tab1);
+        expect(tabBar.previousTab).to.eql(tab1);
       });
 
     });
@@ -357,7 +364,7 @@ describe('phosphor-tabs', () => {
         expect(tabBar.selectedTab).to.eql(tab1);
       });
 
-      it('should be a pure delegate to the selectedTabProperty', () => {
+      it('should be a pure delegate to the `selectedTabProperty`', () => {
         var tabBar = new TabBar();
         var tab0 = new Tab('0');
         var tab1 = new Tab('1');
@@ -637,7 +644,7 @@ describe('phosphor-tabs', () => {
         var tab1 = new Tab('1');
         var tab2 = new Tab('2');
         tabBar.tabs = [tab0, tab2];
-        attachWidget(tabBar, document.body);
+        Widget.attach(tabBar, document.body);
         expect(tabBar.attachTab(tab1, 150)).to.be(true);
         triggerMouseEvent(tab1.node, 'mouseup');
         setTimeout(() => {
@@ -652,7 +659,7 @@ describe('phosphor-tabs', () => {
         var tab1 = new Tab('1');
         var tab2 = new Tab('2');
         tabBar.tabs = [tab0, tab2];
-        attachWidget(tabBar, document.body);
+        Widget.attach(tabBar, document.body);
         tabBar.tabsMovable = false
         expect(tabBar.attachTab(tab1, 150)).to.be(false);
       });
@@ -663,7 +670,7 @@ describe('phosphor-tabs', () => {
         var tab1 = new Tab('1');
         var tab2 = new Tab('2');
         tabBar.tabs = [tab0, tab2];
-        attachWidget(tabBar, document.body);
+        Widget.attach(tabBar, document.body);
         expect(tabBar.attachTab(tab2, 150)).to.be(false);
       });
 
@@ -673,7 +680,7 @@ describe('phosphor-tabs', () => {
         var tab1 = new Tab('1');
         var tab2 = new Tab('2');
         tabBar.tabs = [tab0, tab2];
-        attachWidget(tabBar, document.body);
+        Widget.attach(tabBar, document.body);
         triggerMouseEvent(tab0.node, 'mousedown');
         expect(tabBar.attachTab(tab2, 150)).to.be(false);
       });
@@ -684,7 +691,7 @@ describe('phosphor-tabs', () => {
 
       it('should be invoked just after the tabbar is attached', () => {
         var tabBar = new LogTabBar();
-        attachWidget(tabBar, document.body);
+        Widget.attach(tabBar, document.body);
         expect(tabBar.messages.indexOf('after-attach')).to.not.be(-1);
       });
 
@@ -694,8 +701,8 @@ describe('phosphor-tabs', () => {
 
       it('should be invoked just after the tabbar is detached', () => {
         var tabBar = new LogTabBar();
-        attachWidget(tabBar, document.body);
-        detachWidget(tabBar);
+        Widget.attach(tabBar, document.body);
+        Widget.detach(tabBar);
         expect(tabBar.messages.indexOf('before-detach')).to.not.be(-1);
       });
 
