@@ -7,7 +7,6 @@
 |----------------------------------------------------------------------------*/
 'use strict';
 
-export * from './tab';
 export * from './tabbar';
 export * from './tabpanel';
 

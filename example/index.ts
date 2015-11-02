@@ -12,7 +12,7 @@ import {
 } from 'phosphor-widget';
 
 import {
-  Tab, TabPanel
+  TabPanel
 } from '../lib/index';
 
 import './index.css';
@@ -22,7 +22,7 @@ function createContent(title: string): Widget {
   let widget = new Widget();
   widget.addClass('content');
   widget.addClass(title.toLowerCase());
-  TabPanel.setTab(widget, new Tab(title));
+  widget.title.text = title;
   return widget;
 }
 

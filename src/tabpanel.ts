@@ -12,7 +12,7 @@ import {
 } from 'phosphor-boxpanel';
 
 import {
-  Property
+  IPropertyChangedArgs, Property
 } from 'phosphor-properties';
 
 import {
@@ -24,15 +24,11 @@ import {
 } from 'phosphor-stackedpanel';
 
 import {
-  Widget
+  Title, Widget
 } from 'phosphor-widget';
 
 import {
-  Tab
-} from './tab';
-
-import {
-  ITabIndexArgs, ITabMoveArgs, TabBar
+  TabBar
 } from './tabbar';
 
 
@@ -48,11 +44,6 @@ const TAB_PANEL_CLASS = 'p-TabPanel';
  * The `TabPanel` provides a convenient combination of a `TabBar` and
  * a `StackedPanel` which allows the user to toggle between widgets by
  * selecting the tab associated with a widget.
- *
- * #### Notes
- * Widgets should be added to a `TabPanel` using the `<prefix>Widget`
- * methods, **not** the `<prefix>Child` methods. The children of a
- * `TabPanel` should **not** be manipulated directly by user code.
  */
 export
 class TabPanel extends BoxPanel {
@@ -64,60 +55,13 @@ class TabPanel extends BoxPanel {
   static currentChangedSignal = new Signal<TabPanel, IWidgetIndexArgs>();
 
   /**
-   * The property descriptor for the tab attached property.
-   *
-   * This controls the tab used for a widget in a tab panel.
-   *
-   * #### Notes
-   * If the tab for a widget is changed, the new tab will not be
-   * reflected until the widget is re-inserted into the tab panel.
-   * However, in-place changes to the tab's properties **will** be
-   * reflected.
-   *
-   * **See also:** [[getTab]], [[setTab]]
-   */
-  static tabProperty = new Property<Widget, Tab>({
-    value: null,
-    coerce: (owner, value) => value || null,
-  });
-
-  /**
-   * Get the tab for the given widget.
-   *
-   * @param widget - The widget of interest.
-   *
-   * @returns The tab for the given widget.
-   *
-   * #### Notes
-   * This is a pure delegate for the [[tabProperty]].
-   */
-  static getTab(widget: Widget): Tab {
-    return TabPanel.tabProperty.get(widget);
-  }
-
-  /**
-   * Set the tab for the given widget.
-   *
-   * @param widget - The widget of interest.
-   *
-   * @param tab - The tab to use for the widget.
-   *
-   * #### Notes
-   * This is a pure delegate for the [[tabProperty]].
-   */
-  static setTab(widget: Widget, tab: Tab): void {
-    TabPanel.tabProperty.set(widget, tab);
-  }
-
-  /**
    * Construct a new tab panel.
    */
   constructor() {
     super();
     this.addClass(TAB_PANEL_CLASS);
 
-    this._tabs.tabMoved.connect(this._onTabMoved, this);
-    this._tabs.tabSelected.connect(this._onTabSelected, this);
+    this._tabs.selectedTabChanged.connect(this._onSelectedTabChanged, this);
     this._tabs.tabCloseRequested.connect(this._onTabCloseRequested, this);
 
     this._stack.currentChanged.connect(this._onCurrentChanged, this);
@@ -164,7 +108,7 @@ class TabPanel extends BoxPanel {
    */
   set currentWidget(widget: Widget) {
     let i = this._stack.childIndex(widget);
-    this._tabs.selectedTab = this._tabs.tabAt(i);
+    this._tabs.selectedTab = this._tabs.tabs.get(i);
   }
 
   /**
@@ -297,29 +241,9 @@ class TabPanel extends BoxPanel {
    * **See also:** [[addWidget]], [[moveWidget]]
    */
   insertWidget(index: number, widget: Widget): number {
-    let tab = TabPanel.getTab(widget);
-    if (!tab) throw new Error('`TabPanel.tab` property not set');
     let i = this._stack.insertChild(index, widget);
-    return this._tabs.insertTab(i, tab);
-  }
-
-  /**
-   * Move a widget from one index to another.
-   *
-   * @param fromIndex - The index of the widget of interest.
-   *
-   * @param toIndex - The target index for the widget.
-   *
-   * @returns 'true' if the widget was moved, or `false` if either
-   *   of the given indices are out of range.
-   *
-   * #### Notes
-   * This can be more efficient than re-inserting an existing widget.
-   *
-   * **See also:** [[addWidget]], [[insertWidget]]
-   */
-  moveWidget(fromIndex: number, toIndex: number): boolean {
-    return this._tabs.moveTab(fromIndex, toIndex);
+    this._tabs.tabs.insert(i, widget.title);
+    return i;
   }
 
   /**
@@ -360,24 +284,17 @@ class TabPanel extends BoxPanel {
   }
 
   /**
-   * Handle the `tabMoved` signal from the tab bar.
-   */
-  private _onTabMoved(sender: TabBar, args: ITabMoveArgs): void {
-    this._stack.moveChild(args.fromIndex, args.toIndex);
-  }
-
-  /**
    * Handle the `tabSelected` signal from the tab bar.
    */
-  private _onTabSelected(sender: TabBar, args: ITabIndexArgs): void {
-    this._stack.currentWidget = this._stack.childAt(args.index);
+  private _onSelectedTabChanged(sender: TabBar, args: IPropertyChangedArgs<TabBar, Title>): void {
+    this._stack.currentWidget = this._findWidget(args.newValue);
   }
 
   /**
    * Handle the `tabCloseRequested` signal from the tab bar.
    */
-  private _onTabCloseRequested(sender: TabBar, args: ITabIndexArgs): void {
-    this._stack.childAt(args.index).close();
+  private _onTabCloseRequested(sender: TabBar, title: Title): void {
+    this._findWidget(title).close();
   }
 
   /**
@@ -391,7 +308,18 @@ class TabPanel extends BoxPanel {
    * Handle the `widgetRemoved` signal from the stacked panel.
    */
   private _onWidgetRemoved(sender: StackedPanel, args: IWidgetIndexArgs): void {
-    this._tabs.removeTabAt(args.index);
+    this._tabs.tabs.remove(args.widget.title);
+  }
+
+  /**
+   *
+   */
+  private _findWidget(title: Title): Widget {
+    for (let i = 0, n = this._stack.childCount; i < n; ++i) {
+      let child = this._stack.childAt(i);
+      if (child.title === title) return child;
+    }
+    return null;
   }
 
   private _tabs = new TabBar();

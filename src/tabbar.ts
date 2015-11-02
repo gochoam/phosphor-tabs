@@ -710,7 +710,7 @@ class TabBar extends Widget {
    * Create and connect a new observable items list.
    */
   private _createItemsList(): IObservableList<ITabItem> {
-    var list = new ObservableList<ITabItem>();
+    let list = new ObservableList<ITabItem>();
     list.changed.connect(this._onItemsListChanged, this);
     return list;
   }
@@ -740,7 +740,7 @@ class TabBar extends Widget {
     let newTab = newItem ? this._findTab(newItem) : null;
     if (oldTab) oldTab.removeClass(CURRENT_CLASS);
     if (newTab) newTab.addClass(CURRENT_CLASS);
-    this._previousTab = oldTab;
+    this._previousItem = oldItem;
     this._updateTabOrdering();
   }
 
@@ -775,40 +775,160 @@ class TabBar extends Widget {
       newList.changed.connect(this._onItemsListChanged, this);
     }
 
-    // Update the current tab, previous tab, and tab ordering.
+    // Update the current item, previous item, and tab ordering.
     this.currentItem = (newList && newList.get(0)) || null;
-    this._previousTab = null;
+    this._previousItem = null;
     this._updateTabOrdering();
   }
 
   /**
-   * The changed handler for the items list changed signal.
+   * The change handler for the items list `changed` signal.
    */
   private _onItemsListChanged(sender: IObservableList<ITabItem>, args: IListChangedArgs<ITabItem>): void {
-    // this._releaseMouse();
-    // switch (args.type) {
-    // case ListChangeType.Add:
-    //   this._onTitleAdded(args);
-    //   break;
-    // case ListChangeType.Move:
-    //   this._onTitleMoved(args);
-    //   break;
-    // case ListChangeType.Remove:
-    //   this._onTitleRemoved(args);
-    //   break;
-    // case ListChangeType.Replace:
-    //   this._onTitlesReplaced(args);
-    //   break;
-    // case ListChangeType.Set:
-    //   this._onTitleSet(args);
-    //   break;
-    // }
-    // this._updateTabOrdering();
+    // Ensure the mouse is released.
+    this._releaseMouse();
+
+    // Delegate the change to a specific handler.
+    switch (args.type) {
+    case ListChangeType.Add:
+      this._onItemsListAdd(args);
+      break;
+    case ListChangeType.Move:
+      this._onItemsListMove(args);
+      break;
+    case ListChangeType.Remove:
+      this._onItemsListRemove(args);
+      break;
+    case ListChangeType.Replace:
+      this._onItemsListReplace(args);
+      break;
+    case ListChangeType.Set:
+      this._onItemsListSet(args);
+      break;
+    }
+
+    // Update the tab ordering.
+    this._updateTabOrdering();
+  }
+
+  /**
+   * The handler invoked on a items list change of type `Add`.
+   */
+  private _onItemsListAdd(args: IListChangedArgs<ITabItem>): void {
+    // Create the tab for the new tab item.
+    let tab = new Tab(args.newValue as ITabItem);
+
+    // Add the tab to the same location in the internal array.
+    arrays.insert(this._tabs, args.newIndex, tab);
+
+    // Add the tab node to the DOM. The position is irrelevant.
+    this.contentNode.appendChild(tab.node);
+
+    // Select the tab if no tab is currently selected.
+    if (!this.currentItem) this.currentItem = tab.item;
+  }
+
+  /**
+   * The handler invoked on a items list change of type `Move`.
+   */
+  private _onItemsListMove(args: IListChangedArgs<ITabItem>): void {
+    // Simply move the tab in the array. DOM position is irrelevant.
+    arrays.move(this._tabs, args.oldIndex, args.newIndex);
+  }
+
+  /**
+   * The handler invoked on a items list change of type `Remove`.
+   */
+  private _onItemsListRemove(args: IListChangedArgs<ITabItem>): void {
+    // Remove the tab from the internal array.
+    let tab = arrays.removeAt(this._tabs, args.oldIndex);
+
+    // Remove the tab node from the DOM.
+    this.contentNode.removeChild(tab.node);
+
+    // Patch up the current and previous items if needed.
+    if (this.currentItem === tab.item) {
+      let next: ITabItem;
+      let items = this.items;
+      if (items.length === 0) {
+        next = null;
+      } else if (this._previousItem) {
+        next = this._previousItem;
+      } else if (args.oldIndex < items.length) {
+        next = items.get(args.oldIndex);
+      } else {
+        next = items.get(items.length - 1);
+      }
+      this.currentItem = next;
+      this._previousItem = null;
+    } else if (this._previousItem === tab.item) {
+      this._previousItem = null;
+    }
+
+    // Dispose of the tab.
+    tab.dispose();
+  }
+
+  /**
+   * The handler invoked on a items list change of type `Replace`.
+   */
+  private _onItemsListReplace(args: IListChangedArgs<ITabItem>): void {
+    // Create the new tabs for the new tab items.
+    let newItems = args.newValue as ITabItem[];
+    let newTabs = newItems.map(item => new Tab(item));
+
+    // Replace the tabs in the internal array.
+    let oldItems = args.oldValue as ITabItem[];
+    let oldTabs = this._tabs.splice(args.newIndex, oldItems.length, ...newTabs);
+
+    // Remove the old tabs from the DOM.
+    let content = this.contentNode;
+    oldTabs.forEach(tab => { content.removeChild(tab.node); });
+
+    // Add the new tabs to the DOM. Their position is irrelevant.
+    newTabs.forEach(tab => { content.appendChild(tab.node); });
+
+    // TODO patch up current/previous
+
+    // Dispose of the old tabs.
+    oldTabs.forEach(tab => { tab.dispose(); });
+  }
+
+  /**
+   * The handler invoked on a items list change of type `Set`.
+   */
+  private _onItemsListSet(args: IListChangedArgs<ITabItem>): void {
+    // If the item was not actually changed, there is nothing to do.
+    if (args.oldValue === args.newValue) {
+      return;
+    }
+
+    // Create the tab for the new tab item.
+    let newTab = new Tab(args.newValue as ITabItem);
+
+    // Swap the new tab in the internal array.
+    let oldTab = this._tabs[args.newIndex];
+    this._tabs[args.newIndex] = newTab;
+
+    // Swap the new tab node in the DOM.
+    this.contentNode.replaceChild(newTab.node, oldTab.node);
+
+    // Patch up the current and previous items if needed.
+    if (this.currentItem = oldTab.item) {
+      let temp = this._previousItem;
+      this.currentItem = newTab.item;
+      this._previousItem = temp;
+    } else if (this._previousItem === oldTab.item) {
+      this._previousItem = newTab.item;
+    }
+
+    // Dispose of the old tab.
+    oldTab.dispose();
   }
 
   private _tabs: Tab[] = [];
-  private _previousTab: Tab = null;
   private _dragData: DragData = null;
+  private _previousItem: ITabItem = null;
 }
 
 
