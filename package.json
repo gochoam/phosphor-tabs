@@ -5,17 +5,17 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "dependencies": {
-    "phosphor-arrays": "^1.0.5",
-    "phosphor-boxpanel": "^0.9.7",
-    "phosphor-disposable": "^1.0.4",
-    "phosphor-domutil": "^0.9.5",
+    "phosphor-arrays": "^1.0.6",
+    "phosphor-boxpanel": "^1.0.0-beta",
+    "phosphor-disposable": "^1.0.5",
+    "phosphor-domutil": "^1.0.0",
     "phosphor-messaging": "^1.0.5",
     "phosphor-nodewrapper": "^1.0.4",
-    "phosphor-observablelist": "^0.9.0",
-    "phosphor-properties": "^1.3.0",
+    "phosphor-observablelist": "^1.0.0-beta",
+    "phosphor-properties": "^2.0.0",
     "phosphor-signaling": "^1.1.2",
-    "phosphor-stackedpanel": "^0.9.6",
-    "phosphor-widget": "^0.9.13"
+    "phosphor-stackedpanel": "^1.0.0-beta",
+    "phosphor-widget": "^1.0.0-beta"
   },
   "devDependencies": {
     "browserify": "^11.0.1",
