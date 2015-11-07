@@ -32,22 +32,22 @@ import {
 import './index.css';
 
 
-class LogTabBar extends TabBar {
+// class LogTabBar extends TabBar {
 
-  messages: string[] = [];
+//   messages: string[] = [];
 
-  processMessage(msg: Message): void {
-    super.processMessage(msg);
-    this.messages.push(msg.type);
-  }
-}
+//   processMessage(msg: Message): void {
+//     super.processMessage(msg);
+//     this.messages.push(msg.type);
+//   }
+// }
 
 
-function triggerMouseEvent(node: HTMLElement, eventType: string, options: any = {}) {
-  options.bubbles = true;
-  var clickEvent = new MouseEvent(eventType, options);
-  node.dispatchEvent(clickEvent);
-}
+// function triggerMouseEvent(node: HTMLElement, eventType: string, options: any = {}) {
+//   options.bubbles = true;
+//   var clickEvent = new MouseEvent(eventType, options);
+//   node.dispatchEvent(clickEvent);
+// }
 
 
 describe('phosphor-tabs', () => {
