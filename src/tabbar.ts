@@ -211,7 +211,6 @@ class TabBar<T extends ITabItem> extends Widget {
    * Dispose of the resources held by the widget.
    */
   dispose(): void {
-    // TODO release mouse
     this.items = null;
     super.dispose();
   }
@@ -439,7 +438,8 @@ class TabBar<T extends ITabItem> extends Widget {
    * The coerce handler for the [[currentItemProperty]].
    */
   private _coerceCurrentItem(item: T): T {
-    return (item && this.items && this.items.contains(item)) ? item : null;
+    let list = this.items;
+    return (item && list && list.contains(item)) ? item : null;
   }
 
   /**
@@ -450,7 +450,6 @@ class TabBar<T extends ITabItem> extends Widget {
     let newTab = newItem ? this._findTab(newItem) : null;
     if (oldTab) oldTab.removeClass(CURRENT_CLASS);
     if (newTab) newTab.addClass(CURRENT_CLASS);
-    this._previousItem = oldItem;
     this._updateTabOrdering();
   }
 
@@ -458,9 +457,6 @@ class TabBar<T extends ITabItem> extends Widget {
    * The change handler for the [[itemsProperty]].
    */
   private _onItemsChanged(oldList: IObservableList<T>, newList: IObservableList<T>): void {
-    // Ensure the mouse is released.
-    // TODO this._releaseMouse();
-
     // Disconnect the change listener for the old list.
     // Remove and dispose of the old tabs.
     if (oldList) {
@@ -485,9 +481,8 @@ class TabBar<T extends ITabItem> extends Widget {
       newList.changed.connect(this._onItemsListChanged, this);
     }
 
-    // Update the current item, previous item, and tab ordering.
-    this.currentItem = (newList && newList.get(0)) || null;
-    this._previousItem = null;
+    // Update the current item and tab ordering.
+    this.currentItem = newList && newList.get(0);
     this._updateTabOrdering();
   }
 
@@ -495,10 +490,6 @@ class TabBar<T extends ITabItem> extends Widget {
    * The change handler for the items list `changed` signal.
    */
   private _onItemsListChanged(sender: IObservableList<T>, args: IListChangedArgs<T>): void {
-    // Ensure the mouse is released.
-    // TODO this._releaseMouse();
-
-    // Delegate the change to a specific handler.
     switch (args.type) {
     case ListChangeType.Add:
       this._onItemsListAdd(args);
@@ -516,8 +507,6 @@ class TabBar<T extends ITabItem> extends Widget {
       this._onItemsListSet(args);
       break;
     }
-
-    // Update the tab ordering.
     this._updateTabOrdering();
   }
 
@@ -556,23 +545,10 @@ class TabBar<T extends ITabItem> extends Widget {
     // Remove the tab node from the DOM.
     this.contentNode.removeChild(tab.node);
 
-    // Patch up the current and previous items if needed.
+    // Patch up the current item if needed.
     if (this.currentItem === tab.item) {
-      let next: T;
-      let items = this.items;
-      if (items.length === 0) {
-        next = null;
-      } else if (this._previousItem) {
-        next = this._previousItem;
-      } else if (args.oldIndex < items.length) {
-        next = items.get(args.oldIndex);
-      } else {
-        next = items.get(items.length - 1);
-      }
-      this.currentItem = next;
-      this._previousItem = null;
-    } else if (this._previousItem === tab.item) {
-      this._previousItem = null;
+      let list = this.items;
+      this.currentItem = list.get(args.oldIndex) || list.get(-1);
     }
 
     // Dispose of the tab.
@@ -598,7 +574,17 @@ class TabBar<T extends ITabItem> extends Widget {
     // Add the new tabs to the DOM. Their position is irrelevant.
     newTabs.forEach(tab => { content.appendChild(tab.node); });
 
-    // TODO patch up current/previous
+    // Patch up the current item if needed.
+    let curr = this.currentItem;
+    if (oldItems.indexOf(curr) !== -1) {
+      this.currentItem = null;
+      if (newItems.indexOf(curr) !== -1) {
+        this.currentItem = curr;
+      } else {
+        let list = this.items;
+        this.currentItem = list.get(args.newIndex) || list.get(-1);
+      }
+    }
 
     // Dispose of the old tabs.
     oldTabs.forEach(tab => { tab.dispose(); });
@@ -623,13 +609,9 @@ class TabBar<T extends ITabItem> extends Widget {
     // Swap the new tab node in the DOM.
     this.contentNode.replaceChild(newTab.node, oldTab.node);
 
-    // Patch up the current and previous items if needed.
-    if (this.currentItem = oldTab.item) {
-      let temp = this._previousItem;
+    // Patch up the current item if needed.
+    if (this.currentItem === oldTab.item) {
       this.currentItem = newTab.item;
-      this._previousItem = temp;
-    } else if (this._previousItem === oldTab.item) {
-      this._previousItem = newTab.item;
     }
 
     // Dispose of the old tab.
@@ -637,7 +619,6 @@ class TabBar<T extends ITabItem> extends Widget {
   }
 
   private _tabs: Tab<T>[] = [];
-  private _previousItem: T = null;
 }
 
 
