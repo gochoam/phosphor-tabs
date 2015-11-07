@@ -89,11 +89,6 @@ const ICON_CLASS = 'p-Tab-icon';
 const CLOSE_CLASS = 'p-Tab-close';
 
 /**
- * A class name added to the tab bar when dragging.
- */
-// const DRAGGING_CLASS = 'p-mod-dragging';
-
-/**
  * The class name added to the current tab.
  */
 const CURRENT_CLASS = 'p-mod-current';
@@ -102,11 +97,6 @@ const CURRENT_CLASS = 'p-mod-current';
  * The class name added to a closable tab.
  */
 const CLOSABLE_CLASS = 'p-mod-closable';
-
-/**
- * A class name added to the active drag tab.
- */
-// const ACTIVE_CLASS = 'p-mod-active';
 
 /**
  * A class name added to the first tab in the tab bar.
@@ -266,6 +256,49 @@ class TabBar<T extends ITabItem> extends Widget {
   }
 
   /**
+   * Get the tab bar header node.
+   *
+   * #### Notes
+   * This can be used to add extra header content.
+   */
+  get headerNode(): HTMLElement {
+    return this.node.getElementsByClassName(HEADER_CLASS)[0] as HTMLElement;
+  }
+
+  /**
+   * Get the tab bar body node.
+   *
+   * #### Notes
+   * This can be used to add extra body content.
+   */
+  get bodyNode(): HTMLElement {
+    return this.node.getElementsByClassName(BODY_CLASS)[0] as HTMLElement;
+  }
+
+  /**
+   * Get the tab bar content node.
+   *
+   * #### Notes
+   * This can be used to access the content node.
+   *
+   * This is the node which holds the tab nodes. Modifying the content
+   * of this node indiscriminately can lead to undesired behavior.
+   */
+  get contentNode(): HTMLElement {
+    return this.node.getElementsByClassName(CONTENT_CLASS)[0] as HTMLElement;
+  }
+
+  /**
+   * Get the tab bar footer node.
+   *
+   * #### Notesatom
+   * This can be used to add extra footer content.
+   */
+  get footerNode(): HTMLElement {
+    return this.node.getElementsByClassName(FOOTER_CLASS)[0] as HTMLElement;
+  }
+
+  /**
    * Handle the DOM events for the tab bar.
    *
    * @param event - The DOM event sent to the tab bar.
@@ -284,49 +317,6 @@ class TabBar<T extends ITabItem> extends Widget {
       this._evtMouseDown(event as MouseEvent);
       break;
     }
-  }
-
-  /**
-   * Get the tab bar header node.
-   *
-   * #### Notes
-   * This can be used by subclasses to add extra header content.
-   */
-  protected get headerNode(): HTMLElement {
-    return this.node.getElementsByClassName(HEADER_CLASS)[0] as HTMLElement;
-  }
-
-  /**
-   * Get the tab bar body node.
-   *
-   * #### Notes
-   * This can be used by subclasses to add extra body content.
-   */
-  protected get bodyNode(): HTMLElement {
-    return this.node.getElementsByClassName(BODY_CLASS)[0] as HTMLElement;
-  }
-
-  /**
-   * Get the tab bar content node.
-   *
-   * #### Notes
-   * This can be used by subclasses to access the content node.
-   *
-   * This is the node which holds the tab nodes. Modifying the content
-   * of this node indiscriminately can lead to undesired behavior.
-   */
-  protected get contentNode(): HTMLElement {
-    return this.node.getElementsByClassName(CONTENT_CLASS)[0] as HTMLElement;
-  }
-
-  /**
-   * Get the tab bar footer node.
-   *
-   * #### Notesatom
-   * This can be used by subclasses to add extra footer content.
-   */
-  protected get footerNode(): HTMLElement {
-    return this.node.getElementsByClassName(FOOTER_CLASS)[0] as HTMLElement;
   }
 
   /**
@@ -457,8 +447,7 @@ class TabBar<T extends ITabItem> extends Widget {
    * The change handler for the [[itemsProperty]].
    */
   private _onItemsChanged(oldList: IObservableList<T>, newList: IObservableList<T>): void {
-    // Disconnect the change listener for the old list.
-    // Remove and dispose of the old tabs.
+    // Disconnect the old list and dispose the old tabs.
     if (oldList) {
       oldList.changed.disconnect(this._onItemsListChanged, this);
       let content = this.contentNode;
@@ -469,8 +458,7 @@ class TabBar<T extends ITabItem> extends Widget {
       }
     }
 
-    // Create and add the new tabs.
-    // Connect the change listener for the new list.
+    // Create the new tabs and connect the new list.
     if (newList) {
       let content = this.contentNode;
       for (let i = 0, n = newList.length; i < n; ++i) {
@@ -507,7 +495,6 @@ class TabBar<T extends ITabItem> extends Widget {
       this._onItemsListSet(args);
       break;
     }
-    this._updateTabOrdering();
   }
 
   /**
@@ -525,6 +512,9 @@ class TabBar<T extends ITabItem> extends Widget {
 
     // Select the tab if no tab is currently selected.
     if (!this.currentItem) this.currentItem = tab.item;
+
+    // Update the tab ordering.
+    this._updateTabOrdering();
   }
 
   /**
@@ -533,6 +523,9 @@ class TabBar<T extends ITabItem> extends Widget {
   private _onItemsListMove(args: IListChangedArgs<T>): void {
     // Simply move the tab in the array. DOM position is irrelevant.
     arrays.move(this._tabs, args.oldIndex, args.newIndex);
+
+    // Update the tab ordering.
+    this._updateTabOrdering();
   }
 
   /**
@@ -553,6 +546,9 @@ class TabBar<T extends ITabItem> extends Widget {
 
     // Dispose of the tab.
     tab.dispose();
+
+    // Update the tab ordering.
+    this._updateTabOrdering();
   }
 
   /**
@@ -588,6 +584,9 @@ class TabBar<T extends ITabItem> extends Widget {
 
     // Dispose of the old tabs.
     oldTabs.forEach(tab => { tab.dispose(); });
+
+    // Update the tab ordering.
+    this._updateTabOrdering();
   }
 
   /**
@@ -616,6 +615,9 @@ class TabBar<T extends ITabItem> extends Widget {
 
     // Dispose of the old tab.
     oldTab.dispose();
+
+    // Update the tab ordering.
+    this._updateTabOrdering();
   }
 
   private _tabs: Tab<T>[] = [];
