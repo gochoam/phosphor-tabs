@@ -15,7 +15,7 @@ import {
 } from 'phosphor-disposable';
 
 import {
-  hitTest, overrideCursor
+  hitTest
 } from 'phosphor-domutil';
 
 import {
@@ -27,11 +27,11 @@ import {
 } from 'phosphor-nodewrapper';
 
 import {
-  IListChangedArgs, IObservableList, ListChangeType, ObservableList
+  IListChangedArgs, IObservableList, ListChangeType
 } from 'phosphor-observablelist';
 
 import {
-  IPropertyChangedArgs, Property
+  IChangedArgs, Property
 } from 'phosphor-properties';
 
 import {
@@ -91,7 +91,7 @@ const CLOSE_CLASS = 'p-Tab-close';
 /**
  * A class name added to the tab bar when dragging.
  */
-const DRAGGING_CLASS = 'p-mod-dragging';
+// const DRAGGING_CLASS = 'p-mod-dragging';
 
 /**
  * The class name added to the current tab.
@@ -106,7 +106,7 @@ const CLOSABLE_CLASS = 'p-mod-closable';
 /**
  * A class name added to the active drag tab.
  */
-const ACTIVE_CLASS = 'p-mod-active';
+// const ACTIVE_CLASS = 'p-mod-active';
 
 /**
  * A class name added to the first tab in the tab bar.
@@ -118,21 +118,6 @@ const FIRST_CLASS = 'p-mod-first';
  */
 const LAST_CLASS = 'p-mod-last';
 
-/**
- * The start drag distance threshold.
- */
-const DRAG_THRESHOLD = 5;
-
-/**
- * The tear off distance threshold.
- */
-const TEAR_THRESHOLD = 20;
-
-/**
- * The tab transition duration. Keep in sync with CSS.
- */
-const TRANSITION_DURATION = 150;
-
 
 /**
  * An object which can be added to a tab bar.
@@ -142,20 +127,26 @@ interface ITabItem {
   /**
    * The title object which provides data for the tab.
    *
+   * #### Notes
    * This should be a read-only constant property.
    */
   title: Title;
+
+  /**
+   * A method called when the user clicks the item's close icon.
+   *
+   * #### Notes
+   * This will only be called if the item's title is `closable`.
+   */
+  close(): void;
 }
 
 
 /**
  * A widget which displays a list of tab items as a row of tabs.
- *
- * #### Notes
- * A TabBar does **not** support child widget.
  */
 export
-class TabBar extends Widget {
+class TabBar<T extends ITabItem> extends Widget {
   /**
    * Create the DOM node for a tab bar.
    */
@@ -177,42 +168,35 @@ class TabBar extends Widget {
   }
 
   /**
-   * A signal emitted when a closable items's close icon is clicked.
+   * A signal emitted when the current tab item is changed.
    *
-   * **See also:** [[itemCloseRequested]]
+   * **See also:** [[currentChanged]]
    */
-  static itemCloseRequestedSignal = new Signal<TabBar, ITabItem>();
+  static currentChangedSignal = new Signal<TabBar<ITabItem>, IChangedArgs<ITabItem>>();
 
   /**
-   * The property descriptor for the currently selected item.
+   * The property descriptor for the currently selected tab item.
    *
    * **See also:** [[currentItem]]
    */
-  static currentItemProperty = new Property<TabBar, ITabItem>({
+  static currentItemProperty = new Property<TabBar<ITabItem>, ITabItem>({
+    name: 'currentItem',
     value: null,
     coerce: (owner, value) => owner._coerceCurrentItem(value),
     changed: (owner, old, value) => owner._onCurrentItemChanged(old, value),
+    notify: TabBar.currentChangedSignal,
   });
 
   /**
-   * The property descriptor for the tab bar items list.
+   * The property descriptor for the observable list of tab items.
    *
    * **See also:** [[items]]
    */
-  static itemsProperty = new Property<TabBar, IObservableList<ITabItem>>({
-    create: owner => owner._createItemsList(),
+  static itemsProperty = new Property<TabBar<ITabItem>, IObservableList<ITabItem>>({
+    name: 'items',
+    value: null,
     coerce: (owner, value) => value || null,
     changed: (owner, old, value) => owner._onItemsChanged(old, value),
-  });
-
-  /**
-   * The property descriptor for whether the tabs are user-movable.
-   *
-   * **See also:** [[tabsMovable]]
-   */
-  static tabsMovableProperty = new Property<TabBar, boolean>({
-    value: true,
-    changed: owner => owner._releaseMouse(),
   });
 
   /**
@@ -227,89 +211,59 @@ class TabBar extends Widget {
    * Dispose of the resources held by the widget.
    */
   dispose(): void {
-    this._releaseMouse();
+    // TODO release mouse
     this.items = null;
     super.dispose();
   }
 
   /**
-   * A signal emitted when a closable items's close icon is clicked.
+   * A signal emitted when the current tab item is changed.
    *
    * #### Notes
-   * This is a pure delegate to the [[itemCloseRequestedSignal]].
+   * This is a pure delegate to the [[currentChangedSignal]].
    */
-  get itemCloseRequested(): ISignal<TabBar, ITabItem> {
-    return TabBar.itemCloseRequestedSignal.bind(this);
+  get currentChanged(): ISignal<TabBar<T>, IChangedArgs<T>> {
+    return TabBar.currentChangedSignal.bind(this);
   }
 
   /**
-   * Get the currently selected item.
+   * Get the currently selected tab item.
    *
    * #### Notes
    * This is a pure delegate to the [[currentItemProperty]].
    */
-  get currentItem(): ITabItem {
-    return TabBar.currentItemProperty.get(this);
+  get currentItem(): T {
+    return TabBar.currentItemProperty.get(this) as T;
   }
 
   /**
-   * Set the currently selected item.
+   * Set the currently selected tab item.
    *
    * #### Notes
    * This is a pure delegate to the [[currentItemProperty]].
    */
-  set currentItem(value: ITabItem) {
+  set currentItem(value: T) {
     TabBar.currentItemProperty.set(this, value);
   }
 
   /**
-   * A signal emitted when the current items changes.
-   *
-   * #### Notes
-   * This is the changed signal for the [[currentItemProperty]].
-   */
-  get currentTabChanged(): ISignal<TabBar, IPropertyChangedArgs<TabBar, ITabItem>> {
-    return TabBar.currentItemProperty.getChanged(this);
-  }
-
-  /**
-   * Get the tab items list for the tab bar.
+   * Get the list of tab items for the tab bar.
    *
    * #### Notes
    * This is a pure delegate to the [[itemsProperty]].
    */
-  get items(): IObservableList<ITabItem> {
-    return TabBar.itemsProperty.get(this);
+  get items(): IObservableList<T> {
+    return TabBar.itemsProperty.get(this) as IObservableList<T>;
   }
 
   /**
-   * Set the tab items list for the tab bar.
+   * Set the list tab items for the tab bar.
    *
    * #### Notes
    * This is a pure delegate to the [[itemsProperty]].
    */
-  set items(value: IObservableList<ITabItem>) {
+  set items(value: IObservableList<T>) {
     TabBar.itemsProperty.set(this, value);
-  }
-
-  /**
-   * Get whether the tabs are movable by the user.
-   *
-   * #### Notes
-   * This is a pure delegate to the [[tabsMovableProperty]].
-   */
-  get tabsMovable(): boolean {
-    return TabBar.tabsMovableProperty.get(this);
-  }
-
-  /**
-   * Set whether the tabs are movable by the user.
-   *
-   * #### Notes
-   * This is a pure delegate to the [[tabsMovableProperty]].
-   */
-  set tabsMovable(value: boolean) {
-    TabBar.tabsMovableProperty.set(this, value);
   }
 
   /**
@@ -329,12 +283,6 @@ class TabBar extends Widget {
       break;
     case 'mousedown':
       this._evtMouseDown(event as MouseEvent);
-      break;
-    case 'mousemove':
-      this._evtMouseMove(event as MouseEvent);
-      break;
-    case 'mouseup':
-      this._evtMouseUp(event as MouseEvent);
       break;
     }
   }
@@ -366,7 +314,7 @@ class TabBar extends Widget {
    * This can be used by subclasses to access the content node.
    *
    * This is the node which holds the tab nodes. Modifying the content
-   * of this node directly can lead to undefined behavior.
+   * of this node indiscriminately can lead to undesired behavior.
    */
   protected get contentNode(): HTMLElement {
     return this.node.getElementsByClassName(CONTENT_CLASS)[0] as HTMLElement;
@@ -375,7 +323,7 @@ class TabBar extends Widget {
   /**
    * Get the tab bar footer node.
    *
-   * #### Notes
+   * #### Notesatom
    * This can be used by subclasses to add extra footer content.
    */
   protected get footerNode(): HTMLElement {
@@ -383,36 +331,19 @@ class TabBar extends Widget {
   }
 
   /**
-   * A method invoked when the tear off threshold is exceeded.
-   *
-   * @param item - The tab item which should be torn off.
-   *
-   * @param event - The current mouse event for the drag.
-   *
-   * #### Notes
-   * This should be reimplemented by subclasses which support tear off
-   * tabs. It will be called once the first time the tear off threshold
-   * is exceeded during a drag operation. The subclass need only remove
-   * the tab item from the tab bar to terminate the drag operation.
-   *
-   * The default implementation of this method is a no-op.
-   */
-  protected tearOffItem(item: ITabItem, event: MouseEvent): void { }
-
-  /**
    * A message handler invoked on an `'after-attach'` message.
    */
   protected onAfterAttach(msg: Message): void {
-    this.node.addEventListener('mousedown', this);
     this.node.addEventListener('click', this);
+    this.node.addEventListener('mousedown', this);
   }
 
   /**
    * A message handler invoked on a `'before-dettach'` message.
    */
   protected onBeforeDetach(msg: Message): void {
-    this.node.removeEventListener('mousedown', this);
     this.node.removeEventListener('click', this);
+    this.node.removeEventListener('mousedown', this);
   }
 
   /**
@@ -440,8 +371,8 @@ class TabBar extends Widget {
       return;
     }
 
-    // Emit the `itemCloseRequested` signal if the item is closable.
-    if (tab.item.title.closable) this.itemCloseRequested.emit(tab.item);
+    // Close the tab item if it is marked as closable.
+    if (tab.item.title.closable) tab.item.close();
   }
 
   /**
@@ -453,19 +384,14 @@ class TabBar extends Widget {
       return;
     }
 
-    // Bail if a previous drag is still transitioning.
-    if (this._dragData) {
-      return;
-    }
-
     // Do nothing if the press is not on a tab.
     let index = hitTestTabs(this._tabs, event.clientX, event.clientY);
     if (index < 0) {
       return;
     }
 
-    // Pressing on a tab stops the event propagation.
-    event.preventDefault();
+    // Pressing on a tab stops the event propagation, but the default
+    // action must be allowed in order for drag events to be processed.
     event.stopPropagation();
 
     // Do nothing if the press was on a close icon node.
@@ -474,216 +400,12 @@ class TabBar extends Widget {
       return;
     }
 
-    // Setup the drag if the tabs are movable.
-    if (this.tabsMovable) {
-      let data = this._dragData = new DragData();
-      let rect = tab.node.getBoundingClientRect();
-      data.tab = tab;
-      data.tabIndex = index;
-      data.tabLeft = tab.node.offsetLeft;
-      data.tabWidth = tab.node.offsetWidth;
-      data.tabPressX = event.clientX - rect.left;
-      data.pressX = event.clientX;
-      data.pressY = event.clientY;
-      document.addEventListener('mouseup', this, true);
-      document.addEventListener('mousemove', this, true);
-    }
-
     // Update the current item to the pressed item.
     this.currentItem = tab.item;
   }
 
   /**
-   * Handle the `'mousemove'` event for the tab bar.
-   */
-  private _evtMouseMove(event: MouseEvent): void {
-    // Mouse move events are never propagated since this handler
-    // is only installed when during a left mouse drag operation.
-    event.preventDefault();
-    event.stopPropagation();
-
-    // Bail if there is no drag in progress.
-    if (!this._dragData) {
-      return;
-    }
-
-    // Check to see if the drag threshold has been exceeded, and
-    // start the tab drag operation the first time that occurrs.
-    let data = this._dragData;
-    if (!data.dragActive) {
-      let dx = Math.abs(event.clientX - data.pressX);
-      let dy = Math.abs(event.clientY - data.pressY);
-      if (dx < DRAG_THRESHOLD && dy < DRAG_THRESHOLD) {
-        return;
-      }
-
-      // Fill in the remaining drag data.
-      data.contentRect = this.contentNode.getBoundingClientRect();
-      data.tabLayout = snapTabLayout(this._tabs);
-      data.cursorGrab = overrideCursor('default');
-      data.dragActive = true;
-
-      // Add the dragging style classes.
-      data.tab.addClass(ACTIVE_CLASS);
-      this.addClass(DRAGGING_CLASS);
-    }
-
-    // Check to see if the tear off threshold has been exceeded, and
-    // invoke the tear off method the first time that occurrs. If the
-    // drag data is set to null, it indicates the mouse was released.
-    if (!data.tearOffAttempted && tearExceeded(data.contentRect, event)) {
-      data.tearOffAttempted = true;
-      this.tearOffItem(data.tab.item, event);
-      if (!this._dragData) {
-        return;
-      }
-    }
-
-    // Compute the target bounds of the drag tab.
-    let offsetLeft = event.clientX - data.contentRect.left;
-    let targetLeft = offsetLeft - data.tabPressX;
-    let targetRight = targetLeft + data.tabWidth;
-
-    // Reset the target tab index.
-    data.tabTargetIndex = data.tabIndex;
-
-    // Update the non-drag tab positions and the tab target index.
-    for (let i = 0, n = this._tabs.length; i < n; ++i) {
-      let style = this._tabs[i].node.style;
-      let layout = data.tabLayout[i];
-      let threshold = layout.left + (layout.width >> 1);
-      if (i < data.tabIndex && targetLeft < threshold) {
-        style.left = data.tabWidth + data.tabLayout[i + 1].margin + 'px';
-        data.tabTargetIndex = Math.min(data.tabTargetIndex, i);
-      } else if (i > data.tabIndex && targetRight > threshold) {
-        style.left = -data.tabWidth - layout.margin + 'px';
-        data.tabTargetIndex = i;
-      } else if (i !== data.tabIndex) {
-        style.left = '';
-      }
-    }
-
-    // Update the drag tab position
-    let idealLeft = event.clientX - data.pressX;
-    let maxLeft = data.contentRect.width - (data.tabLeft + data.tabWidth);
-    let adjustedLeft = Math.max(-data.tabLeft, Math.min(idealLeft, maxLeft));
-    data.tab.node.style.left = adjustedLeft + 'px';
-  }
-
-  /**
-   * Handle the `'mouseup'` event for the tab bar.
-   */
-  private _evtMouseUp(event: MouseEvent): void {
-    // Do nothing if the left mouse button is not released.
-    if (event.button !== 0) {
-      return;
-    }
-
-    // Mouse move events are never propagated since this handler
-    // is only installed when during a left mouse drag operation.
-    event.preventDefault();
-    event.stopPropagation();
-
-    // Bail if there is no drag in progress.
-    if (!this._dragData) {
-      return;
-    }
-
-    // Remove the extra mouse handlers.
-    document.removeEventListener('mouseup', this, true);
-    document.removeEventListener('mousemove', this, true);
-
-    // If the drag is not active, clear the reference and bail.
-    let data = this._dragData;
-    if (!data.dragActive) {
-      this._dragData = null;
-      return;
-    }
-
-    // Compute the approximate final relative tab offset.
-    let idealLeft: number;
-    if (data.tabTargetIndex === data.tabIndex) {
-      idealLeft = 0;
-    } else if (data.tabTargetIndex > data.tabIndex) {
-      let tl = data.tabLayout[data.tabTargetIndex];
-      idealLeft = tl.left + tl.width - data.tabWidth - data.tabLeft;
-    } else {
-      let tl = data.tabLayout[data.tabTargetIndex];
-      idealLeft = tl.left - data.tabLeft;
-    }
-
-    // Position the tab to its final position, subject to limits.
-    let maxLeft = data.contentRect.width - (data.tabLeft + data.tabWidth);
-    let adjustedLeft = Math.max(-data.tabLeft, Math.min(idealLeft, maxLeft));
-    data.tab.node.style.left = adjustedLeft + 'px';
-
-    // Remove the active class from the tab so it can be transitioned.
-    data.tab.removeClass(ACTIVE_CLASS);
-
-    // Complete the release on a timer to allow the tab to transition.
-    setTimeout(() => {
-      // Bail if the drag data has been changed or released.
-      if (this._dragData !== data) {
-        return;
-      }
-
-      // Clear the drag data reference.
-      this._dragData = null;
-
-      // Clear the relative tab positions.
-      for (let i = 0, n = this._tabs.length; i < n; ++i) {
-        this._tabs[i].node.style.left = '';
-      }
-
-      // Clear the cursor grab and drag styles.
-      data.cursorGrab.dispose();
-      data.tab.removeClass(ACTIVE_CLASS);
-      this.removeClass(DRAGGING_CLASS);
-
-      // Finally, move the tab title the new location.
-      let fromIndex = data.tabIndex;
-      let toIndex = data.tabTargetIndex;
-      if (toIndex !== -1 && fromIndex !== toIndex) {
-        this.items.move(fromIndex, toIndex);
-      }
-    }, TRANSITION_DURATION);
-  }
-
-  /**
-   * Release the mouse grab and restore the tab positions.
-   */
-  private _releaseMouse(): void {
-    // Bail early if there is no drag in progress.
-    if (!this._dragData) {
-      return;
-    }
-
-    // Remove the extra mouse listeners.
-    document.removeEventListener('mouseup', this, true);
-    document.removeEventListener('mousemove', this, true);
-
-    // Clear the drag data reference.
-    let data = this._dragData;
-    this._dragData = null;
-
-    // If the drag is not active, there's nothing left to do.
-    if (!data.dragActive) {
-      return;
-    }
-
-    // Reset the positions of the tabs.
-    for (let i = 0, n = this._tabs.length; i < n; ++i) {
-      this._tabs[i].node.style.left = '';
-    }
-
-    // Clear the cursor grab and drag styles.
-    data.cursorGrab.dispose();
-    data.tab.removeClass(ACTIVE_CLASS);
-    this.removeClass(DRAGGING_CLASS);
-  }
-
-  /**
-   * Update the flex order and Z-index of the tabs.
+   * Update the flex order and z-index of the tabs.
    */
   private _updateTabOrdering(): void {
     let n = this._tabs.length;
@@ -707,35 +429,23 @@ class TabBar extends Widget {
   }
 
   /**
-   * Create and connect a new observable items list.
-   */
-  private _createItemsList(): IObservableList<ITabItem> {
-    let list = new ObservableList<ITabItem>();
-    list.changed.connect(this._onItemsListChanged, this);
-    return list;
-  }
-
-  /**
    * Find the tab associated with the given tab item.
    */
-  private _findTab(item: ITabItem): Tab {
+  private _findTab(item: T): Tab<T> {
     return arrays.find(this._tabs, tab => tab.item === item) || null;
   }
 
   /**
    * The coerce handler for the [[currentItemProperty]].
    */
-  private _coerceCurrentItem(item: ITabItem): ITabItem {
-    if (!item) return null;
-    let items = this.items;
-    if (!items) return null;
-    return items.indexOf(item) !== -1 ? item : null;
+  private _coerceCurrentItem(item: T): T {
+    return (item && this.items && this.items.contains(item)) ? item : null;
   }
 
   /**
    * The change handler for the [[currentItemProperty]].
    */
-  private _onCurrentItemChanged(oldItem: ITabItem, newItem: ITabItem): void {
+  private _onCurrentItemChanged(oldItem: T, newItem: T): void {
     let oldTab = oldItem ? this._findTab(oldItem) : null;
     let newTab = newItem ? this._findTab(newItem) : null;
     if (oldTab) oldTab.removeClass(CURRENT_CLASS);
@@ -747,9 +457,9 @@ class TabBar extends Widget {
   /**
    * The change handler for the [[itemsProperty]].
    */
-  private _onItemsChanged(oldList: IObservableList<ITabItem>, newList: IObservableList<ITabItem>): void {
+  private _onItemsChanged(oldList: IObservableList<T>, newList: IObservableList<T>): void {
     // Ensure the mouse is released.
-    this._releaseMouse();
+    // TODO this._releaseMouse();
 
     // Disconnect the change listener for the old list.
     // Remove and dispose of the old tabs.
@@ -784,9 +494,9 @@ class TabBar extends Widget {
   /**
    * The change handler for the items list `changed` signal.
    */
-  private _onItemsListChanged(sender: IObservableList<ITabItem>, args: IListChangedArgs<ITabItem>): void {
+  private _onItemsListChanged(sender: IObservableList<T>, args: IListChangedArgs<T>): void {
     // Ensure the mouse is released.
-    this._releaseMouse();
+    // TODO this._releaseMouse();
 
     // Delegate the change to a specific handler.
     switch (args.type) {
@@ -814,9 +524,9 @@ class TabBar extends Widget {
   /**
    * The handler invoked on a items list change of type `Add`.
    */
-  private _onItemsListAdd(args: IListChangedArgs<ITabItem>): void {
+  private _onItemsListAdd(args: IListChangedArgs<T>): void {
     // Create the tab for the new tab item.
-    let tab = new Tab(args.newValue as ITabItem);
+    let tab = new Tab(args.newValue as T);
 
     // Add the tab to the same location in the internal array.
     arrays.insert(this._tabs, args.newIndex, tab);
@@ -831,7 +541,7 @@ class TabBar extends Widget {
   /**
    * The handler invoked on a items list change of type `Move`.
    */
-  private _onItemsListMove(args: IListChangedArgs<ITabItem>): void {
+  private _onItemsListMove(args: IListChangedArgs<T>): void {
     // Simply move the tab in the array. DOM position is irrelevant.
     arrays.move(this._tabs, args.oldIndex, args.newIndex);
   }
@@ -839,7 +549,7 @@ class TabBar extends Widget {
   /**
    * The handler invoked on a items list change of type `Remove`.
    */
-  private _onItemsListRemove(args: IListChangedArgs<ITabItem>): void {
+  private _onItemsListRemove(args: IListChangedArgs<T>): void {
     // Remove the tab from the internal array.
     let tab = arrays.removeAt(this._tabs, args.oldIndex);
 
@@ -848,7 +558,7 @@ class TabBar extends Widget {
 
     // Patch up the current and previous items if needed.
     if (this.currentItem === tab.item) {
-      let next: ITabItem;
+      let next: T;
       let items = this.items;
       if (items.length === 0) {
         next = null;
@@ -872,13 +582,13 @@ class TabBar extends Widget {
   /**
    * The handler invoked on a items list change of type `Replace`.
    */
-  private _onItemsListReplace(args: IListChangedArgs<ITabItem>): void {
+  private _onItemsListReplace(args: IListChangedArgs<T>): void {
     // Create the new tabs for the new tab items.
-    let newItems = args.newValue as ITabItem[];
+    let newItems = args.newValue as T[];
     let newTabs = newItems.map(item => new Tab(item));
 
     // Replace the tabs in the internal array.
-    let oldItems = args.oldValue as ITabItem[];
+    let oldItems = args.oldValue as T[];
     let oldTabs = this._tabs.splice(args.newIndex, oldItems.length, ...newTabs);
 
     // Remove the old tabs from the DOM.
@@ -897,14 +607,14 @@ class TabBar extends Widget {
   /**
    * The handler invoked on a items list change of type `Set`.
    */
-  private _onItemsListSet(args: IListChangedArgs<ITabItem>): void {
+  private _onItemsListSet(args: IListChangedArgs<T>): void {
     // If the item was not actually changed, there is nothing to do.
     if (args.oldValue === args.newValue) {
       return;
     }
 
     // Create the tab for the new tab item.
-    let newTab = new Tab(args.newValue as ITabItem);
+    let newTab = new Tab(args.newValue as T);
 
     // Swap the new tab in the internal array.
     let oldTab = this._tabs[args.newIndex];
@@ -926,108 +636,15 @@ class TabBar extends Widget {
     oldTab.dispose();
   }
 
-  private _tabs: Tab[] = [];
-  private _dragData: DragData = null;
-  private _previousItem: ITabItem = null;
+  private _tabs: Tab<T>[] = [];
+  private _previousItem: T = null;
 }
 
 
 /**
- * An object which holds layout data for a tab.
+ * An object which manages a tab node for a tab bar.
  */
-interface ITabLayout {
-  /**
-   * The left margin value for the tab.
-   */
-  margin: number;
-
-  /**
-   * The offset left position of the tab.
-   */
-  left: number;
-
-  /**
-   * The offset width of the tab.
-   */
-  width: number;
-}
-
-
-/**
- * A struct which holds the drag data for a tab bar.
- */
-class DragData {
-  /**
-   * The tab node being dragged.
-   */
-  tab: Tab = null;
-
-  /**
-   * The index of the tab being dragged.
-   */
-  tabIndex = -1;
-
-  /**
-   * The offset left of the tab being dragged.
-   */
-  tabLeft = -1;
-
-  /**
-   * The offset width of the tab being dragged.
-   */
-  tabWidth = -1;
-
-  /**
-   * The orginal mouse X position in tab coordinates.
-   */
-  tabPressX = -1;
-
-  /**
-   * The tab target index upon mouse release.
-   */
-  tabTargetIndex = -1;
-
-  /**
-   * The array of tab layout objects snapped at drag start.
-   */
-  tabLayout: ITabLayout[] = null;
-
-  /**
-   * The mouse press client X position.
-   */
-  pressX = -1;
-
-  /**
-   * The mouse press client Y position.
-   */
-  pressY = -1;
-
-  /**
-   * The bounding client rect of the tab bar content node.
-   */
-  contentRect: ClientRect = null;
-
-  /**
-   * The disposable to clean up the cursor override.
-   */
-  cursorGrab: IDisposable = null;
-
-  /**
-   * Whether the drag is currently active.
-   */
-  dragActive = false;
-
-  /**
-   * Whether a tear off attempt has been made.
-   */
-  tearOffAttempted = false;
-}
-
-
-/**
- * An object which manages a node for a tab bar.
- */
-class Tab extends NodeWrapper implements IDisposable {
+class Tab<T extends ITabItem> extends NodeWrapper implements IDisposable {
   /**
    * Create the DOM node for a tab.
    */
@@ -1050,7 +667,7 @@ class Tab extends NodeWrapper implements IDisposable {
    *
    * @param item - The tab item to associate with the tab.
    */
-  constructor(item: ITabItem) {
+  constructor(item: T) {
     super();
     this.addClass(TAB_CLASS);
     this._item = item;
@@ -1061,15 +678,15 @@ class Tab extends NodeWrapper implements IDisposable {
     if (title.icon) exAddClass(this.iconNode, title.icon);
     if (title.className) exAddClass(this.node, title.className);
 
-    Property.getChanged(title).connect(this._onTitleChanged, this);
+    title.changed.connect(this._onTitleChanged, this);
   }
 
   /**
    * Dispose of the resources held by the tab.
    */
   dispose(): void {
-    clearSignalData(this);
     this._item = null;
+    clearSignalData(this);
   }
 
   /**
@@ -1115,33 +732,63 @@ class Tab extends NodeWrapper implements IDisposable {
    * #### Notes
    * This is a read-only property.
    */
-  get item(): ITabItem {
+  get item(): T {
     return this._item;
   }
 
   /**
-   * Handle the property changed signal for the item title.
+   * The handler for the title `changed` signal.
    */
-  private _onTitleChanged(sender: Title, args: IPropertyChangedArgs<Title, any>): void {
-    switch (args.property) {
-    case Title.textProperty:
-      this.textNode.textContent = args.newValue;
+  private _onTitleChanged(sender: Title, args: IChangedArgs<any>): void {
+    switch (args.name) {
+    case 'text':
+      this._onTitleTextChanged(args as IChangedArgs<string>);
       break;
-    case Title.iconProperty:
-      if (args.oldValue) exRemClass(this.iconNode, args.oldValue);
-      if (args.newValue) exAddClass(this.iconNode, args.newValue);
+    case 'icon':
+      this._onTitleIconChanged(args as IChangedArgs<string>);
       break;
-    case Title.closableProperty:
-      this.toggleClass(CLOSABLE_CLASS, args.newValue);
+    case 'closable':
+      this._onTitleClosableChanged(args as IChangedArgs<boolean>);
       break;
-    case Title.classNameProperty:
-      if (args.oldValue) exRemClass(this.node, args.oldValue);
-      if (args.newValue) exAddClass(this.node, args.newValue);
+    case 'className':
+      this._onTitleClassNameChanged(args as IChangedArgs<string>);
       break;
     }
   }
 
-  private _item: ITabItem;
+  /**
+   * A method invoked when the title text changes.
+   */
+  private _onTitleTextChanged(args: IChangedArgs<string>): void {
+    this.textNode.textContent = args.newValue;
+  }
+
+  /**
+   * A method invoked when the title icon changes.
+   */
+  private _onTitleIconChanged(args: IChangedArgs<string>): void {
+    let node = this.iconNode;
+    if (args.oldValue) exRemClass(node, args.oldValue);
+    if (args.newValue) exAddClass(node, args.newValue);
+  }
+
+  /**
+   * A method invoked when the title closable flag changes.
+   */
+  private _onTitleClosableChanged(args: IChangedArgs<boolean>): void {
+    this.toggleClass(CLOSABLE_CLASS, args.newValue);
+  }
+
+  /**
+   * A method invoked when the title class name changes.
+   */
+  private _onTitleClassNameChanged(args: IChangedArgs<string>): void {
+    let node = this.node;
+    if (args.oldValue) exRemClass(node, args.oldValue);
+    if (args.newValue) exAddClass(node, args.newValue);
+  }
+
+  private _item: T;
 }
 
 
@@ -1170,43 +817,13 @@ function exRemClass(node: HTMLElement, name: string): void {
 
 
 /**
- * Get a snapshot of the current tab layout values.
- */
-function snapTabLayout(tabs: Tab[]): ITabLayout[] {
-  let layout = new Array<ITabLayout>(tabs.length);
-  for (let i = 0, n = tabs.length; i < n; ++i) {
-    let node = tabs[i].node;
-    let left = node.offsetLeft;
-    let width = node.offsetWidth;
-    let cstyle = window.getComputedStyle(node);
-    let margin = parseInt(cstyle.marginLeft, 10) || 0;
-    layout[i] = { margin: margin, left: left, width: width };
-  }
-  return layout;
-}
-
-
-/**
- * Performm a client position hit test an array of tabs.
+ * Perform a client position hit test an array of tabs.
  *
  * Returns the index of the first matching node, or `-1`.
  */
-function hitTestTabs(tabs: Tab[], clientX: number, clientY: number): number {
+function hitTestTabs(tabs: Tab<ITabItem>[], clientX: number, clientY: number): number {
   for (let i = 0, n = tabs.length; i < n; ++i) {
     if (hitTest(tabs[i].node, clientX, clientY)) return i;
   }
   return -1;
-}
-
-
-/**
- * Test if a mouse position exceeds the tear off threshold.
- */
-function tearExceeded(rect: ClientRect, event: MouseEvent): boolean {
-  return (
-    (event.clientX < rect.left - TEAR_THRESHOLD) ||
-    (event.clientX >= rect.right + TEAR_THRESHOLD) ||
-    (event.clientY < rect.top - TEAR_THRESHOLD) ||
-    (event.clientY >= rect.bottom + TEAR_THRESHOLD)
-  );
 }

@@ -67,14 +67,14 @@
 }
 
 
-.p-TabBar.p-mod-dragging > .p-TabBar-content > .p-Tab {
+.p-TabBar.p-mod-dragging .p-Tab {
   position: relative;
   left: 0;
   transition: left 150ms ease;
 }
 
 
-.p-TabBar.p-mod-dragging > .p-TabBar-content > .p-Tab.p-mod-active {
+.p-TabBar.p-mod-dragging .p-Tab.p-mod-active {
   transition: none;
 }
 
