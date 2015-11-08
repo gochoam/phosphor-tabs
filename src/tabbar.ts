@@ -431,9 +431,9 @@ class TabBar<T extends ITabItem> extends Widget {
   }
 
   /**
-   * Update the flex order and z-index of the tabs.
+   * Update the flex order and z-index of the tab nodes.
    */
-  private _updateTabOrdering(): void {
+  private _updateTabNodeOrder(): void {
     let n = this._tabs.length;
     if (n === 0) {
       return;
@@ -477,7 +477,7 @@ class TabBar<T extends ITabItem> extends Widget {
     let newTab = newItem ? this._findTab(newItem) : null;
     if (oldTab) oldTab.removeClass(CURRENT_CLASS);
     if (newTab) newTab.addClass(CURRENT_CLASS);
-    this._updateTabOrdering();
+    this._updateTabNodeOrder();
   }
 
   /**
@@ -506,9 +506,9 @@ class TabBar<T extends ITabItem> extends Widget {
       newList.changed.connect(this._onItemsListChanged, this);
     }
 
-    // Update the current item and tab ordering.
+    // Update the current item and tab node order.
     this.currentItem = newList && newList.get(0);
-    this._updateTabOrdering();
+    this._updateTabNodeOrder();
   }
 
   /**
@@ -550,8 +550,8 @@ class TabBar<T extends ITabItem> extends Widget {
     // Select the tab if no tab is currently selected.
     if (!this.currentItem) this.currentItem = tab.item;
 
-    // Update the tab ordering.
-    this._updateTabOrdering();
+    // Update the tab node order.
+    this._updateTabNodeOrder();
   }
 
   /**
@@ -561,8 +561,8 @@ class TabBar<T extends ITabItem> extends Widget {
     // Simply move the tab in the array. DOM position is irrelevant.
     arrays.move(this._tabs, args.oldIndex, args.newIndex);
 
-    // Update the tab ordering.
-    this._updateTabOrdering();
+    // Update the tab node order.
+    this._updateTabNodeOrder();
   }
 
   /**
@@ -584,8 +584,8 @@ class TabBar<T extends ITabItem> extends Widget {
     // Dispose of the tab.
     tab.dispose();
 
-    // Update the tab ordering.
-    this._updateTabOrdering();
+    // Update the tab node order.
+    this._updateTabNodeOrder();
   }
 
   /**
@@ -622,8 +622,8 @@ class TabBar<T extends ITabItem> extends Widget {
     // Dispose of the old tabs.
     oldTabs.forEach(tab => { tab.dispose(); });
 
-    // Update the tab ordering.
-    this._updateTabOrdering();
+    // Update the tab node order.
+    this._updateTabNodeOrder();
   }
 
   /**
@@ -653,8 +653,8 @@ class TabBar<T extends ITabItem> extends Widget {
     // Dispose of the old tab.
     oldTab.dispose();
 
-    // Update the tab ordering.
-    this._updateTabOrdering();
+    // Update the tab node order.
+    this._updateTabNodeOrder();
   }
 
   private _tabs: ITab<T>[] = [];
