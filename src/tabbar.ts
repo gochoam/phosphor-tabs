@@ -115,20 +115,12 @@ const LAST_CLASS = 'p-mod-last';
 export
 interface ITabItem {
   /**
-   * The title object which provides data for the tab.
+   * The title object which provides data for the item's tab.
    *
    * #### Notes
    * This should be a read-only constant property.
    */
   title: Title;
-
-  /**
-   * A method called when the user clicks the item's close icon.
-   *
-   * #### Notes
-   * This will only be called if the item's title is `closable`.
-   */
-  close(): void;
 }
 
 
@@ -156,6 +148,13 @@ class TabBar<T extends ITabItem> extends Widget {
     node.appendChild(footer);
     return node;
   }
+
+  /**
+   * A signal emitted when the user clicks a tab item's close icon.
+   *
+   * **See also:** [[closeRequested]]
+   */
+  static closeRequestedSignal = new Signal<TabBar<ITabItem>, ITabItem>();
 
   /**
    * A signal emitted when the current tab item is changed.
@@ -203,6 +202,16 @@ class TabBar<T extends ITabItem> extends Widget {
   dispose(): void {
     this.items = null;
     super.dispose();
+  }
+
+  /**
+   * A signal emitted when the user clicks a tab item's close icon.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[itemCloseRequestedSignal]].
+   */
+  get closeRequested(): ISignal<TabBar<T>, T> {
+    return TabBar.closeRequestedSignal.bind(this);
   }
 
   /**
@@ -291,7 +300,7 @@ class TabBar<T extends ITabItem> extends Widget {
   /**
    * Get the tab bar footer node.
    *
-   * #### Notesatom
+   * #### Notes
    * This can be used to add extra footer content.
    */
   get footerNode(): HTMLElement {
@@ -380,8 +389,8 @@ class TabBar<T extends ITabItem> extends Widget {
       return;
     }
 
-    // Close the tab item if it is marked as closable.
-    if (tab.item.title.closable) tab.item.close();
+    // Emit the close requested signal if the item is closable.
+    if (tab.item.title.closable) this.closeRequested.emit(tab.item);
   }
 
   /**
@@ -458,8 +467,10 @@ class TabBar<T extends ITabItem> extends Widget {
       newList.changed.connect(this._onItemsListChanged, this);
     }
 
-    // Update the current item and tab node order.
+    // Update the current item.
     this.currentItem = newList && newList.get(0);
+
+    // Update the tab node order.
     this.update();
   }
 
