@@ -133,6 +133,29 @@ interface ITabItem {
 
 
 /**
+ * An object which can be used as a tab in a tab bar.
+ */
+export
+interface ITab<T extends ITabItem> extends NodeWrapper, IDisposable {
+  /**
+   * The tab item associated with the tab.
+   *
+   * #### Notes
+   * This should be a read-only property.
+   */
+  item: T;
+
+  /**
+   * The close icon node for the tab.
+   *
+   * #### Notes
+   * This should be a read-only property.
+   */
+  closeNode: HTMLElement;
+}
+
+
+/**
  * A widget which displays a list of tab items as a row of tabs.
  */
 export
@@ -320,6 +343,20 @@ class TabBar<T extends ITabItem> extends Widget {
   }
 
   /**
+   * Create a new tab object for the given tab item.
+   *
+   * @item - The tab item for which to create the tab.
+   *
+   * @returns The new tab object for the tab item.
+   *
+   * #### Notes
+   * This may be reimplemented by subclasses to customize the tab.
+   */
+  protected createTab(item: T): ITab<T> {
+    return new Tab(item);
+  }
+
+  /**
    * A message handler invoked on an `'after-attach'` message.
    */
   protected onAfterAttach(msg: Message): void {
@@ -420,7 +457,7 @@ class TabBar<T extends ITabItem> extends Widget {
   /**
    * Find the tab associated with the given tab item.
    */
-  private _findTab(item: T): Tab<T> {
+  private _findTab(item: T): ITab<T> {
     return arrays.find(this._tabs, tab => tab.item === item) || null;
   }
 
@@ -462,7 +499,7 @@ class TabBar<T extends ITabItem> extends Widget {
     if (newList) {
       let content = this.contentNode;
       for (let i = 0, n = newList.length; i < n; ++i) {
-        let tab = new Tab(newList.get(i));
+        let tab = this.createTab(newList.get(i));
         content.appendChild(tab.node);
         this._tabs.push(tab);
       }
@@ -502,7 +539,7 @@ class TabBar<T extends ITabItem> extends Widget {
    */
   private _onItemsListAdd(args: IListChangedArgs<T>): void {
     // Create the tab for the new tab item.
-    let tab = new Tab(args.newValue as T);
+    let tab = this.createTab(args.newValue as T);
 
     // Add the tab to the same location in the internal array.
     arrays.insert(this._tabs, args.newIndex, tab);
@@ -557,7 +594,7 @@ class TabBar<T extends ITabItem> extends Widget {
   private _onItemsListReplace(args: IListChangedArgs<T>): void {
     // Create the new tabs for the new tab items.
     let newItems = args.newValue as T[];
-    let newTabs = newItems.map(item => new Tab(item));
+    let newTabs = newItems.map(item => this.createTab(item));
 
     // Replace the tabs in the internal array.
     let oldItems = args.oldValue as T[];
@@ -599,7 +636,7 @@ class TabBar<T extends ITabItem> extends Widget {
     }
 
     // Create the tab for the new tab item.
-    let newTab = new Tab(args.newValue as T);
+    let newTab = this.createTab(args.newValue as T);
 
     // Swap the new tab in the internal array.
     let oldTab = this._tabs[args.newIndex];
@@ -620,14 +657,14 @@ class TabBar<T extends ITabItem> extends Widget {
     this._updateTabOrdering();
   }
 
-  private _tabs: Tab<T>[] = [];
+  private _tabs: ITab<T>[] = [];
 }
 
 
 /**
  * An object which manages a tab node for a tab bar.
  */
-class Tab<T extends ITabItem> extends NodeWrapper implements IDisposable {
+class Tab<T extends ITabItem> extends NodeWrapper implements ITab<T> {
   /**
    * Create the DOM node for a tab.
    */
@@ -700,7 +737,7 @@ class Tab<T extends ITabItem> extends NodeWrapper implements IDisposable {
   }
 
   /**
-   * Get the close node for the tab.
+   * Get the close icon node for the tab.
    *
    * #### Notes
    * This is a read-only property.
@@ -804,7 +841,7 @@ function exRemClass(node: HTMLElement, name: string): void {
  *
  * Returns the index of the first matching node, or `-1`.
  */
-function hitTestTabs(tabs: Tab<ITabItem>[], clientX: number, clientY: number): number {
+function hitTestTabs(tabs: ITab<ITabItem>[], clientX: number, clientY: number): number {
   for (let i = 0, n = tabs.length; i < n; ++i) {
     if (hitTest(tabs[i].node, clientX, clientY)) return i;
   }
