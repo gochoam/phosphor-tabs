@@ -21,15 +21,20 @@
 }
 
 
-.p-TabBar-content {
+.p-TabBar-body {
   position: absolute;
-  margin: 0;
-  padding: 0;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 2;
+}
+
+
+.p-TabBar-content {
+  margin: 0;
+  padding: 0;
+  height: 100%;
   display: flex;
   flex-direction: row;
   list-style-type: none;
@@ -64,18 +69,6 @@
   flex: 1 1 auto;
   overflow: hidden;
   white-space: nowrap;
-}
-
-
-.p-TabBar.p-mod-dragging .p-Tab {
-  position: relative;
-  left: 0;
-  transition: left 150ms ease;
-}
-
-
-.p-TabBar.p-mod-dragging .p-Tab.p-mod-active {
-  transition: none;
 }
 
 
