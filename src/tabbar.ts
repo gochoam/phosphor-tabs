@@ -373,6 +373,26 @@ class TabBar<T extends ITabItem> extends Widget {
   }
 
   /**
+   * A message handler invoked on an `'update-request'` message.
+   *
+   * This handler updates the flex order and z-index of the tabs.
+   */
+  protected onUpdateRequest(msg: Message): void {
+    for (let i = 0, n = this._tabs.length, k = n - 1; i < n; ++i) {
+      let tab = this._tabs[i];
+      let style = tab.node.style;
+      if (tab.hasClass(CURRENT_CLASS)) {
+        style.zIndex = n + '';
+      } else {
+        style.zIndex = k-- + '';
+      }
+      style.order = i + '';
+      tab.toggleClass(FIRST_CLASS, i === 0);
+      tab.toggleClass(LAST_CLASS, i === n - 1);
+    }
+  }
+
+  /**
    * Handle the `'click'` event for the tab bar.
    */
   private _evtClick(event: MouseEvent): void {
@@ -431,37 +451,6 @@ class TabBar<T extends ITabItem> extends Widget {
   }
 
   /**
-   * Update the flex order and z-index of the tab nodes.
-   */
-  private _updateTabNodeOrder(): void {
-    let n = this._tabs.length;
-    if (n === 0) {
-      return;
-    }
-    for (let i = 0, k = n - 1; i < n; ++i) {
-      let tab = this._tabs[i];
-      let style = tab.node.style;
-      tab.removeClass(FIRST_CLASS);
-      tab.removeClass(LAST_CLASS);
-      if (tab.hasClass(CURRENT_CLASS)) {
-        style.zIndex = n + '';
-      } else {
-        style.zIndex = k-- + '';
-      }
-      style.order = i + '';
-    }
-    this._tabs[0].addClass(FIRST_CLASS);
-    this._tabs[n - 1].addClass(LAST_CLASS);
-  }
-
-  /**
-   * Find the tab associated with the given tab item.
-   */
-  private _findTab(item: T): ITab<T> {
-    return arrays.find(this._tabs, tab => tab.item === item) || null;
-  }
-
-  /**
    * The coerce handler for the [[currentItemProperty]].
    */
   private _coerceCurrentItem(item: T): T {
@@ -473,11 +462,11 @@ class TabBar<T extends ITabItem> extends Widget {
    * The change handler for the [[currentItemProperty]].
    */
   private _onCurrentItemChanged(oldItem: T, newItem: T): void {
-    let oldTab = oldItem ? this._findTab(oldItem) : null;
-    let newTab = newItem ? this._findTab(newItem) : null;
+    let oldTab = arrays.find(this._tabs, tab => tab.item === oldItem);
+    let newTab = arrays.find(this._tabs, tab => tab.item === newItem);
     if (oldTab) oldTab.removeClass(CURRENT_CLASS);
     if (newTab) newTab.addClass(CURRENT_CLASS);
-    this._updateTabNodeOrder();
+    this.update();
   }
 
   /**
@@ -508,7 +497,7 @@ class TabBar<T extends ITabItem> extends Widget {
 
     // Update the current item and tab node order.
     this.currentItem = newList && newList.get(0);
-    this._updateTabNodeOrder();
+    this.update();
   }
 
   /**
@@ -551,7 +540,7 @@ class TabBar<T extends ITabItem> extends Widget {
     if (!this.currentItem) this.currentItem = tab.item;
 
     // Update the tab node order.
-    this._updateTabNodeOrder();
+    this.update();
   }
 
   /**
@@ -562,7 +551,7 @@ class TabBar<T extends ITabItem> extends Widget {
     arrays.move(this._tabs, args.oldIndex, args.newIndex);
 
     // Update the tab node order.
-    this._updateTabNodeOrder();
+    this.update();
   }
 
   /**
@@ -581,11 +570,11 @@ class TabBar<T extends ITabItem> extends Widget {
       this.currentItem = list.get(args.oldIndex) || list.get(-1);
     }
 
-    // Dispose of the tab.
+    // Dispose of the old tab.
     tab.dispose();
 
     // Update the tab node order.
-    this._updateTabNodeOrder();
+    this.update();
   }
 
   /**
@@ -623,7 +612,7 @@ class TabBar<T extends ITabItem> extends Widget {
     oldTabs.forEach(tab => { tab.dispose(); });
 
     // Update the tab node order.
-    this._updateTabNodeOrder();
+    this.update();
   }
 
   /**
@@ -654,7 +643,7 @@ class TabBar<T extends ITabItem> extends Widget {
     oldTab.dispose();
 
     // Update the tab node order.
-    this._updateTabNodeOrder();
+    this.update();
   }
 
   private _tabs: ITab<T>[] = [];
