@@ -138,7 +138,7 @@ interface ITabItem {
    * The title object which provides data for the item's tab.
    *
    * #### Notes
-   * This should be a read-only constant property.
+   * This should be a read-only property.
    */
   title: Title;
 }
@@ -436,7 +436,7 @@ class TabBar<T extends ITabItem> extends Widget {
   }
 
   /**
-   * A message handler invoked on a `'before-dettach'` message.
+   * A message handler invoked on a `'before-detach'` message.
    */
   protected onBeforeDetach(msg: Message): void {
     this.node.removeEventListener('click', this);
@@ -557,7 +557,7 @@ class TabBar<T extends ITabItem> extends Widget {
     }
 
     // Check to see if the drag threshold has been exceeded, and
-    // start the tab drag operation the first time that occurrs.
+    // start the tab drag operation the first time that occurs.
     if (!data.dragActive) {
       let dx = Math.abs(event.clientX - data.pressX);
       let dy = Math.abs(event.clientY - data.pressY);
@@ -704,7 +704,7 @@ class TabBar<T extends ITabItem> extends Widget {
   }
 
   /**
-   * Ensure the mouse grab is released immediately.
+   * Release the mouse and restore the non-dragged tab positions.
    */
   private _releaseMouse(): void {
     // Bail early if there is no drag in progress.
@@ -844,7 +844,7 @@ class TabBar<T extends ITabItem> extends Widget {
     // Ensure the mouse is released.
     this._releaseMouse();
 
-    // Simply move the tab in the array. DOM position is irrelevant.
+    // Move the tab in the array. DOM position is irrelevant.
     arrays.move(this._tabs, args.oldIndex, args.newIndex);
 
     // Update the tab node order.
@@ -1215,7 +1215,7 @@ class DragData<T extends ITabItem> {
   tabWidth = -1;
 
   /**
-   * The orginal mouse X position in tab coordinates.
+   * The original mouse X position in tab coordinates.
    */
   tabPressX = -1;
 
