@@ -145,67 +145,6 @@ interface ITabItem {
 
 
 /**
- * A message class for `'tear-off-request'` messages.
- *
- * #### Notes
- * A message of this type is sent to a tab bar when the user drags
- * a tab beyond the tear-off threshold which surrounds the tab bar.
- */
-export
-class TearOffMessage<T extends ITabItem> extends Message {
-  /**
-   * Construct a new tear off request message.
-   *
-   * @param item - The tab item being dragged by the user.
-   *
-   * @param clientX - The current client X position of the mouse.
-   *
-   * @param clientY - The current client Y position of the mouse.
-   */
-  constructor(item: T, clientX: number, clientY: number) {
-    super('tear-off-request');
-    this._item = item;
-    this._clientX = clientX;
-    this._clientY = clientY;
-  }
-
-  /**
-   * The tab item being dragged by the user.
-   *
-   * #### Notes
-   * This is a read-only property.
-   */
-  get item(): T {
-    return this._item;
-  }
-
-  /**
-   * The current client X position of the mouse.
-   *
-   * #### Notes
-   * This is a read-only property.
-   */
-  get clientX(): number {
-    return this._clientX;
-  }
-
-  /**
-   * The current client Y position of the mouse.
-   *
-   * #### Notes
-   * This is a read-only property.
-   */
-  get clientY(): number {
-    return this._clientY;
-  }
-
-  private _item: T;
-  private _clientX: number;
-  private _clientY: number;
-}
-
-
-/**
  * A widget which displays a list of tab items as a row of tabs.
  */
 export
@@ -1015,6 +954,67 @@ class TabBar<T extends ITabItem> extends Widget {
 
   private _tabs: Tab<T>[] = [];
   private _dragData: DragData<T> = null;
+}
+
+
+/**
+ * A message class for `'tear-off-request'` messages.
+ *
+ * #### Notes
+ * A message of this type is sent to a tab bar when the user drags
+ * a tab beyond the tear-off threshold which surrounds the tab bar.
+ */
+export
+class TearOffMessage<T extends ITabItem> extends Message {
+  /**
+   * Construct a new tear off request message.
+   *
+   * @param item - The tab item being dragged by the user.
+   *
+   * @param clientX - The current client X position of the mouse.
+   *
+   * @param clientY - The current client Y position of the mouse.
+   */
+  constructor(item: T, clientX: number, clientY: number) {
+    super('tear-off-request');
+    this._item = item;
+    this._clientX = clientX;
+    this._clientY = clientY;
+  }
+
+  /**
+   * The tab item being dragged by the user.
+   *
+   * #### Notes
+   * This is a read-only property.
+   */
+  get item(): T {
+    return this._item;
+  }
+
+  /**
+   * The current client X position of the mouse.
+   *
+   * #### Notes
+   * This is a read-only property.
+   */
+  get clientX(): number {
+    return this._clientX;
+  }
+
+  /**
+   * The current client Y position of the mouse.
+   *
+   * #### Notes
+   * This is a read-only property.
+   */
+  get clientY(): number {
+    return this._clientY;
+  }
+
+  private _item: T;
+  private _clientX: number;
+  private _clientY: number;
 }
 
 
