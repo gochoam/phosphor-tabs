@@ -31,16 +31,6 @@
 }
 
 
-.p-TabBar-content {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-  list-style-type: none;
-}
-
-
 .p-TabBar-footer {
   display: none;
   position: absolute;
@@ -48,6 +38,16 @@
   right: 0;
   bottom: 0;
   z-index: 1;
+}
+
+
+.p-TabBar-content {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  list-style-type: none;
 }
 
 
