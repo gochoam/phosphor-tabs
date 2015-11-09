@@ -113,16 +113,16 @@ class TabPanel extends BoxPanel {
   /**
    * Get whether the tabs are movable by the user.
    */
-  // get tabsMovable(): boolean {
-  //   return this._tabs.tabsMovable;
-  // }
+  get tabsMovable(): boolean {
+    return this._tabs.tabsMovable;
+  }
 
   /**
    * Set whether the tabs are movable by the user.
    */
-  // set tabsMovable(movable: boolean) {
-  //   this._tabs.tabsMovable = movable;
-  // }
+  set tabsMovable(movable: boolean) {
+    this._tabs.tabsMovable = movable;
+  }
 
   /**
    * Get the observable list of widgets for the tab panel.
