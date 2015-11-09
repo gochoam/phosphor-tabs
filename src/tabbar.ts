@@ -696,6 +696,8 @@ class TabBar<T extends ITabItem> extends Widget {
       let toIndex = data.tabTargetIndex;
       if (toIndex !== -1 && fromIndex !== toIndex) {
         this.items.move(fromIndex, toIndex);
+        // Force an update to prevent flicker on IE.
+        sendMessage(this, Widget.MsgUpdateRequest);
       }
     }, TRANSITION_DURATION);
   }
