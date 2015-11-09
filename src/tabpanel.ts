@@ -15,10 +15,6 @@ import {
   IChangedArgs
 } from 'phosphor-properties';
 
-// import {
-//   ISignal, Signal
-// } from 'phosphor-signaling';
-
 import {
   StackedPanel
 } from 'phosphor-stackedpanel';
@@ -39,24 +35,13 @@ const TAB_PANEL_CLASS = 'p-TabPanel';
 
 
 /**
- * A panel which provides a tabbed layout for child widgets.
+ * A panel which combines a `TabBar` and a `StackedPanel`.
  *
  * #### Notes
- * A `TabPanel` is a combination of a `TabBar` and a `StackedPanel`.
- *
- * Widgets should be added to the tab panel's `widgets` list (instead
- * of its `children` list) so that the widgets are properly added to
- * the internal stacked panel.
+ * Children for this panel should be added to the [[widgets]] list.
  */
 export
 class TabPanel extends BoxPanel {
-  /**
-   * A signal emitted when the current widget is changed.
-   *
-   * **See also:** [[currentChanged]]
-   */
-  // static currentChangedSignal = new Signal<TabPanel, IWidgetIndexArgs>();
-
   /**
    * Construct a new tab panel.
    */
@@ -65,7 +50,8 @@ class TabPanel extends BoxPanel {
     this.addClass(TAB_PANEL_CLASS);
 
     this._tabs.items = this._stack.children;
-    this._tabs.currentChanged.connect(this._onCurrentChanged, this);
+    this._tabs.currentItemChanged.connect(this.onCurrentItemChanged, this);
+    this._tabs.itemCloseRequested.connect(this.onItemCloseRequested, this);
 
     BoxPanel.setStretch(this._tabs, 0);
     BoxPanel.setStretch(this._stack, 1);
@@ -87,17 +73,11 @@ class TabPanel extends BoxPanel {
   }
 
   /**
-   * A signal emitted when the current widget is changed.
+   * Get the currently selected widget.
    *
    * #### Notes
-   * This is a pure delegate to the [[currentChangedSignal]].
-   */
-  // get currentChanged(): ISignal<TabPanel, IWidgetIndexArgs> {
-  //   return TabPanel.currentChangedSignal.bind(this);
-  // }
-
-  /**
-   * Get the currently selected widget.
+   * This is a convenience alias to the `currentItem` property of the
+   * tab bar.
    */
   get currentWidget(): Widget {
     return this._tabs.currentItem;
@@ -105,6 +85,10 @@ class TabPanel extends BoxPanel {
 
   /**
    * Set the currently selected widget.
+   *
+   * #### Notes
+   * This is a convenience alias to the `currentItem` property of the
+   * tab bar.
    */
   set currentWidget(widget: Widget) {
     this._tabs.currentItem = widget;
@@ -112,6 +96,10 @@ class TabPanel extends BoxPanel {
 
   /**
    * Get whether the tabs are movable by the user.
+   *
+   * #### Notes
+   * This is a convenience alias to the `tabsMovable` property of the
+   * tab bar.
    */
   get tabsMovable(): boolean {
     return this._tabs.tabsMovable;
@@ -119,6 +107,10 @@ class TabPanel extends BoxPanel {
 
   /**
    * Set whether the tabs are movable by the user.
+   *
+   * #### Notes
+   * This is a convenience alias to the `tabsMovable` property of the
+   * tab bar.
    */
   set tabsMovable(movable: boolean) {
     this._tabs.tabsMovable = movable;
@@ -128,17 +120,65 @@ class TabPanel extends BoxPanel {
    * Get the observable list of widgets for the tab panel.
    *
    * #### Notes
-   * This is a read-only property.
+   * Widgets to arrange in the tab panel should be added to this list.
+   *
+   * This is a read-only alias of the `children` property of the
+   * stacked panel.
    */
   get widgets(): IChildWidgetList {
     return this._stack.children;
   }
 
   /**
-   * Handle the `currentChanged` signal from the tab bar.
+   * Get the tab bar associated with the tab panel.
+   *
+   * #### Notes
+   * The items in the tab bar are automatically synchronized with the
+   * children of the stacked panel.
+   *
+   * This is a read-only property.
    */
-  private _onCurrentChanged(sender: TabBar<Widget>, args: IChangedArgs<Widget>): void {
+  get tabs(): TabBar<Widget> {
+    return this._tabs;
+  }
+
+  /**
+   * Get the stacked panel associated with the tab panel.
+   *
+   * #### Notes
+   * The children of the stacked panel are automatically synchronized
+   * with the items in the tab bar.
+   *
+   * This is a read-only property.
+   */
+  get stack(): StackedPanel {
+    return this._stack;
+  }
+
+  /**
+   * Handle the `currentItemChanged` signal from the tab bar.
+   *
+   * #### Notes
+   * This can be reimplemented by subclasses as needed.
+   *
+   * The default implementation of this method synchronizes the current
+   * tab item with current widget of the stacked panel.
+   */
+  protected onCurrentItemChanged(sender: TabBar<Widget>, args: IChangedArgs<Widget>): void {
     this._stack.currentWidget = args.newValue;
+  }
+
+  /**
+   * Handle the `itemCloseRequested` signal from the tab bar.
+   *
+   * #### Notes
+   * This can be reimplemented by subclasses as needed.
+   *
+   * The default implementation of this method closes the widget if the
+   * widget's title object has its `closable` flag set to `true`.
+   */
+  protected onItemCloseRequested(sender: TabBar<Widget>, args: Widget): void {
+    if (args.title.closable) args.close();
   }
 
   private _tabs = new TabBar<Widget>();
