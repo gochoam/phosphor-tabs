@@ -204,6 +204,7 @@ class TabBar<T extends ITabItem> extends Widget {
   static tabsMovableProperty = new Property<TabBar<ITabItem>, boolean>({
     name: 'tabsMovable',
     value: false,
+    changed: owner => { owner._releaseMouse(); },
   });
 
   /**
@@ -218,6 +219,7 @@ class TabBar<T extends ITabItem> extends Widget {
    * Dispose of the resources held by the widget.
    */
   dispose(): void {
+    this._releaseMouse();
     this.items = null;
     super.dispose();
   }
@@ -643,6 +645,39 @@ class TabBar<T extends ITabItem> extends Widget {
   }
 
   /**
+   * Ensure the mouse grab is released immediately.
+   */
+  private _releaseMouse(): void {
+    // Bail early if there is no drag in progress.
+    let data = this._dragData;
+    if (!data) {
+      return;
+    }
+
+    // Clear the drag data reference.
+    this._dragData = null;
+
+    // Remove the extra mouse listeners.
+    document.removeEventListener('mouseup', this, true);
+    document.removeEventListener('mousemove', this, true);
+
+    // If the drag is not active, there's nothing left to do.
+    if (!data.dragActive) {
+      return;
+    }
+
+    // Reset the positions of the tabs.
+    for (let i = 0, n = this._tabs.length; i < n; ++i) {
+      this._tabs[i].node.style.left = '';
+    }
+
+    // Clear the cursor grab and drag styles.
+    data.cursorGrab.dispose();
+    data.tab.removeClass(DRAGGING_CLASS);
+    this.removeClass(DRAGGING_CLASS);
+  }
+
+  /**
    * The coerce handler for the [[currentItemProperty]].
    */
   private _coerceCurrentItem(item: T): T {
@@ -665,6 +700,9 @@ class TabBar<T extends ITabItem> extends Widget {
    * The change handler for the [[itemsProperty]].
    */
   private _onItemsChanged(oldList: IObservableList<T>, newList: IObservableList<T>): void {
+    // Ensure the mouse is released.
+    this._releaseMouse();
+
     // Disconnect the old list and dispose the old tabs.
     if (oldList) {
       oldList.changed.disconnect(this._onItemsListChanged, this);
@@ -721,6 +759,9 @@ class TabBar<T extends ITabItem> extends Widget {
    * The handler invoked on a items list change of type `Add`.
    */
   private _onItemsListAdd(args: IListChangedArgs<T>): void {
+    // Ensure the mouse is released.
+    this._releaseMouse();
+
     // Create the tab for the new tab item.
     let tab = new Tab(args.newValue as T);
 
@@ -741,6 +782,9 @@ class TabBar<T extends ITabItem> extends Widget {
    * The handler invoked on a items list change of type `Move`.
    */
   private _onItemsListMove(args: IListChangedArgs<T>): void {
+    // Ensure the mouse is released.
+    this._releaseMouse();
+
     // Simply move the tab in the array. DOM position is irrelevant.
     arrays.move(this._tabs, args.oldIndex, args.newIndex);
 
@@ -752,6 +796,9 @@ class TabBar<T extends ITabItem> extends Widget {
    * The handler invoked on a items list change of type `Remove`.
    */
   private _onItemsListRemove(args: IListChangedArgs<T>): void {
+    // Ensure the mouse is released.
+    this._releaseMouse();
+
     // Remove the tab from the internal array.
     let tab = arrays.removeAt(this._tabs, args.oldIndex);
 
@@ -775,6 +822,9 @@ class TabBar<T extends ITabItem> extends Widget {
    * The handler invoked on a items list change of type `Replace`.
    */
   private _onItemsListReplace(args: IListChangedArgs<T>): void {
+    // Ensure the mouse is released.
+    this._releaseMouse();
+
     // Create the new tabs for the new tab items.
     let newItems = args.newValue as T[];
     let newTabs = newItems.map(item => new Tab(item));
@@ -817,6 +867,9 @@ class TabBar<T extends ITabItem> extends Widget {
     if (args.oldValue === args.newValue) {
       return;
     }
+
+    // Ensure the mouse is released.
+    this._releaseMouse();
 
     // Create the tab for the new tab item.
     let newTab = new Tab(args.newValue as T);
