@@ -72,6 +72,18 @@
 }
 
 
+.p-TabBar.p-mod-dragging .p-Tab {
+  position: relative;
+  left: 0;
+  transition: left 150ms ease;
+}
+
+
+.p-TabBar.p-mod-dragging .p-Tab.p-mod-dragging {
+  transition: none;
+}
+
+
 .p-TabPanel {
   z-index: 0;
 }
