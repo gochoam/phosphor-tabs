@@ -119,6 +119,11 @@ const LAST_CLASS = 'p-mod-last';
 const DRAG_THRESHOLD = 5;
 
 /**
+ * The tear-off distance threshold.
+ */
+const TEAR_OFF_THRESHOLD = 20;
+
+/**
  * The tab transition duration.
  */
 const TRANSITION_DURATION = 150;  // Keep in sync with CSS.
@@ -348,6 +353,39 @@ class TabBar<T extends ITabItem> extends Widget {
   }
 
   /**
+   * A method invoked when the tab tear-off threshold is exceeded.
+   *
+   * @param item - The tab item being dragged by the user.
+   *
+   * @param clientX - The current client X position of the mouse.
+   *
+   * @param clientY - The current client Y position of the mouse.
+   *
+   * @returns `true` if the tab bar should release the mouse, `false`
+   *   otherwise.
+   *
+   * #### Notes
+   * This may be reimplemented by subclasses to support tear-off tabs.
+   *
+   * The reimplementation should take whatever action is necessary for
+   * its use case to continue the drag from the given client position.
+   * This will typically involve creating a new DOM node to represent
+   * the drag item, and may or may not include removing the specified
+   * item from the tab bar.
+   *
+   * If the reimplementation takes over the drag operation, it should
+   * return `true` so that the tab bar ceases its handling of mouse
+   * events. Otherwise, it should return `false`.
+   *
+   * This method will not be called if the tabs are not movable.
+   *
+   * The default implementation returns `false`.
+   */
+  protected tearOffItem(item: T, clientX: number, clientY: number): boolean {
+    return false;
+  }
+
+  /**
    * Handle the DOM events for the tab bar.
    *
    * @param event - The DOM event sent to the tab bar.
@@ -523,16 +561,16 @@ class TabBar<T extends ITabItem> extends Widget {
       this.addClass(DRAGGING_CLASS);
     }
 
-    // Check to see if the tear off threshold has been exceeded, and
-    // invoke the tear off method the first time that occurrs. If the
-    // drag data is set to null, it indicates the mouse was released.
-    // if (!data.tearOffAttempted && tearExceeded(data.contentRect, event)) {
-    //   data.tearOffAttempted = true;
-    //   this.tearOffItem(data.tab.item, event);
-    //   if (!this._dragData) {
-    //     return;
-    //   }
-    // }
+    // Check to see if the tear-off threshold has been exceeded, and
+    // attempt to tear-off the tab item the first time that occurs.
+    // Release the mouse and return if the tear-off is successful.
+    if (!data.tearOffAttempted && tearOffExceeded(data.contentRect, event)) {
+      data.tearOffAttempted = true;
+      if (this.tearOffItem(data.tab.item, event.clientX, event.clientY)) {
+        this._releaseMouse();
+        return;
+      }
+    }
 
     // Compute the target bounds of the drag tab.
     let offsetLeft = event.clientX - data.contentRect.left;
@@ -1134,10 +1172,10 @@ class DragData<T extends ITabItem> {
    */
   dragActive = false;
 
-  // /**
-  //  * Whether a tear off attempt has been made.
-  //  */
-  // tearOffAttempted = false;
+  /**
+   * Whether a tear-off has been attempted.
+   */
+  tearOffAttempted = false;
 }
 
 
@@ -1192,4 +1230,17 @@ function snapTabLayout(tabs: Tab<ITabItem>[]): ITabLayout[] {
     layout[i] = { margin: margin, left: left, width: width };
   }
   return layout;
+}
+
+
+/**
+ * Test if a mouse position exceeds the tear-off threshold.
+ */
+function tearOffExceeded(rect: ClientRect, event: MouseEvent): boolean {
+  return (
+    (event.clientX < rect.left - TEAR_OFF_THRESHOLD) ||
+    (event.clientX >= rect.right + TEAR_OFF_THRESHOLD) ||
+    (event.clientY < rect.top - TEAR_OFF_THRESHOLD) ||
+    (event.clientY >= rect.bottom + TEAR_OFF_THRESHOLD)
+  );
 }
