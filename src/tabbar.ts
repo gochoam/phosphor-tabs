@@ -19,7 +19,7 @@ import {
 } from 'phosphor-domutil';
 
 import {
-  Message
+  Message, sendMessage
 } from 'phosphor-messaging';
 
 import {
@@ -141,6 +141,67 @@ interface ITabItem {
    * This should be a read-only constant property.
    */
   title: Title;
+}
+
+
+/**
+ * A message class for `'tear-off-request'` messages.
+ *
+ * #### Notes
+ * A message of this type is sent to a tab bar when the user drags
+ * a tab beyond the tear-off threshold which surrounds the tab bar.
+ */
+export
+class TearOffMessage<T extends ITabItem> extends Message {
+  /**
+   * Construct a new tear off request message.
+   *
+   * @param item - The tab item being dragged by the user.
+   *
+   * @param clientX - The current client X position of the mouse.
+   *
+   * @param clientY - The current client Y position of the mouse.
+   */
+  constructor(item: T, clientX: number, clientY: number) {
+    super('tear-off-request');
+    this._item = item;
+    this._clientX = clientX;
+    this._clientY = clientY;
+  }
+
+  /**
+   * The tab item being dragged by the user.
+   *
+   * #### Notes
+   * This is a read-only property.
+   */
+  get item(): T {
+    return this._item;
+  }
+
+  /**
+   * The current client X position of the mouse.
+   *
+   * #### Notes
+   * This is a read-only property.
+   */
+  get clientX(): number {
+    return this._clientX;
+  }
+
+  /**
+   * The current client Y position of the mouse.
+   *
+   * #### Notes
+   * This is a read-only property.
+   */
+  get clientY(): number {
+    return this._clientY;
+  }
+
+  private _item: T;
+  private _clientX: number;
+  private _clientY: number;
 }
 
 
@@ -353,39 +414,6 @@ class TabBar<T extends ITabItem> extends Widget {
   }
 
   /**
-   * A method invoked when the tab tear-off threshold is exceeded.
-   *
-   * @param item - The tab item being dragged by the user.
-   *
-   * @param clientX - The current client X position of the mouse.
-   *
-   * @param clientY - The current client Y position of the mouse.
-   *
-   * @returns `true` if the tab bar should release the mouse, `false`
-   *   otherwise.
-   *
-   * #### Notes
-   * This may be reimplemented by subclasses to support tear-off tabs.
-   *
-   * The reimplementation should take whatever action is necessary for
-   * its use case to continue the drag from the given client position.
-   * This will typically involve creating a new DOM node to represent
-   * the drag item, and may or may not include removing the specified
-   * item from the tab bar.
-   *
-   * If the reimplementation takes over the drag operation, it should
-   * return `true` so that the tab bar ceases its handling of mouse
-   * events. Otherwise, it should return `false`.
-   *
-   * This method will not be called if the tabs are not movable.
-   *
-   * The default implementation returns `false`.
-   */
-  protected tearOffItem(item: T, clientX: number, clientY: number): boolean {
-    return false;
-  }
-
-  /**
    * Handle the DOM events for the tab bar.
    *
    * @param event - The DOM event sent to the tab bar.
@@ -411,6 +439,54 @@ class TabBar<T extends ITabItem> extends Widget {
       break;
     }
   }
+
+  /**
+   * Process a message sent to the tab bar.
+   *
+   * @param msg - The message sent to the tab bar.
+   *
+   * #### Notes
+   * Subclasses may reimplement this method as needed.
+   */
+  processMessage(msg: Message): void {
+    if (msg.type === 'tear-off-request') {
+      this.onTearOffRequest(msg as TearOffMessage<T>);
+    } else {
+      super.processMessage(msg);
+    }
+  }
+
+  /**
+   * Release the mouse and restore the non-dragged tab positions.
+   *
+   * #### Notes
+   * This will cause the tab bar to stop handling mouse events and to
+   * restore the tabs their non-dragged positions. It is intended to
+   * be called by subclasses which implement [[onTearOffRequest]].
+   */
+  protected releaseMouse(): void {
+    this._releaseMouse();
+  }
+
+  /**
+   * A message handler invoked on a `'tear-off-request'` message.
+   *
+   * #### Notes
+   * This may be reimplemented by subclasses to support tear-off tabs.
+   *
+   * The reimplementation should take whatever action is necessary for
+   * its use case to continue the drag from the given client position.
+   * This will typically involve creating a new DOM node to represent
+   * the drag item, and may or may not include removing the specified
+   * item from the tab bar.
+   *
+   * If the reimplementation handles the tear-off, it should call the
+   * [[releaseMouse]] method so that the tab bar ceases its handling
+   * of mouse events.
+   *
+   * The default implementation of this handler is a no-op.
+   */
+  protected onTearOffRequest(msg: TearOffMessage<T>): void { }
 
   /**
    * A message handler invoked on an `'after-attach'` message.
@@ -561,13 +637,19 @@ class TabBar<T extends ITabItem> extends Widget {
       this.addClass(DRAGGING_CLASS);
     }
 
-    // Check to see if the tear-off threshold has been exceeded, and
-    // attempt to tear-off the tab item the first time that occurs.
-    // Release the mouse and return if the tear-off is successful.
-    if (!data.tearOffAttempted && tearOffExceeded(data.contentRect, event)) {
-      data.tearOffAttempted = true;
-      if (this.tearOffItem(data.tab.item, event.clientX, event.clientY)) {
-        this._releaseMouse();
+    // Check to see if the tear-off threshold has been exceeded.
+    if (!data.tearOffRequested && tearOffExceeded(data.contentRect, event)) {
+      // Only make the tear-off request once per drag action.
+      data.tearOffRequested = true;
+
+      // Send the tear-off request message to the tab bar.
+      let item = data.tab.item;
+      let clientX = event.clientX;
+      let clientY = event.clientY;
+      sendMessage(this, new TearOffMessage(item, clientX, clientY));
+
+      // Do nothing further if the mouse has been released.
+      if (!this._dragData) {
         return;
       }
     }
@@ -1173,9 +1255,9 @@ class DragData<T extends ITabItem> {
   dragActive = false;
 
   /**
-   * Whether a tear-off has been attempted.
+   * Whether a tear-off request as been made.
    */
-  tearOffAttempted = false;
+  tearOffRequested = false;
 }
 
 
