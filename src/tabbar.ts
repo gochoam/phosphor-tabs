@@ -165,18 +165,11 @@ class TabBar<T extends ITabItem> extends Widget {
   }
 
   /**
-   * A signal emitted when the user clicks a tab item's close icon.
+   * A signal emitted when the user clicks a closable item's close icon.
    *
-   * **See also:** [[closeRequested]]
+   * **See also:** [[itemCloseRequested]]
    */
-  static closeRequestedSignal = new Signal<TabBar<ITabItem>, ITabItem>();
-
-  /**
-   * A signal emitted when the current tab item is changed.
-   *
-   * **See also:** [[currentChanged]]
-   */
-  static currentChangedSignal = new Signal<TabBar<ITabItem>, IChangedArgs<ITabItem>>();
+  static itemCloseRequestedSignal = new Signal<TabBar<ITabItem>, ITabItem>();
 
   /**
    * The property descriptor for the currently selected tab item.
@@ -188,7 +181,7 @@ class TabBar<T extends ITabItem> extends Widget {
     value: null,
     coerce: (owner, value) => owner._coerceCurrentItem(value),
     changed: (owner, old, value) => owner._onCurrentItemChanged(old, value),
-    notify: TabBar.currentChangedSignal,
+    notify: new Signal<TabBar<ITabItem>, IChangedArgs<ITabItem>>(),
   });
 
   /**
@@ -230,23 +223,13 @@ class TabBar<T extends ITabItem> extends Widget {
   }
 
   /**
-   * A signal emitted when the user clicks a tab item's close icon.
+   * A signal emitted when the user clicks a closable item's close icon.
    *
    * #### Notes
    * This is a pure delegate to the [[itemCloseRequestedSignal]].
    */
-  get closeRequested(): ISignal<TabBar<T>, T> {
-    return TabBar.closeRequestedSignal.bind(this);
-  }
-
-  /**
-   * A signal emitted when the current tab item is changed.
-   *
-   * #### Notes
-   * This is a pure delegate to the [[currentChangedSignal]].
-   */
-  get currentChanged(): ISignal<TabBar<T>, IChangedArgs<T>> {
-    return TabBar.currentChangedSignal.bind(this);
+  get itemCloseRequested(): ISignal<TabBar<T>, T> {
+    return TabBar.itemCloseRequestedSignal.bind(this);
   }
 
   /**
@@ -267,6 +250,16 @@ class TabBar<T extends ITabItem> extends Widget {
    */
   set currentItem(value: T) {
     TabBar.currentItemProperty.set(this, value);
+  }
+
+  /**
+   * A signal emitted when the current tab item is changed.
+   *
+   * #### Notes
+   * This is the notify signal for the [[currentItemProperty]].
+   */
+  get currentItemChanged(): ISignal<TabBar<T>, IChangedArgs<T>> {
+    return TabBar.currentItemProperty.notify.bind(this);
   }
 
   /**
@@ -440,8 +433,8 @@ class TabBar<T extends ITabItem> extends Widget {
       return;
     }
 
-    // Emit the close requested signal if the item is closable.
-    if (tab.item.title.closable) this.closeRequested.emit(tab.item);
+    // Emit the item close requested signal if the item is closable.
+    if (tab.item.title.closable) this.itemCloseRequested.emit(tab.item);
   }
 
   /**
