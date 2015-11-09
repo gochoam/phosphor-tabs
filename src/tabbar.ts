@@ -180,7 +180,7 @@ class TabBar<T extends ITabItem> extends Widget {
     name: 'currentItem',
     value: null,
     coerce: (owner, value) => owner._coerceCurrentItem(value),
-    changed: (owner, old, value) => owner._onCurrentItemChanged(old, value),
+    changed: (owner, old, value) => { owner._onCurrentItemChanged(old, value); },
     notify: new Signal<TabBar<ITabItem>, IChangedArgs<ITabItem>>(),
   });
 
@@ -193,7 +193,7 @@ class TabBar<T extends ITabItem> extends Widget {
     name: 'items',
     value: null,
     coerce: (owner, value) => value || null,
-    changed: (owner, old, value) => owner._onItemsChanged(old, value),
+    changed: (owner, old, value) => { owner._onItemsChanged(old, value); },
   });
 
   /**
@@ -496,13 +496,13 @@ class TabBar<T extends ITabItem> extends Widget {
     event.stopPropagation();
 
     // Bail if there is no drag in progress.
-    if (!this._dragData) {
+    let data = this._dragData;
+    if (!data) {
       return;
     }
 
     // Check to see if the drag threshold has been exceeded, and
     // start the tab drag operation the first time that occurrs.
-    let data = this._dragData;
     if (!data.dragActive) {
       let dx = Math.abs(event.clientX - data.pressX);
       let dy = Math.abs(event.clientY - data.pressY);
@@ -541,8 +541,9 @@ class TabBar<T extends ITabItem> extends Widget {
     data.tabTargetIndex = data.tabIndex;
 
     // Update the non-drag tab positions and the tab target index.
-    for (let i = 0, n = this._tabs.length; i < n; ++i) {
-      let style = this._tabs[i].node.style;
+    let tabs = this._tabs;
+    for (let i = 0, n = tabs.length; i < n; ++i) {
+      let style = tabs[i].node.style;
       let layout = data.tabLayout[i];
       let threshold = layout.left + (layout.width >> 1);
       if (i < data.tabIndex && targetLeft < threshold) {
@@ -556,7 +557,7 @@ class TabBar<T extends ITabItem> extends Widget {
       }
     }
 
-    // Update the drag tab position
+    // Update the drag tab position.
     let idealLeft = event.clientX - data.pressX;
     let maxLeft = data.contentRect.width - (data.tabLeft + data.tabWidth);
     let adjustedLeft = Math.max(-data.tabLeft, Math.min(idealLeft, maxLeft));
@@ -578,7 +579,8 @@ class TabBar<T extends ITabItem> extends Widget {
     event.stopPropagation();
 
     // Bail if there is no drag in progress.
-    if (!this._dragData) {
+    let data = this._dragData;
+    if (!data) {
       return;
     }
 
@@ -587,7 +589,6 @@ class TabBar<T extends ITabItem> extends Widget {
     document.removeEventListener('mousemove', this, true);
 
     // If the drag is not active, clear the reference and bail.
-    let data = this._dragData;
     if (!data.dragActive) {
       this._dragData = null;
       return;
@@ -632,7 +633,7 @@ class TabBar<T extends ITabItem> extends Widget {
       data.cursorGrab.dispose();
       this.removeClass(DRAGGING_CLASS);
 
-      // Finally, move the tab title the new location.
+      // Finally, move the tab item to the new location.
       let fromIndex = data.tabIndex;
       let toIndex = data.tabTargetIndex;
       if (toIndex !== -1 && fromIndex !== toIndex) {
