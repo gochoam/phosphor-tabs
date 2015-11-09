@@ -33,9 +33,10 @@ function main(): void {
   let blue = createContent('Blue');
   let green = createContent('Green');
 
-  let panel = new TabPanel()
+  let panel = new TabPanel();
   panel.id = 'main';
-  panel.widgets = [red, yellow, blue, green];
+  panel.tabsMovable = true;
+  panel.widgets.assign([red, yellow, blue, green]);
 
   Widget.attach(panel, document.body);
 
