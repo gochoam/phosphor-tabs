@@ -170,7 +170,7 @@ class TabBar<T extends ITabItem> extends Widget {
   }
 
   /**
-   * A signal emitted when the user clicks a closable item's close icon.
+   * A signal emitted when the user clicks a tab item's close icon.
    *
    * **See also:** [[itemCloseRequested]]
    */
@@ -230,7 +230,7 @@ class TabBar<T extends ITabItem> extends Widget {
   }
 
   /**
-   * A signal emitted when the user clicks a closable item's close icon.
+   * A signal emitted when the user clicks a tab item's close icon.
    *
    * #### Notes
    * This is a pure delegate to the [[itemCloseRequestedSignal]].
@@ -482,14 +482,11 @@ class TabBar<T extends ITabItem> extends Widget {
     event.preventDefault();
     event.stopPropagation();
 
-    // Do nothing if the click was not on a close icon node.
+    // Emit the close requested signal if the close icon was clicked.
     let tab = this._tabs[index];
-    if (!tab.closeNode.contains(event.target as HTMLElement)) {
-      return;
+    if (tab.closeNode.contains(event.target as HTMLElement)) {
+      this.itemCloseRequested.emit(tab.item);
     }
-
-    // Emit the item close requested signal if the item is closable.
-    if (tab.item.title.closable) this.itemCloseRequested.emit(tab.item);
   }
 
   /**
