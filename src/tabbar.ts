@@ -225,7 +225,8 @@ class TabBar<T extends ITabItem> extends Widget {
    */
   dispose(): void {
     this._releaseMouse();
-    this.items = null;
+    this._tabs.forEach(tab => { tab.dispose(); });
+    this._tabs.length = 0;
     super.dispose();
   }
 
