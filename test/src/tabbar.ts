@@ -103,7 +103,6 @@ function triggerMouseEvent(node: HTMLElement, eventType: string, options: any = 
 
 function createContent(title: string): Widget {
   let widget = new Widget();
-  widget.addClass(title.toLowerCase());
   widget.title.text = title;
   widget.title.icon = 'dummy';
   widget.title.className = 'dummyClass';
@@ -117,6 +116,7 @@ function createTabBar(): LogTabBar {
   let widget1 = createContent('1');
   let items = new ObservableList<Widget>([widget0, widget1]);
   tabBar.items = items;
+  tabBar.id = 'main';
   return tabBar;
 }
 
@@ -225,7 +225,11 @@ describe('phosphor-tabs', () => {
         tabBar.itemCloseRequested.connect(() => { called = true; });
         Widget.attach(tabBar, document.body);
         let nodes = tabBar.node.querySelectorAll('.p-Tab-close');
-        (nodes[0] as HTMLElement).click();
+        let node = nodes[0] as HTMLElement;
+        node.textContent = "X";
+        let rect = node.getBoundingClientRect();
+        let args = { clientX: rect.left + 1, clientY: rect.top + 1 };
+        triggerMouseEvent(node, 'click', args);
         expect(called).to.be(true);
         Widget.detach(tabBar);
       });
@@ -236,7 +240,15 @@ describe('phosphor-tabs', () => {
         tabBar.itemCloseRequested.connect(() => { called = true; });
         Widget.attach(tabBar, document.body);
         let nodes = tabBar.node.querySelectorAll('.p-Tab-close');
-        triggerMouseEvent(nodes[0] as HTMLElement, 'click', { button: 1 });
+        let node = nodes[0] as HTMLElement;
+        node.textContent = "X";
+        let rect = node.getBoundingClientRect();
+        let args = {
+          clientX: rect.left + 1,
+          clientY: rect.top + 1,
+          button: 1
+        };
+        triggerMouseEvent(node, 'click', args);
         expect(called).to.be(false);
         Widget.detach(tabBar);
       });
@@ -246,11 +258,16 @@ describe('phosphor-tabs', () => {
         let tabBar = createTabBar();
         tabBar.itemCloseRequested.connect(() => { called = true; });
         Widget.attach(tabBar, document.body);
-        let nodes = tabBar.node.querySelectorAll('.p-Tab-icon');
-        triggerMouseEvent(nodes[0] as HTMLElement, 'click');
+        let nodes = tabBar.node.querySelectorAll('.p-Tab-close');
+        let node = nodes[0] as HTMLElement;
+        node.textContent = "X";
+        let rect = node.getBoundingClientRect();
+        let args = { clientX: rect.left + 100, clientY: rect.top + 1 };
+        triggerMouseEvent(node, 'click', args);
         expect(called).to.be(false);
         Widget.detach(tabBar);
       });
+
     });
 
     describe('#currentItem', () => {
@@ -496,14 +513,15 @@ describe('phosphor-tabs', () => {
 
       });
 
-      it('should be called when a tab is detached', (done) => {
+      it('should be called when a tab is detached leftward', (done) => {
         let tabBar = createTabBar();
         tabBar.tabsMovable = true;
         Widget.attach(tabBar, document.body);
-        let tab = tabBar.contentNode.children[0] as HTMLElement;
+        let tab = tabBar.contentNode.children[1] as HTMLElement;
+        let left = tabBar.contentNode.getBoundingClientRect().left;
         let rect = tab.getBoundingClientRect();
-        let opts1 = { clientY: rect.top };
-        let opts2 = { clientX: -200, clientY: rect.bottom };
+        let opts1 = { clientX: rect.left + 1, clientY: rect.top + 1 };
+        let opts2 = { clientX: left - 200, clientY: rect.top + 1 };
         triggerMouseEvent(tab, 'mousedown', opts1);
         triggerMouseEvent(tab, 'mousemove', opts2);
         expect(tabBar.methods.indexOf('onTearOffRequest')).to.not.be(-1);
@@ -515,15 +533,62 @@ describe('phosphor-tabs', () => {
         }, 500);
       });
 
+      it('should be called when a tab is torn off downward', () => {
+        let tabBar = createTabBar();
+        tabBar.tabsMovable = true;
+        Widget.attach(tabBar, document.body);
+        let tab = tabBar.contentNode.children[0] as HTMLElement;
+        let top = tabBar.contentNode.getBoundingClientRect().top;
+        let rect = tab.getBoundingClientRect();
+        let opts1 = { clientX: rect.left + 1, clientY: rect.top + 1 };
+        let opts2 = { clientX: rect.left + 1, clientY: top - 200 };
+        triggerMouseEvent(tab, 'mousedown', opts1);
+        triggerMouseEvent(tab, 'mousemove', opts2);
+        expect(tabBar.methods.indexOf('onTearOffRequest')).to.not.be(-1);
+        Widget.detach(tabBar);
+      });
+
+      it('should be called when a tab is torn off upward', () => {
+        let tabBar = createTabBar();
+        tabBar.tabsMovable = true;
+        Widget.attach(tabBar, document.body);
+        let tab = tabBar.contentNode.children[0] as HTMLElement;
+        let bottom = tabBar.contentNode.getBoundingClientRect().bottom;
+        let rect = tab.getBoundingClientRect();
+        let opts1 = { clientX: rect.left + 1, clientY: rect.top + 1 };
+        let opts2 = { clientX: rect.left + 1, clientY: bottom + 200 };
+        triggerMouseEvent(tab, 'mousedown', opts1);
+        triggerMouseEvent(tab, 'mousemove', opts2);
+        expect(tabBar.methods.indexOf('onTearOffRequest')).to.not.be(-1);
+        Widget.detach(tabBar);
+      });
+
+      it('should be called when a tab is torn off rightward', () => {
+        let tabBar = createTabBar();
+        tabBar.tabsMovable = true;
+        Widget.attach(tabBar, document.body);
+        let tab = tabBar.contentNode.children[0] as HTMLElement;
+        let right = tabBar.contentNode.getBoundingClientRect().right;
+        let rect = tab.getBoundingClientRect();
+        let opts1 = { clientX: rect.left + 1, clientY: rect.top + 1 };
+        let opts2 = { clientX: right + 200, clientY: rect.top + 1 };
+        triggerMouseEvent(tab, 'mousedown', opts1);
+        triggerMouseEvent(tab, 'mousemove', opts2);
+        expect(tabBar.methods.indexOf('onTearOffRequest')).to.not.be(-1);
+        Widget.detach(tabBar);
+      });
+
       it('should not be called when a tab is not moved far enough', () => {
         let tabBar = createTabBar();
         tabBar.tabsMovable = true;
         Widget.attach(tabBar, document.body);
         let tab = tabBar.contentNode.children[0] as HTMLElement;
         let rect = tab.getBoundingClientRect();
-        let opts1 = { clientY: rect.top };
-        let opts2 = { clientY: rect.top + 1 };
+        let opts1 = { clientX: rect.left + 1, clientY: rect.top + 1 };
+        let opts2 = { clientX: rect.left, clientY: rect.top + 1 };
         triggerMouseEvent(tab, 'mousedown', opts1);
+        // next event should be ignored
+        triggerMouseEvent(tab, 'mousedown', opts2);
         triggerMouseEvent(tab, 'mousemove', opts2);
         expect(tabBar.methods.indexOf('onTearOffRequest')).to.be(-1);
         triggerMouseEvent(tab, 'mouseup', opts2);
@@ -536,8 +601,16 @@ describe('phosphor-tabs', () => {
         Widget.attach(tabBar, document.body);
         let tab = tabBar.contentNode.children[0] as HTMLElement;
         let rect = tab.getBoundingClientRect();
-        let opts1 = { clientY: rect.top, button: 1 };
-        let opts2 = { clientX: -200, clientY: rect.bottom, button: 1 };
+        let opts1 = {
+          clientX: rect.left + 1,
+          clientY: rect.top + 1,
+          button: 1
+        };
+        let opts2 = {
+          clientX: -200,
+          clientY: rect.top + 1,
+          button: 1
+        };
         triggerMouseEvent(tab, 'mousedown', opts1);
         triggerMouseEvent(tab, 'mousemove', opts2);
         expect(tabBar.methods.indexOf('onTearOffRequest')).to.be(-1);
@@ -557,6 +630,23 @@ describe('phosphor-tabs', () => {
         triggerMouseEvent(tab, 'mousemove', opts2);
         expect(tabBar.methods.indexOf('onTearOffRequest')).to.be(-1);
         triggerMouseEvent(tab, 'mouseup', opts2);
+        Widget.detach(tabBar);
+      });
+
+      it('should not be called when a close node is selected', () => {
+        let tabBar = createTabBar();
+        tabBar.tabsMovable = true;
+        Widget.attach(tabBar, document.body);
+        let nodes = tabBar.node.querySelectorAll('.p-Tab-close');
+        let node = nodes[0] as HTMLElement;
+        node.textContent = "X";
+        let rect = node.getBoundingClientRect();
+        let opts1 = { clientX: rect.left + 1, clientY: rect.top + 1 };
+        let opts2 = { clientX: -200, clientY: rect.top + 1 };
+        triggerMouseEvent(node, 'mousedown', opts1);
+        triggerMouseEvent(node, 'mousemove', opts2);
+        expect(tabBar.methods.indexOf('onTearOffRequest')).to.be(-1);
+        triggerMouseEvent(node, 'mouseup', opts2);
         Widget.detach(tabBar);
       });
 
