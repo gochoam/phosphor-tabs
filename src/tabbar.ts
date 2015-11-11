@@ -334,8 +334,6 @@ class TabBar<T extends ITabItem> extends Widget {
    * Get the tab bar content node.
    *
    * #### Notes
-   * This can be used to access the content node.
-   *
    * This is the node which holds the tab nodes. Modifying the content
    * of this node indiscriminately can lead to undesired behavior.
    */
