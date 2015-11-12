@@ -108,3 +108,34 @@ Usage Examples
 
 **Note:** This module is fully compatible with Node/Babel/ES6/ES5. Simply
 omit the type declarations when using a language other than TypeScript.
+
+```typescript
+import {
+  TabPanel
+} from 'phosphor-tabs';
+
+import {
+  Widget
+} from 'phosphor-widget';
+
+
+function main(): void {
+  let one = new Widget();
+  one.title.text = 'One';
+
+  let two = new Widget();
+  two.title.text = 'Two';
+
+  let three = new Widget();
+  three.title.text = 'Three';
+
+  // Note: A `TabBar` can also be used independently of a `TabPanel`.
+  let panel = new TabPanel();
+  panel.tabsMovable = true;
+  panel.widgets.assign([one, two, three]);
+
+  Widget.attach(panel, document.body);
+
+  window.onresize = () => panel.update();
+}
+```
