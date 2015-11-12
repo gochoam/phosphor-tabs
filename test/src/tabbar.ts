@@ -54,27 +54,27 @@ class LogTabBar extends TabBar<Widget> {
     this.events.push(event.type);
   }
 
-  releaseMouse(): void {
+  protected releaseMouse(): void {
     super.releaseMouse();
     this.methods.push('releaseMouse');
   }
 
-  onAfterAttach(msg: Message): void {
+  protected onAfterAttach(msg: Message): void {
     super.onAfterAttach(msg);
     this.methods.push('onAfterAttach');
   }
 
-  onBeforeDetach(msg: Message): void {
+  protected onBeforeDetach(msg: Message): void {
     super.onBeforeDetach(msg);
     this.methods.push('onBeforeDetach');
   }
 
-  onTearOffRequest(msg: TearOffMessage<Widget>): void {
+  protected onTearOffRequest(msg: TearOffMessage<Widget>): void {
     super.onTearOffRequest(msg);
     this.methods.push('onTearOffRequest');
   }
 
-  onUpdateRequest(msg: Message): void {
+  protected onUpdateRequest(msg: Message): void {
     super.onUpdateRequest(msg);
     this.methods.push('onUpdateRequest');
   }
@@ -85,19 +85,18 @@ class TearOffTabBar extends LogTabBar {
 
   tearOffMessages: TearOffMessage<Widget>[] = [];
 
-  onTearOffRequest(msg: TearOffMessage<Widget>): void {
+  protected onTearOffRequest(msg: TearOffMessage<Widget>): void {
     super.onTearOffRequest(msg);
     this.tearOffMessages.push(msg);
     this.releaseMouse();
   }
-
 }
 
 
 function triggerMouseEvent(node: HTMLElement, eventType: string, options: any = {}) {
-   options.bubbles = true;
-   let clickEvent = new MouseEvent(eventType, options);
-   node.dispatchEvent(clickEvent);
+  options.bubbles = true;
+  let clickEvent = new MouseEvent(eventType, options);
+  node.dispatchEvent(clickEvent);
 }
 
 
@@ -122,9 +121,9 @@ function createTabBar(): LogTabBar {
 
 
 function expectListEqual(list0: IObservableList<ITabItem>, list1: IObservableList<ITabItem>): void {
-  expect(list0.length).to.eql(list1.length);
+  expect(list0.length).to.be(list1.length);
   for (let i = 0; i < list0.length; i++) {
-    expect(list0.get(i)).to.eql(list1.get(i));
+    expect(list0.get(i)).to.be(list1.get(i));
   }
 }
 
@@ -160,6 +159,14 @@ describe('phosphor-tabs', () => {
         expect(TabBar.currentItemProperty instanceof Property).to.be(true);
       });
 
+      it('should have the name `currentItem`', () => {
+        expect(TabBar.currentItemProperty.name).to.be('currentItem');
+      });
+
+      it('should have a notify signal', () => {
+        expect(TabBar.currentItemProperty.notify instanceof Signal).to.be(true);
+      });
+
       it('should default to `null`', () => {
         let tab = new TabBar<Widget>();
         expect(TabBar.currentItemProperty.get(tab)).to.be(null);
@@ -171,6 +178,10 @@ describe('phosphor-tabs', () => {
 
       it('should be a property', () => {
         expect(TabBar.itemsProperty instanceof Property).to.be(true);
+      });
+
+      it('should have the name `items`', () => {
+        expect(TabBar.itemsProperty.name).to.be('items');
       });
 
       it('should default to `null`', () => {
@@ -186,6 +197,10 @@ describe('phosphor-tabs', () => {
         expect(TabBar.tabsMovableProperty instanceof Property).to.be(true);
       });
 
+      it('should have the name `tabsMovable`', () => {
+        expect(TabBar.tabsMovableProperty.name).to.be('tabsMovable');
+      });
+
       it('should default to `false`', () => {
         let tab = new TabBar<Widget>();
         expect(TabBar.tabsMovableProperty.get(tab)).to.be(false);
@@ -196,13 +211,13 @@ describe('phosphor-tabs', () => {
     describe('#constructor()', () => {
 
       it('should accept no argumentst', () => {
-       let tabBar = new TabBar();
-       expect(tabBar instanceof TabBar).to.be(true);
+        let tabBar = new TabBar();
+        expect(tabBar instanceof TabBar).to.be(true);
       });
 
       it('should add the `p-TabBar` class', () => {
-       let tabBar = new TabBar();
-       expect(tabBar.hasClass('p-TabBar')).to.be(true);
+        let tabBar = new TabBar();
+        expect(tabBar.hasClass('p-TabBar')).to.be(true);
       });
 
     });
@@ -513,7 +528,7 @@ describe('phosphor-tabs', () => {
 
       });
 
-      it('should be called when a tab is detached leftward', (done) => {
+      it('should be called when a tab is detached leftward', () => {
         let tabBar = createTabBar();
         tabBar.tabsMovable = true;
         Widget.attach(tabBar, document.body);
@@ -526,11 +541,7 @@ describe('phosphor-tabs', () => {
         triggerMouseEvent(tab, 'mousemove', opts2);
         expect(tabBar.methods.indexOf('onTearOffRequest')).to.not.be(-1);
         triggerMouseEvent(tab, 'mouseup', opts2);
-        // wait for the transition to complete
-        setTimeout(() => {
-          Widget.detach(tabBar);
-          done();
-        }, 500);
+        tabBar.dispose();
       });
 
       it('should be called when a tab is torn off downward', () => {
@@ -545,7 +556,7 @@ describe('phosphor-tabs', () => {
         triggerMouseEvent(tab, 'mousedown', opts1);
         triggerMouseEvent(tab, 'mousemove', opts2);
         expect(tabBar.methods.indexOf('onTearOffRequest')).to.not.be(-1);
-        Widget.detach(tabBar);
+        tabBar.dispose();
       });
 
       it('should be called when a tab is torn off upward', () => {
@@ -560,7 +571,7 @@ describe('phosphor-tabs', () => {
         triggerMouseEvent(tab, 'mousedown', opts1);
         triggerMouseEvent(tab, 'mousemove', opts2);
         expect(tabBar.methods.indexOf('onTearOffRequest')).to.not.be(-1);
-        Widget.detach(tabBar);
+        tabBar.dispose();
       });
 
       it('should be called when a tab is torn off rightward', () => {
@@ -575,7 +586,7 @@ describe('phosphor-tabs', () => {
         triggerMouseEvent(tab, 'mousedown', opts1);
         triggerMouseEvent(tab, 'mousemove', opts2);
         expect(tabBar.methods.indexOf('onTearOffRequest')).to.not.be(-1);
-        Widget.detach(tabBar);
+        tabBar.dispose();
       });
 
       it('should not be called when a tab is not moved far enough', () => {
@@ -592,7 +603,7 @@ describe('phosphor-tabs', () => {
         triggerMouseEvent(tab, 'mousemove', opts2);
         expect(tabBar.methods.indexOf('onTearOffRequest')).to.be(-1);
         triggerMouseEvent(tab, 'mouseup', opts2);
-        Widget.detach(tabBar);
+        tabBar.dispose();
       });
 
       it('should not be called when the left button is not used', () => {
@@ -615,7 +626,7 @@ describe('phosphor-tabs', () => {
         triggerMouseEvent(tab, 'mousemove', opts2);
         expect(tabBar.methods.indexOf('onTearOffRequest')).to.be(-1);
         triggerMouseEvent(tab, 'mouseup', opts2);
-        Widget.detach(tabBar);
+        tabBar.dispose();
       });
 
       it('should not be called when tab is not selected', () => {
@@ -630,7 +641,7 @@ describe('phosphor-tabs', () => {
         triggerMouseEvent(tab, 'mousemove', opts2);
         expect(tabBar.methods.indexOf('onTearOffRequest')).to.be(-1);
         triggerMouseEvent(tab, 'mouseup', opts2);
-        Widget.detach(tabBar);
+        tabBar.dispose();
       });
 
       it('should not be called when a close node is selected', () => {
@@ -647,7 +658,7 @@ describe('phosphor-tabs', () => {
         triggerMouseEvent(node, 'mousemove', opts2);
         expect(tabBar.methods.indexOf('onTearOffRequest')).to.be(-1);
         triggerMouseEvent(node, 'mouseup', opts2);
-        Widget.detach(tabBar);
+        tabBar.dispose();
       });
 
     });
@@ -658,6 +669,7 @@ describe('phosphor-tabs', () => {
         let tabBar = new LogTabBar();
         Widget.attach(tabBar, document.body);
         expect(tabBar.methods.indexOf('onAfterAttach')).to.not.be(-1);
+        tabBar.dispose();
       });
 
       context('`msg` parameter', () => {
@@ -666,6 +678,7 @@ describe('phosphor-tabs', () => {
           let tabBar = new LogTabBar();
           Widget.attach(tabBar, document.body);
           expect(tabBar.messages[0]).to.be('after-attach');
+          tabBar.dispose();
         });
 
       });
@@ -680,7 +693,7 @@ describe('phosphor-tabs', () => {
         expect(tabBar.events.indexOf('click')).to.not.be(-1);
         triggerMouseEvent(tabBar.node, 'mousedown');
         expect(tabBar.events.indexOf('mousedown')).to.not.be(-1);
-        Widget.detach(tabBar);
+        tabBar.dispose();
       });
 
     });
@@ -692,6 +705,7 @@ describe('phosphor-tabs', () => {
         Widget.attach(tabBar, document.body);
         Widget.detach(tabBar);
         expect(tabBar.methods.indexOf('onBeforeDetach')).to.not.be(-1);
+        tabBar.dispose();
       });
 
       context('`msg` parameter', () => {
@@ -702,6 +716,7 @@ describe('phosphor-tabs', () => {
           tabBar.messages = [];
           Widget.detach(tabBar);
           expect(tabBar.messages[0]).to.be('before-detach');
+          tabBar.dispose();
         });
 
       });
@@ -716,6 +731,7 @@ describe('phosphor-tabs', () => {
         expect(tabBar.events.indexOf('click')).to.be(-1);
         triggerMouseEvent(tabBar.node, 'mousedown');
         expect(tabBar.events.indexOf('mousedown')).to.be(-1);
+        tabBar.dispose();
       });
 
     });
@@ -754,7 +770,7 @@ describe('phosphor-tabs', () => {
         expect(node1.style.zIndex).to.be('2');
         expect(node0.style.order).to.be('0');
         expect(node1.style.order).to.be('1');
-        Widget.detach(tabBar);
+        tabBar.dispose();
       });
 
     });

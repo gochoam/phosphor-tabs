@@ -14,19 +14,15 @@ import {
 } from 'phosphor-messaging';
 
 import {
-  IChangedArgs, Property
+  IChangedArgs
 } from 'phosphor-properties';
-
-import {
-  Signal
-} from 'phosphor-signaling';
 
 import {
   StackedPanel
 } from 'phosphor-stackedpanel';
 
 import {
-  IChildWidgetList, Widget
+  Widget
 } from 'phosphor-widget';
 
 import {
@@ -35,6 +31,7 @@ import {
 
 
 class LogWidget extends Widget {
+
   messages: string[] = [];
 
   processMessage(msg: Message): void {
@@ -55,12 +52,12 @@ class LogTabPanel extends TabPanel {
     LogTabPanel.messages.push(msg.type);
   }
 
-  onCurrentItemChanged(sender: TabBar<Widget>, args: IChangedArgs<Widget>): void {
+  protected onCurrentItemChanged(sender: TabBar<Widget>, args: IChangedArgs<Widget>): void {
     super.onCurrentItemChanged(sender, args);
     LogTabPanel.methods.push('onCurrentItemChanged');
   }
 
-  onItemCloseRequested(sender: TabBar<Widget>, args: Widget): void {
+  protected onItemCloseRequested(sender: TabBar<Widget>, args: Widget): void {
     super.onItemCloseRequested(sender, args);
     LogTabPanel.methods.push('onItemCloseRequested');
   }
@@ -88,17 +85,17 @@ describe('phosphor-tabs', () => {
     describe('#constructor()', () => {
 
       it('should accept no arguments', () => {
-        var tabPanel = new TabPanel();
+        let tabPanel = new TabPanel();
         expect(tabPanel instanceof TabPanel).to.be(true);
       });
 
       it('should add the `p-TabPanel` class', () => {
-        var tabPanel = new TabPanel();
+        let tabPanel = new TabPanel();
         expect(tabPanel.hasClass('p-TabPanel')).to.be(true);
       });
 
       it('should add a TabBar and a StackPanel', () => {
-        var tabPanel = new TabPanel();
+        let tabPanel = new TabPanel();
         expect(tabPanel.children.get(0) instanceof TabBar).to.be(true);
         expect(tabPanel.children.get(1) instanceof StackedPanel).to.be(true);
       });
