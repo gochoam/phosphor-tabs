@@ -59,13 +59,9 @@
     "url": "https://github.com/phosphorjs/phosphor-tabs.git"
   },
   "files": [
-    "lib/index.css",
-    "lib/index.d.ts",
-    "lib/index.js",
-    "lib/tabbar.d.ts",
-    "lib/tabbar.js",
-    "lib/tabpanel.d.ts",
-    "lib/tabpanel.js"
+    "lib/*.css",
+    "lib/*.d.ts",
+    "lib/*.js"
   ],
   "browserify": {
     "transform": [
