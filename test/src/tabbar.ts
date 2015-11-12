@@ -258,11 +258,11 @@ describe('phosphor-tabs', () => {
         let tabBar = createTabBar();
         tabBar.itemCloseRequested.connect(() => { called = true; });
         Widget.attach(tabBar, document.body);
-        let nodes = tabBar.node.querySelectorAll('.p-Tab-close');
+        let nodes = tabBar.node.querySelectorAll('.p-Tab-text');
         let node = nodes[0] as HTMLElement;
         node.textContent = "X";
         let rect = node.getBoundingClientRect();
-        let args = { clientX: rect.left + 100, clientY: rect.top + 1 };
+        let args = { clientX: rect.left + 1, clientY: rect.top + 1 };
         triggerMouseEvent(node, 'click', args);
         expect(called).to.be(false);
         Widget.detach(tabBar);
