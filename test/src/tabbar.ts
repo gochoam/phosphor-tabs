@@ -54,11 +54,6 @@ class LogTabBar extends TabBar<Widget> {
     this.events.push(event.type);
   }
 
-  protected releaseMouse(): void {
-    super.releaseMouse();
-    this.methods.push('releaseMouse');
-  }
-
   protected onAfterAttach(msg: Message): void {
     super.onAfterAttach(msg);
     this.methods.push('onAfterAttach');
@@ -77,18 +72,6 @@ class LogTabBar extends TabBar<Widget> {
   protected onUpdateRequest(msg: Message): void {
     super.onUpdateRequest(msg);
     this.methods.push('onUpdateRequest');
-  }
-}
-
-
-class TearOffTabBar extends LogTabBar {
-
-  tearOffMessages: TearOffMessage<Widget>[] = [];
-
-  protected onTearOffRequest(msg: TearOffMessage<Widget>): void {
-    super.onTearOffRequest(msg);
-    this.tearOffMessages.push(msg);
-    this.releaseMouse();
   }
 }
 
@@ -246,7 +229,7 @@ describe('phosphor-tabs', () => {
         let args = { clientX: rect.left + 1, clientY: rect.top + 1 };
         triggerMouseEvent(node, 'click', args);
         expect(called).to.be(true);
-        Widget.detach(tabBar);
+        tabBar.dispose();
       });
 
       it('should be not emitted if it is not the left button', () => {
@@ -265,7 +248,7 @@ describe('phosphor-tabs', () => {
         };
         triggerMouseEvent(node, 'click', args);
         expect(called).to.be(false);
-        Widget.detach(tabBar);
+        tabBar.dispose();
       });
 
       it('should be not emitted if the click is not on the close node', () => {
@@ -280,7 +263,7 @@ describe('phosphor-tabs', () => {
         let args = { clientX: rect.left + 1, clientY: rect.top + 1 };
         triggerMouseEvent(node, 'click', args);
         expect(called).to.be(false);
-        Widget.detach(tabBar);
+        tabBar.dispose();
       });
 
     });
@@ -465,7 +448,7 @@ describe('phosphor-tabs', () => {
     describe('#releaseMouse', () => {
 
       it('should stop mouse events and restore tabs', () => {
-        let tabBar = new TearOffTabBar();
+        let tabBar = new LogTabBar();
         tabBar.tabsMovable = true;
         let widgets = [createContent('0'), createContent('1')];
         tabBar.items = new ObservableList<Widget>(widgets);
@@ -474,13 +457,15 @@ describe('phosphor-tabs', () => {
         let rect = tab.getBoundingClientRect();
         let opts1 = { clientY: rect.top };
         let opts2 = { clientX: -200, clientY: rect.bottom };
+        tabBar.events = [];
         triggerMouseEvent(tab, 'mousedown', opts1);
         triggerMouseEvent(tab, 'mousemove', opts2);
-        expect(tabBar.methods.indexOf('releaseMouse')).to.not.be(-1);
+        expect(tabBar.events.indexOf('mousemove')).to.not.be(-1);
+        tabBar.releaseMouse();
         tabBar.events = [];
         triggerMouseEvent(tab, 'mousemove', opts2);
         expect(tabBar.events.indexOf('mousemove')).to.be(-1);
-        Widget.detach(tabBar);
+        tabBar.dispose();
       });
 
     });

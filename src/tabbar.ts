@@ -352,6 +352,20 @@ class TabBar<T extends ITabItem> extends Widget {
   }
 
   /**
+   * Release the mouse and restore the non-dragged tab positions.
+   *
+   * #### Notes
+   * This will cause the tab bar to stop handling mouse events and to
+   * restore the tabs to their non-dragged positions. It is intended
+   * to be called when implementing tear off tabs.
+   *
+   * **See also:** [[onTearOffRequest]]
+   */
+  releaseMouse(): void {
+    this._releaseMouse();
+  }
+
+  /**
    * Handle the DOM events for the tab bar.
    *
    * @param event - The DOM event sent to the tab bar.
@@ -392,18 +406,6 @@ class TabBar<T extends ITabItem> extends Widget {
     } else {
       super.processMessage(msg);
     }
-  }
-
-  /**
-   * Release the mouse and restore the non-dragged tab positions.
-   *
-   * #### Notes
-   * This will cause the tab bar to stop handling mouse events and to
-   * restore the tabs their non-dragged positions. It is intended to
-   * be called by subclasses which implement [[onTearOffRequest]].
-   */
-  protected releaseMouse(): void {
-    this._releaseMouse();
   }
 
   /**
