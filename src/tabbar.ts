@@ -632,7 +632,7 @@ class TabBar<T extends ITabItem> extends Widget {
       return;
     }
 
-    // Mouse move events are never propagated since this handler
+    // Mouse up events are never propagated since this handler
     // is only installed when during a left mouse drag operation.
     event.preventDefault();
     event.stopPropagation();
