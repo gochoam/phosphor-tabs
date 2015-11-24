@@ -64,6 +64,22 @@ class LogTabPanel extends TabPanel {
 }
 
 
+class CustomPanel extends TabPanel {
+
+  static createTabBar(): TabBar<Widget> {
+    let bar = new TabBar<Widget>();
+    bar.id = 'custom-tab-bar';
+    return bar;
+  }
+
+  static createStackedPanel(): StackedPanel {
+    let stack = new StackedPanel();
+    stack.id = 'custom-stacked-panel';
+    return stack;
+  }
+}
+
+
 function createContent(title: string): Widget {
   let widget = new LogWidget();
   widget.title.text = title;
@@ -81,6 +97,48 @@ function createTabPanel(): LogTabPanel {
 describe('phosphor-tabs', () => {
 
   describe('TabPanel', () => {
+
+    describe('.createTabBar()', () => {
+
+      it('should create a TabBar', () => {
+        let bar = TabPanel.createTabBar();
+        expect(bar instanceof TabBar).to.be(true);
+        expect(bar.id).to.be('');
+      });
+
+      it('should be overridable by a subclass', () => {
+        let bar = CustomPanel.createTabBar();
+        expect(bar instanceof TabBar).to.be(true);
+        expect(bar.id).to.be('custom-tab-bar');
+      });
+
+      it('should be called to create the tab bar', () => {
+        let panel = new CustomPanel();
+        expect(panel.tabs.id).to.be('custom-tab-bar');
+      });
+
+    });
+
+    describe('.createStackedPanel()', () => {
+
+      it('should create a StackedPanel', () => {
+        let stack = TabPanel.createStackedPanel();
+        expect(stack instanceof StackedPanel).to.be(true);
+        expect(stack.id).to.be('');
+      });
+
+      it('should be overridable by a subclass', () => {
+        let stack = CustomPanel.createStackedPanel();
+        expect(stack instanceof StackedPanel).to.be(true);
+        expect(stack.id).to.be('custom-stacked-panel');
+      });
+
+      it('should be called to create the stacked panel', () => {
+        let panel = new CustomPanel();
+        expect(panel.stack.id).to.be('custom-stacked-panel');
+      });
+
+    });
 
     describe('#constructor()', () => {
 

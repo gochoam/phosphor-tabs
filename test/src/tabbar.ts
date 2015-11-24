@@ -475,7 +475,8 @@ describe('phosphor-tabs', () => {
       it('should be invoked on a `tearoff-request`', () => {
         let tabBar = createTabBar();
         let widget = tabBar.items.get(0);
-        let msg = new TearOffMessage<Widget>(widget, 0, 0);
+        let node = tabBar.contentNode.childNodes[0] as HTMLElement;
+        let msg = new TearOffMessage<Widget>(widget, node, 0, 0);
         sendMessage(tabBar, msg);
         expect(tabBar.methods[0]).to.be('onTearOffRequest');
       });
@@ -485,7 +486,8 @@ describe('phosphor-tabs', () => {
         it('should have a `type` of `tear-off-request`', () => {
           let tabBar = createTabBar();
           let widget = tabBar.items.get(0);
-          let msg = new TearOffMessage<Widget>(widget, 0, 0);
+          let node = tabBar.contentNode.childNodes[0] as HTMLElement;
+          let msg = new TearOffMessage<Widget>(widget, node, 0, 0);
           sendMessage(tabBar, msg);
           expect(tabBar.messages[0]).to.be('tear-off-request');
         });
@@ -493,21 +495,32 @@ describe('phosphor-tabs', () => {
         it('should have an `item` property', () => {
           let tabBar = createTabBar();
           let widget = tabBar.items.get(0);
-          let msg = new TearOffMessage<Widget>(widget, 0, 0);
+          let node = tabBar.contentNode.childNodes[0] as HTMLElement;
+          let msg = new TearOffMessage<Widget>(widget, node, 0, 0);
           expect(msg.item).to.be(widget);
+        });
+
+        it('should have a `node` property', () => {
+          let tabBar = createTabBar();
+          let widget = tabBar.items.get(0);
+          let node = tabBar.contentNode.childNodes[0] as HTMLElement;
+          let msg = new TearOffMessage<Widget>(widget, node, 0, 0);
+          expect(msg.node).to.be(node);
         });
 
         it('should have a `clientX` property', () => {
           let tabBar = createTabBar();
           let widget = tabBar.items.get(0);
-          let msg = new TearOffMessage<Widget>(widget, 0, 0);
+          let node = tabBar.contentNode.childNodes[0] as HTMLElement;
+          let msg = new TearOffMessage<Widget>(widget, node, 0, 0);
           expect(msg.clientX).to.be(0);
         });
 
         it('should have a `clientY` property', () => {
           let tabBar = createTabBar();
           let widget = tabBar.items.get(0);
-          let msg = new TearOffMessage<Widget>(widget, 0, 0);
+          let node = tabBar.contentNode.childNodes[0] as HTMLElement;
+          let msg = new TearOffMessage<Widget>(widget, node, 0, 0);
           expect(msg.clientY).to.be(0);
         });
 
