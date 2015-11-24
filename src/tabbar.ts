@@ -581,9 +581,10 @@ class TabBar<T extends ITabItem> extends Widget {
 
       // Send the tear-off request message to the tab bar.
       let item = data.tab.item;
+      let node = data.tab.node;
       let clientX = event.clientX;
       let clientY = event.clientY;
-      sendMessage(this, new TearOffMessage(item, clientX, clientY));
+      sendMessage(this, new TearOffMessage(item, node, clientX, clientY));
 
       // Do nothing further if the mouse has been released.
       if (!this._dragData) {
@@ -971,13 +972,16 @@ class TearOffMessage<T extends ITabItem> extends Message {
    *
    * @param item - The tab item being dragged by the user.
    *
+   * @param node - The DOM node for the item tab.
+   *
    * @param clientX - The current client X position of the mouse.
    *
    * @param clientY - The current client Y position of the mouse.
    */
-  constructor(item: T, clientX: number, clientY: number) {
+  constructor(item: T, node: HTMLElement, clientX: number, clientY: number) {
     super('tear-off-request');
     this._item = item;
+    this._node = node;
     this._clientX = clientX;
     this._clientY = clientY;
   }
@@ -990,6 +994,19 @@ class TearOffMessage<T extends ITabItem> extends Message {
    */
   get item(): T {
     return this._item;
+  }
+
+  /**
+   * The DOM node which represents the tab.
+   *
+   * #### Notes
+   * This node *must not* be removed from the DOM, but it can be cloned
+   * for use as a ghost node which follows the cursor during dragging.
+   *
+   * This is a read-only property.
+   */
+  get node(): HTMLElement {
+    return this._node;
   }
 
   /**
@@ -1013,6 +1030,7 @@ class TearOffMessage<T extends ITabItem> extends Message {
   }
 
   private _item: T;
+  private _node: HTMLElement;
   private _clientX: number;
   private _clientY: number;
 }
