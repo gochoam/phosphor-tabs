@@ -43,11 +43,41 @@ const TAB_PANEL_CLASS = 'p-TabPanel';
 export
 class TabPanel extends BoxPanel {
   /**
+   * Create the `TabBar` for the tab panel.
+   *
+   * @returns The tab bar to use with the tab panel.
+   *
+   * #### Notes
+   * This may be reimplemented by a subclass to create a custom
+   * tab bar for use with the tab panel.
+   */
+  static createTabBar(): TabBar<Widget> {
+    return new TabBar<Widget>();
+  }
+
+  /**
+   * Create the `StackedPanel` for the tab panel.
+   *
+   * @returns The stacked panel to use with the tab panel.
+   *
+   * #### Notes
+   * This may be reimplemented by a subclass to create a custom
+   * stacked panel for use with the tab panel.
+   */
+  static createStackedPanel(): StackedPanel {
+    return new StackedPanel();
+  }
+
+  /**
    * Construct a new tab panel.
    */
   constructor() {
     super();
     this.addClass(TAB_PANEL_CLASS);
+
+    let ctor = this.constructor as typeof TabPanel;
+    this._tabs = ctor.createTabBar();
+    this._stack = ctor.createStackedPanel();
 
     this._tabs.items = this._stack.children;
     this._tabs.currentItemChanged.connect(this.onCurrentItemChanged, this);
@@ -181,6 +211,6 @@ class TabPanel extends BoxPanel {
     if (args.title.closable) args.close();
   }
 
-  private _tabs = new TabBar<Widget>();
-  private _stack = new StackedPanel();
+  private _tabs: TabBar<Widget>;
+  private _stack: StackedPanel;
 }
