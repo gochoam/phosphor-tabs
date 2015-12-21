@@ -115,19 +115,14 @@ const TRANSITION_DURATION = 150;  // Keep in sync with CSS.
  * The arguments object for a `tabMoved` signal.
  */
 export
-interface ITabMoveArgs {
+interface ITabMovedArgs {
   /**
-   * The title object which was moved.
-   */
-  title: Title;
-
-  /**
-   * The previous index of the title.
+   * The previous index of the tab.
    */
   fromIndex: number;
 
   /**
-   * The current index of the title.
+   * The current index of the tab.
    */
   toIndex: number;
 }
@@ -205,7 +200,7 @@ class TabBar extends Widget {
   /**
    * A signal emitted when a tab is moved by the user.
    */
-  get tabMoved(): ISignal<TabBar, ITabMoveArgs> {
+  get tabMoved(): ISignal<TabBar, ITabMovedArgs> {
     return TabBarPrivate.tabMovedSignal.bind(this);
   }
 
@@ -641,12 +636,11 @@ class TabBar extends Widget {
     TabBarPrivate.endDrag(this, this._dragData, event, {
       move: (i, j) => {
         let k = j < i ? j : j + 1;
-        let title = this._titles[i];
         let content = this.contentNode;
         let children = content.children;
         arrays.move(this._titles, i, j);
         content.insertBefore(children[i], children[k]);
-        this.tabMoved.emit({ title, fromIndex: i, toIndex: j });
+        this.tabMoved.emit({ fromIndex: i, toIndex: j });
         this.update();
       },
       clear: () => {
@@ -800,7 +794,7 @@ namespace TabBarPrivate {
    * A signal emitted when a tab is moved by the user.
    */
   export
-  const tabMovedSignal = new Signal<TabBar, ITabMoveArgs>();
+  const tabMovedSignal = new Signal<TabBar, ITabMovedArgs>();
 
   /**
    * A signal emitted when the user clicks a tab's close icon.
