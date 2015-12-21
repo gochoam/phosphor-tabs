@@ -35,6 +35,8 @@ import {
 } from 'phosphor-widget';
 
 
+// TODO - need better solution for storing these class names
+
 /**
  * The class name added to TabBar instances.
  */
@@ -603,18 +605,8 @@ class TabBar extends Widget {
 
     // End the drag operation.
     TabBarPrivate.endDrag(this, this._dragData, event, {
-      clear: () => {
-        this._dragData = null;
-      },
-      move: (i, j) => {
-        let k = j < i ? j : j + 1;
-        let content = this.contentNode;
-        let children = content.children;
-        arrays.move(this._titles, i, j);
-        content.insertBefore(children[i], children[k]);
-        this.tabMoved.emit({ fromIndex: i, toIndex: j });
-        this.update();
-      },
+      clear: () => { this._dragData = null; },
+      move: (i, j) => { this._moveTab(i, j); },
     });
   }
 
@@ -635,6 +627,19 @@ class TabBar extends Widget {
     // Abort the drag operation and clear the drag data.
     TabBarPrivate.abortDrag(this, this._dragData);
     this._dragData = null;
+  }
+
+  /**
+   * Move a tab from one index to another.
+   */
+  private _moveTab(i: number, j: number): void {
+    let k = j < i ? j : j + 1;
+    let content = this.contentNode;
+    let children = content.children;
+    arrays.move(this._titles, i, j);
+    content.insertBefore(children[i], children[k]);
+    this.tabMoved.emit({ fromIndex: i, toIndex: j });
+    this.update();
   }
 
   /**
