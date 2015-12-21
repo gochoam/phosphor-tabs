@@ -245,7 +245,7 @@ class TabPanel extends Widget {
    * @returns The widget which owns the title, or `null` if no such
    *   widget is contained within the internal stacked panel.
    */
-  protected findTitleWidget(title: Title): Widget {
+  protected findWidgetByTitle(title: Title): Widget {
     let panel = this._stackedPanel;
     for (let i = 0, n = panel.childCount(); i < n; ++i) {
       let child = panel.childAt(i);
@@ -261,7 +261,7 @@ class TabPanel extends Widget {
    * The default implementation updates the current stack widget.
    */
   protected onCurrentChanged(sender: TabBar, args: IChangedArgs<Title>): void {
-    this._stackedPanel.currentWidget = this.findTitleWidget(args.newValue);
+    this._stackedPanel.currentWidget = this.findWidgetByTitle(args.newValue);
   }
 
   /**
@@ -282,7 +282,7 @@ class TabPanel extends Widget {
    * The default implementation closes the respective widget.
    */
   protected onTabCloseRequested(sender: TabBar, title: Title): void {
-    let widget = this.findTitleWidget(title);
+    let widget = this.findWidgetByTitle(title);
     if (widget) widget.close();
   }
 
