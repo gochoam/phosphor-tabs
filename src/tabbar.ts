@@ -634,6 +634,9 @@ class TabBar extends Widget {
 
     // End the drag operation.
     TabBarPrivate.endDrag(this, this._dragData, event, {
+      clear: () => {
+        this._dragData = null;
+      },
       move: (i, j) => {
         let k = j < i ? j : j + 1;
         let content = this.contentNode;
@@ -642,9 +645,6 @@ class TabBar extends Widget {
         content.insertBefore(children[i], children[k]);
         this.tabMoved.emit({ fromIndex: i, toIndex: j });
         this.update();
-      },
-      clear: () => {
-        this._dragData = null;
       },
     });
   }
@@ -986,14 +986,14 @@ namespace TabBarPrivate {
   export
   interface IEndHandler {
     /**
+     * Clear the the drag data reference.
+     */
+    clear: () => void;
+
+    /**
      * Move a tab from one index to another.
      */
     move: (i: number, j: number) => void;
-
-    /**
-     * Clear the the drag data.
-     */
-    clear: () => void;
   }
 
   /**
