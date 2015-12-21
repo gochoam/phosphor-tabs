@@ -150,11 +150,13 @@ browserify myapp.js -o mybundle.js
   <span class="hljs-comment">// Note: A `TabBar` can also be used independently of a `TabPanel`.</span>
   <span class="hljs-keyword">let</span> panel = <span class="hljs-keyword">new</span> TabPanel();
   panel.tabsMovable = <span class="hljs-literal">true</span>;
-  panel.widgets.assign([one, two, three]);
+  panel.addChild(one);
+  panel.addChild(two);
+  panel.addChild(three);
 
-  Widget.attach(panel, <span class="hljs-built_in">document</span>.body);
+  panel.attach(<span class="hljs-built_in">document</span>.body);
 
-  <span class="hljs-built_in">window</span>.onresize = () =&gt; panel.update();
+  <span class="hljs-built_in">window</span>.onresize = () =&gt; { panel.update(); };
 }
 </code></pre>
 			</div>
