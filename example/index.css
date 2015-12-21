@@ -43,7 +43,7 @@ body {
 }
 
 
-.p-Tab {
+.p-TabBar-tab {
   flex-basis: 125px;
   max-height: 21px;
   margin-left: -1px;
@@ -55,26 +55,26 @@ body {
 }
 
 
-.p-Tab.p-mod-first {
+.p-TabBar-tab:first-child {
   margin-left: 0;
 }
 
 
-.p-Tab.p-mod-current {
+.p-TabBar-tab.p-mod-current {
   min-height: 24px;
   background: white;
   transform: translateY(1px);
 }
 
 
-.p-Tab:hover:not(.p-mod-current) {
+.p-TabBar-tab:hover:not(.p-mod-current) {
   background: #F0F0F0;
 }
 
 
-.p-Tab-icon,
-.p-Tab-text,
-.p-Tab-close {
+.p-TabBar-tab-icon,
+.p-TabBar-tab-text,
+.p-TabBar-tab-close {
   line-height: 21px;
 }
 
@@ -109,4 +109,15 @@ body {
 
 .blue {
   background: #3498DB;
+}
+
+
+.p-TabBar-tab.p-mod-closable > .p-TabBar-tab-close {
+  margin-left: 4px;
+}
+
+
+.p-TabBar-tab.p-mod-closable > .p-TabBar-tab-close:before {
+  content: '\f00d';
+  font-family: FontAwesome;
 }

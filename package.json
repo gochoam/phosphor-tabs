@@ -6,16 +6,16 @@
   "typings": "lib/index.d.ts",
   "dependencies": {
     "phosphor-arrays": "^1.0.6",
-    "phosphor-boxpanel": "^1.0.0-beta",
+    "phosphor-boxpanel": "^1.0.0-beta.3",
     "phosphor-disposable": "^1.0.5",
-    "phosphor-domutil": "^1.0.1",
-    "phosphor-messaging": "^1.0.5",
+    "phosphor-domutil": "^1.2.0",
+    "phosphor-messaging": "^1.0.6",
     "phosphor-nodewrapper": "^1.0.4",
     "phosphor-observablelist": "^1.0.0-beta",
     "phosphor-properties": "^2.0.0",
-    "phosphor-signaling": "^1.1.2",
-    "phosphor-stackedpanel": "^1.0.0-beta.1",
-    "phosphor-widget": "^1.0.0-beta.1"
+    "phosphor-signaling": "^1.2.0",
+    "phosphor-stackedpanel": "^1.0.0-beta.5",
+    "phosphor-widget": "^1.0.0-beta.6"
   },
   "devDependencies": {
     "browserify": "^11.0.1",
