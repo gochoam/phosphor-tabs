@@ -44,7 +44,7 @@ function main(): void {
 
   panel.attach(document.body);
 
-  window.onresize = () => panel.update();
+  window.onresize = () => { panel.update(); };
 }
 
 

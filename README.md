@@ -132,10 +132,12 @@ function main(): void {
   // Note: A `TabBar` can also be used independently of a `TabPanel`.
   let panel = new TabPanel();
   panel.tabsMovable = true;
-  panel.widgets.assign([one, two, three]);
+  panel.addChild(one);
+  panel.addChild(two);
+  panel.addChild(three);
 
-  Widget.attach(panel, document.body);
+  panel.attach(document.body);
 
-  window.onresize = () => panel.update();
+  window.onresize = () => { panel.update(); };
 }
 ```

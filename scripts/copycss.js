@@ -1,3 +1,3 @@
-var cp = require('glob-copy');
-cp.sync('src/*.css', 'lib');
-cp.sync('test/src/*.css', 'test/build');
+var fs = require('fs-extra');
+fs.copySync('src/', 'lib/', { filter: /\.css$/ });
+fs.copySync('test/src/', 'test/build/', { filter: /\.css$/ });
