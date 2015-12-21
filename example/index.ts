@@ -8,7 +8,7 @@
 'use-strict';
 
 import {
-  Widget, Title
+  Widget
 } from 'phosphor-widget';
 
 import {
