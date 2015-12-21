@@ -115,7 +115,7 @@ const TRANSITION_DURATION = 150;  // Keep in sync with CSS.
  * The arguments object for a `tabDetachRequested` signal.
  */
 export
-interface IDetachArgs {
+interface ITabDetachArgs {
   /**
    * The title being dragged by the user.
    */
@@ -190,7 +190,7 @@ class TabBar extends Widget {
   /**
    * A signal emitted when a tab is dragged beyond the detach threshold.
    */
-  get tabDetachRequested(): ISignal<TabBar, IDetachArgs> {
+  get tabDetachRequested(): ISignal<TabBar, ITabDetachArgs> {
     return TabBarPrivate.tabDetachRequestedSignal.bind(this);
   }
 
@@ -775,7 +775,7 @@ namespace TabBarPrivate {
    * A signal emitted when a tab is dragged beyond the detach threshold.
    */
   export
-  const tabDetachRequestedSignal = new Signal<TabBar, IDetachArgs>();
+  const tabDetachRequestedSignal = new Signal<TabBar, ITabDetachArgs>();
 
   /**
    * The property descriptor for the currently selected title.
