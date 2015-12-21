@@ -8,7 +8,7 @@
 'use strict';
 
 import {
-  BoxPanel
+  BoxLayout
 } from 'phosphor-boxpanel';
 
 import {
@@ -20,13 +20,15 @@ import {
 } from 'phosphor-stackedpanel';
 
 import {
-  IChildWidgetList, Widget
+  Title, Widget
 } from 'phosphor-widget';
 
 import {
-  TabBar
+  ITabDetachArgs, ITabMovedArgs, TabBar
 } from './tabbar';
 
+
+// TODO - need better solution for storing these class names
 
 /**
  * The class name added to TabPanel instances.
@@ -35,34 +37,37 @@ const TAB_PANEL_CLASS = 'p-TabPanel';
 
 
 /**
- * A panel which combines a `TabBar` and a `StackedPanel`.
+ * A widget which combines a `TabBar` and a `StackedPanel`.
  *
  * #### Notes
- * Children for this panel should be added to the [[widgets]] list.
+ * This is a simple panel which handles the common case of a tab bar
+ * placed above a content area. The selected tab controls the widget
+ * which is shown in the content area.
+ *
+ * For use cases which require more control than is provided by this
+ * panel, the `TabBar` widget may be used independently.
  */
 export
-class TabPanel extends BoxPanel {
+class TabPanel extends Widget {
   /**
-   * Create the `TabBar` for the tab panel.
+   * Create a `TabBar` for a tab panel.
    *
-   * @returns The tab bar to use with the tab panel.
+   * @returns The tab bar to use with a new tab panel.
    *
    * #### Notes
-   * This may be reimplemented by a subclass to create a custom
-   * tab bar for use with the tab panel.
+   * This may be reimplemented by a subclass as needed.
    */
-  static createTabBar(): TabBar<Widget> {
-    return new TabBar<Widget>();
+  static createTabBar(): TabBar {
+    return new TabBar();
   }
 
   /**
-   * Create the `StackedPanel` for the tab panel.
+   * Create a `StackedPanel` for a tab panel.
    *
-   * @returns The stacked panel to use with the tab panel.
+   * @returns The stacked panel to use with a new tab panel.
    *
    * #### Notes
-   * This may be reimplemented by a subclass to create a custom
-   * stacked panel for use with the tab panel.
+   * This may be reimplemented by a subclass as needed.
    */
   static createStackedPanel(): StackedPanel {
     return new StackedPanel();
@@ -75,142 +80,222 @@ class TabPanel extends BoxPanel {
     super();
     this.addClass(TAB_PANEL_CLASS);
 
-    let ctor = this.constructor as typeof TabPanel;
-    this._tabs = ctor.createTabBar();
-    this._stack = ctor.createStackedPanel();
+    let type = this.constructor as typeof TabPanel;
+    this._tabBar = type.createTabBar();
+    this._stackedPanel = type.createStackedPanel();
 
-    this._tabs.items = this._stack.children;
-    this._tabs.currentItemChanged.connect(this.onCurrentItemChanged, this);
-    this._tabs.itemCloseRequested.connect(this.onItemCloseRequested, this);
+    this._tabBar.tabMoved.connect(this.onTabMoved, this);
+    this._tabBar.currentChanged.connect(this.onCurrentChanged, this);
+    this._tabBar.tabCloseRequested.connect(this.onTabCloseRequested, this);
+    this._stackedPanel.widgetRemoved.connect(this.onWidgetRemoved, this);
 
-    BoxPanel.setStretch(this._tabs, 0);
-    BoxPanel.setStretch(this._stack, 1);
+    BoxLayout.setStretch(this._tabBar, 0);
+    BoxLayout.setStretch(this._stackedPanel, 1);
 
-    this.direction = BoxPanel.TopToBottom;
-    this.spacing = 0;
+    let layout = new BoxLayout();
+    layout.direction = BoxLayout.TopToBottom;
+    layout.spacing = 0;
 
-    this.children.add(this._tabs);
-    this.children.add(this._stack);
+    layout.addChild(this._tabBar);
+    layout.addChild(this._stackedPanel);
+
+    this.layout = layout;
   }
 
   /**
    * Dispose of the resources held by the widget.
    */
   dispose(): void {
-    this._tabs = null;
-    this._stack = null;
+    this._tabBar = null;
+    this._stackedPanel = null;
     super.dispose();
   }
 
   /**
    * Get the currently selected widget.
-   *
-   * #### Notes
-   * This is a convenience alias to the `currentItem` property of the
-   * tab bar.
    */
   get currentWidget(): Widget {
-    return this._tabs.currentItem;
+    return this._stackedPanel.currentWidget;
   }
 
   /**
    * Set the currently selected widget.
-   *
-   * #### Notes
-   * This is a convenience alias to the `currentItem` property of the
-   * tab bar.
    */
   set currentWidget(widget: Widget) {
-    this._tabs.currentItem = widget;
+    this._tabBar.currentTitle = widget && widget.title;
   }
 
   /**
    * Get whether the tabs are movable by the user.
-   *
-   * #### Notes
-   * This is a convenience alias to the `tabsMovable` property of the
-   * tab bar.
    */
   get tabsMovable(): boolean {
-    return this._tabs.tabsMovable;
+    return this._tabBar.tabsMovable;
   }
 
   /**
    * Set whether the tabs are movable by the user.
-   *
-   * #### Notes
-   * This is a convenience alias to the `tabsMovable` property of the
-   * tab bar.
    */
   set tabsMovable(movable: boolean) {
-    this._tabs.tabsMovable = movable;
-  }
-
-  /**
-   * Get the observable list of widgets for the tab panel.
-   *
-   * #### Notes
-   * Widgets to arrange in the tab panel should be added to this list.
-   *
-   * This is a read-only alias of the `children` property of the
-   * stacked panel.
-   */
-  get widgets(): IChildWidgetList {
-    return this._stack.children;
+    this._tabBar.tabsMovable = movable;
   }
 
   /**
    * Get the tab bar associated with the tab panel.
    *
    * #### Notes
-   * The items in the tab bar are automatically synchronized with the
-   * children of the stacked panel.
+   * Modifying the tab bar titles can lead to undefined behavior.
    *
    * This is a read-only property.
    */
-  get tabs(): TabBar<Widget> {
-    return this._tabs;
+  get tabBar(): TabBar {
+    return this._tabBar;
   }
 
   /**
    * Get the stacked panel associated with the tab panel.
    *
    * #### Notes
-   * The children of the stacked panel are automatically synchronized
-   * with the items in the tab bar.
+   * Modifying the panel children can lead to undefined behavior.
    *
    * This is a read-only property.
    */
-  get stack(): StackedPanel {
-    return this._stack;
+  get stackedPanel(): StackedPanel {
+    return this._stackedPanel;
   }
 
   /**
-   * Handle the `currentItemChanged` signal from the tab bar.
+   * Get the number of child widgets in the tab panel.
+   *
+   * @returns The number of child widgets in the tab panel.
    *
    * #### Notes
-   * This can be reimplemented by subclasses as needed.
-   *
-   * The default implementation of this method synchronizes the current
-   * tab item with current widget of the stacked panel.
+   * This delegates to `childCount` of the internal stacked panel.
    */
-  protected onCurrentItemChanged(sender: TabBar<Widget>, args: IChangedArgs<Widget>): void {
-    this._stack.currentWidget = args.newValue;
+  childCount(): number {
+    return this._stackedPanel.childCount();
   }
 
   /**
-   * Handle the `itemCloseRequested` signal from the tab bar.
+   * Get the child widget at the specified index.
+   *
+   * @param index - The index of the child widget of interest.
+   *
+   * @returns The child at the specified index, or `undefined`.
    *
    * #### Notes
-   * This can be reimplemented by subclasses as needed.
-   *
-   * The default implementation of this method closes the widget if the
-   * widget's title object has its `closable` flag set to `true`.
+   * This delegates to `childAt` of the internal stacked panel.
    */
-  protected onItemCloseRequested(sender: TabBar<Widget>, args: Widget): void {
-    if (args.title.closable) args.close();
+  childAt(index: number): Widget {
+    return this._stackedPanel.childAt(index);
   }
 
-  private _tabs: TabBar<Widget>;
-  private _stack: StackedPanel;
+  /**
+   * Get the index of the specified child widget.
+   *
+   * @param child - The child widget of interest.
+   *
+   * @returns The index of the specified child, or `-1`.
+   *
+   * #### Notes
+   * This delegates to `childIndex` of the internal stacked panel.
+   */
+  childIndex(child: Widget): number {
+    return this._stackedPanel.childIndex(child);
+  }
+
+  /**
+   * Add a child widget to the end of the tab panel.
+   *
+   * @param child - The child widget to add to the tab panel.
+   *
+   * #### Notes
+   * If the child is already contained in the panel, it will be moved.
+   *
+   * This adds the widget's title object to the internal tab bar, and
+   * adds the widget itself to the internal stacked panel.
+   */
+  addChild(child: Widget): void {
+    this._stackedPanel.addChild(child);
+    this._tabBar.addTitle(child.title);
+  }
+
+  /**
+   * Insert a child widget at the specified index.
+   *
+   * @param index - The index at which to insert the child.
+   *
+   * @param child - The child widget to insert into to the tab panel.
+   *
+   * #### Notes
+   * If the child is already contained in the panel, it will be moved.
+   *
+   * This adds the widget's title object to the internal tab bar, and
+   * adds the widget itself to the internal stacked panel.
+   */
+  insertChild(index: number, child: Widget): void {
+    this._stackedPanel.insertChild(index, child);
+    this._tabBar.insertTitle(index, child.title);
+  }
+
+  /**
+   * Find the widget which owns the given title.
+   *
+   * @param title - The title object of interest.
+   *
+   * @returns The widget which owns the title, or `null` if no such
+   *   widget is contained within the internal stacked panel.
+   */
+  protected findTitleWidget(title: Title): Widget {
+    let panel = this._stackedPanel;
+    for (let i = 0, n = panel.childCount(); i < n; ++i) {
+      let child = panel.childAt(i);
+      if (child.title === title) return child;
+    }
+    return null;
+  }
+
+  /**
+   * Handle the `currentChanged` signal from the tab bar.
+   *
+   * #### Notes
+   * The default implementation updates the current stack widget.
+   */
+  protected onCurrentChanged(sender: TabBar, args: IChangedArgs<Title>): void {
+    this._stackedPanel.currentWidget = this.findTitleWidget(args.newValue);
+  }
+
+  /**
+   * Handle the `tabMoved` signal from the tab bar.
+   *
+   * #### Notes
+   * The default implementation moves the widget in the stack.
+   */
+  protected onTabMoved(sender: TabBar, args: ITabMovedArgs): void {
+    let child = this._stackedPanel.childAt(args.fromIndex);
+    this._stackedPanel.insertChild(args.toIndex, child);
+  }
+
+  /**
+   * Handle the `tabCloseRequested` signal from the tab bar.
+   *
+   * #### Notes
+   * The default implementation closes the respective widget.
+   */
+  protected onTabCloseRequested(sender: TabBar, title: Title): void {
+    let widget = this.findTitleWidget(title);
+    if (widget) widget.close();
+  }
+
+  /**
+   * Handle the `widgetRemoved` signal from the stacked panel.
+   *
+   * #### Notes
+   * The default implementation removes the title from the tab bar.
+   */
+  protected onWidgetRemoved(sender: StackedPanel, widget: Widget): void {
+    this._tabBar.removeTitle(widget.title);
+  }
+
+  private _tabBar: TabBar;
+  private _stackedPanel: StackedPanel;
 }
