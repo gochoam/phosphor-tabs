@@ -723,14 +723,14 @@ class DragData {
   dragActive = false;
 
   /**
+   * Whether the drag has been aborted.
+   */
+  dragAborted = false;
+
+  /**
    * Whether a detach request as been made.
    */
   detachRequested = false;
-
-  /**
-   * The timeout id for ending a drag.
-   */
-  timerID = -1;
 }
 
 
@@ -986,7 +986,12 @@ namespace TabBarPrivate {
     data.tab.classList.remove(DRAGGING_CLASS);
 
     // Complete the release on a timer to allow the tab to transition.
-    data.timerID = setTimeout(() => {
+    setTimeout(() => {
+      // Do nothing if the drag has been aborted.
+      if (data.dragAborted) {
+        return;
+      }
+
       // Clear the drag data reference.
       handler.clear();
 
@@ -1011,10 +1016,9 @@ namespace TabBarPrivate {
    */
   export
   function abortDrag(owner: TabBar, data: DragData): void {
-    // Clear the end timer if one exists.
-    if (data.timerID !== -1) {
-      clearTimeout(data.timerID);
-    }
+    // Indicate the drag has been aborted, which allows the drag
+    // end handler and detach request emitter to return early.
+    data.dragAborted = true;
 
     // If the drag is not active, there's nothing more to do.
     if (!data.dragActive) {
