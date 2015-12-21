@@ -608,23 +608,20 @@ class TabBar extends Widget {
     document.removeEventListener('mousemove', this, true);
     document.removeEventListener('contextmenu', this, true);
 
-    // Setup the tab move handler.
-    let move = (i: number, j: number) => {
-      let k = j < i ? j : j + 1;
-      let content = this.contentNode;
-      let children = content.children;
-      arrays.move(this._titles, i, j);
-      content.insertBefore(children[i], children[k]);
-      this.update();
-    };
-
-    // Setup the drag clear handler.
-    let clear = () => {
-      this._dragData = null;
-    };
-
     // End the drag operation.
-    TabBarPrivate.endDrag(this, this._dragData, event, move, clear);
+    TabBarPrivate.endDrag(this, this._dragData, event, {
+      move: (i, j) => {
+        let k = j < i ? j : j + 1;
+        let content = this.contentNode;
+        let children = content.children;
+        arrays.move(this._titles, i, j);
+        content.insertBefore(children[i], children[k]);
+        this.update();
+      },
+      clear: () => {
+        this._dragData = null;
+      },
+    });
   }
 
   /**
@@ -940,16 +937,20 @@ namespace TabBarPrivate {
   }
 
   /**
-   * A type alias for a clear callback.
+   * A handler object for drag end callbacks.
    */
   export
-  type ClearFunc = () => void;
+  interface IEndHandler {
+    /**
+     * Move a tab from one index to another.
+     */
+    move: (i: number, j: number) => void;
 
-  /**
-   * A type alias for a move callback.
-   */
-  export
-  type MoveFunc = (i: number, j: number) => void;
+    /**
+     * Clear the the drag data.
+     */
+    clear: () => void;
+  }
 
   /**
    * End the drag operation for a tab bar.
@@ -957,10 +958,10 @@ namespace TabBarPrivate {
    * This should be called on a `'mouseup'` event.
    */
   export
-  function endDrag(owner: TabBar, data: DragData, event: MouseEvent, move: MoveFunc, clear: ClearFunc): void {
+  function endDrag(owner: TabBar, data: DragData, event: MouseEvent, handler: IEndHandler): void {
     // Bail early if the drag is not active.
     if (!data.dragActive) {
-      clear();
+      handler.clear();
       return;
     }
 
@@ -987,7 +988,7 @@ namespace TabBarPrivate {
     // Complete the release on a timer to allow the tab to transition.
     data.timerID = setTimeout(() => {
       // Clear the drag data reference.
-      clear();
+      handler.clear();
 
       // Reset the positions of the tabs.
       resetTabPositions(owner);
@@ -998,7 +999,7 @@ namespace TabBarPrivate {
 
       // Finally, move the tab to its new location.
       if (data.targetIndex !== -1 && data.tabIndex !== data.targetIndex) {
-        move(data.tabIndex, data.targetIndex);
+        handler.move(data.tabIndex, data.targetIndex);
       }
     }, TRANSITION_DURATION);
   }
