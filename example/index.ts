@@ -8,7 +8,7 @@
 'use-strict';
 
 import {
-  Widget
+  Widget, Title
 } from 'phosphor-widget';
 
 import {
@@ -23,6 +23,7 @@ function createContent(title: string): Widget {
   widget.addClass('content');
   widget.addClass(title.toLowerCase());
   widget.title.text = title;
+  widget.title.closable = true;
   return widget;
 }
 
@@ -36,9 +37,12 @@ function main(): void {
   let panel = new TabPanel();
   panel.id = 'main';
   panel.tabsMovable = true;
-  panel.widgets.assign([red, yellow, blue, green]);
+  panel.addChild(red);
+  panel.addChild(yellow);
+  panel.addChild(blue);
+  panel.addChild(green);
 
-  Widget.attach(panel, document.body);
+  panel.attach(document.body);
 
   window.onresize = () => panel.update();
 }
