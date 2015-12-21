@@ -378,38 +378,6 @@ class TabBar extends Widget {
   }
 
   /**
-   * Remove the title object at the specified index.
-   *
-   * @param index - The index of the title of interest.
-   *
-   * #### Notes
-   * If the index is out of range, this is a no-op.
-   */
-  removeTitleAt(index: number): void {
-    // Release the mouse before making changes.
-    this._releaseMouse();
-
-    // Do nothing if the index is out of range.
-    let i = index | 0;
-    if (i < 0 || i >= this._titles.length) {
-      return;
-    }
-
-    // Remove the title at the index and disconnect the handler.
-    let title = arrays.removeAt(this._titles, i);
-    title.changed.disconnect(this._onTitleChanged, this);
-
-    // Selected the next best tab if removing the current tab.
-    if (this.currentTitle === title) {
-      this.currentTitle = this._titles[i] || this._titles[i - 1];
-    }
-
-    // Flip the dirty flag and schedule a full update.
-    this._dirty = true;
-    this.update();
-  }
-
-  /**
    * Remove a title object from the tab bar.
    *
    * @param title - The title object to remove from the tab bar.
@@ -418,20 +386,21 @@ class TabBar extends Widget {
    * If the title is not in the tab bar, this is a no-op.
    */
   removeTitle(title: Title): void {
-    this.removeTitleAt(this.titleIndex(title));
-  }
-
-  /**
-   * Remove all title objects from the tab bar.
-   */
-  clearTitles(): void {
     // Release the mouse before making changes.
     this._releaseMouse();
 
-    // Remove and disconnect all titles.
-    while (this._titles.length > 0) {
-      let title = this._titles.pop();
-      title.changed.disconnect(this._onTitleChanged, this);
+    // Remove the specified title, or bail if it doesn't exist.
+    let i = arrays.remove(this._titles, title);
+    if (i === -1) {
+      return;
+    }
+
+    // Disconnect the title changed handler.
+    title.changed.disconnect(this._onTitleChanged, this);
+
+    // Selected the next best tab if removing the current tab.
+    if (this.currentTitle === title) {
+      this.currentTitle = this._titles[i] || this._titles[i - 1];
     }
 
     // Flip the dirty flag and schedule a full update.
