@@ -445,6 +445,9 @@ class TabBar extends Widget {
     case 'mouseup':
       this._evtMouseUp(event as MouseEvent);
       break;
+    case 'keydown':
+      this._evtKeyDown(event as KeyboardEvent);
+      break;
     case 'contextmenu':
       event.preventDefault();
       event.stopPropagation();
@@ -479,6 +482,18 @@ class TabBar extends Widget {
     } else {
       TabBarPrivate.updateZOrder(this);
     }
+  }
+
+  /**
+   * Handle the `'keydown'` event for the tab bar.
+   */
+  private _evtKeyDown(event: KeyboardEvent): void {
+    // Stop all input events during drag.
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Release the mouse if `Escape` is pressed.
+    if (event.keyCode === 27) this._releaseMouse();
   }
 
   /**
@@ -556,6 +571,7 @@ class TabBar extends Widget {
       this._dragData = TabBarPrivate.initDrag(i, event);
       document.addEventListener('mousemove', this, true);
       document.addEventListener('mouseup', this, true);
+      document.addEventListener('keydown', this, true);
       document.addEventListener('contextmenu', this, true);
     }
 
@@ -599,8 +615,9 @@ class TabBar extends Widget {
     event.stopPropagation();
 
     // Remove the extra mouse event listeners.
-    document.removeEventListener('mouseup', this, true);
     document.removeEventListener('mousemove', this, true);
+    document.removeEventListener('mouseup', this, true);
+    document.removeEventListener('keydown', this, true);
     document.removeEventListener('contextmenu', this, true);
 
     // End the drag operation.
@@ -620,8 +637,9 @@ class TabBar extends Widget {
     }
 
     // Remove the extra mouse listeners.
-    document.removeEventListener('mouseup', this, true);
     document.removeEventListener('mousemove', this, true);
+    document.removeEventListener('mouseup', this, true);
+    document.removeEventListener('keydown', this, true);
     document.removeEventListener('contextmenu', this, true);
 
     // Abort the drag operation and clear the drag data.
