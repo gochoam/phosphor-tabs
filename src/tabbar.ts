@@ -904,6 +904,19 @@ namespace TabBarPrivate {
       data.dragActive = true;
     }
 
+    // Emit the detach request signal if the threshold is exceeded.
+    if (!data.detachRequested && detachExceeded(data.contentRect, event)) {
+      let node = data.tab;
+      let clientX = event.clientX;
+      let clientY = event.clientY;
+      let title = owner.titleAt(data.tabIndex);
+      owner.tabDetachRequested.emit({ title, node, clientX, clientY });
+      data.detachRequested = true;
+      if (data.dragAborted) {
+        return;
+      }
+    }
+
     // Compute the target bounds of the drag tab.
     let offsetLeft = event.clientX - data.contentRect.left;
     let targetLeft = offsetLeft - data.tabPressX;
