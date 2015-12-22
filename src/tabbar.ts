@@ -842,7 +842,6 @@ namespace TabBarPrivate {
     let count = owner.titleCount();
     let content = owner.contentNode;
     let children = content.children;
-    let current = owner.currentTitle;
     while (children.length > count) {
       content.removeChild(content.lastChild);
     }
