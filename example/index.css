@@ -79,7 +79,7 @@ body {
 }
 
 
-.p-TabPanel > .p-StackedPanel {
+.p-TabPanel-stackedPanel {
   padding: 10px;
   background: white;
   border: 1px solid #C0C0C0;
