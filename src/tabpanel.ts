@@ -24,11 +24,9 @@ import {
 } from 'phosphor-widget';
 
 import {
-  ITabDetachArgs, ITabMovedArgs, TabBar
+  ITabMovedArgs, TabBar
 } from './tabbar';
 
-
-// TODO - need better solution for storing these class names
 
 /**
  * The class name added to TabPanel instances.
@@ -115,7 +113,7 @@ class TabPanel extends Widget {
    * Get the currently selected widget.
    */
   get currentWidget(): Widget {
-    return this._stackedPanel.currentWidget;
+    return this.findWidgetByTitle(this._tabBar.currentTitle);
   }
 
   /**
@@ -215,8 +213,7 @@ class TabPanel extends Widget {
    * adds the widget itself to the internal stacked panel.
    */
   addChild(child: Widget): void {
-    this._stackedPanel.addChild(child);
-    this._tabBar.addTitle(child.title);
+    this.insertChild(this.childCount(), child);
   }
 
   /**
@@ -233,6 +230,10 @@ class TabPanel extends Widget {
    * adds the widget itself to the internal stacked panel.
    */
   insertChild(index: number, child: Widget): void {
+    if (child.parent !== this._stackedPanel) {
+      child.parent = null;
+      child.hide();
+    }
     this._stackedPanel.insertChild(index, child);
     this._tabBar.insertTitle(index, child.title);
   }
@@ -242,8 +243,8 @@ class TabPanel extends Widget {
    *
    * @param title - The title object of interest.
    *
-   * @returns The widget which owns the title, or `null` if no such
-   *   widget is contained within the internal stacked panel.
+   * @returns The widget which owns the title, or `null` if no
+   *   such widget is found within the internal stacked panel.
    */
   protected findWidgetByTitle(title: Title): Widget {
     let panel = this._stackedPanel;
@@ -258,10 +259,13 @@ class TabPanel extends Widget {
    * Handle the `currentChanged` signal from the tab bar.
    *
    * #### Notes
-   * The default implementation updates the current stack widget.
+   * The default implementation updates the visible child widget.
    */
   protected onCurrentChanged(sender: TabBar, args: IChangedArgs<Title>): void {
-    this._stackedPanel.currentWidget = this.findWidgetByTitle(args.newValue);
+    let oldWidget = this.findWidgetByTitle(args.oldValue);
+    let newWidget = this.findWidgetByTitle(args.newValue);
+    if (oldWidget) oldWidget.hide();
+    if (newWidget) newWidget.show();
   }
 
   /**

@@ -114,6 +114,18 @@ const TRANSITION_DURATION = 150;  // Keep in sync with CSS.
 
 
 /**
+ *
+ */
+export
+interface ITabItem {
+  /**
+   *
+   */
+  title: Title;
+}
+
+
+/**
  * The arguments object for a `tabMoved` signal.
  */
 export
@@ -136,9 +148,9 @@ interface ITabMovedArgs {
 export
 interface ITabDetachArgs {
   /**
-   * The title being dragged by the user.
+   * The item being dragged by the user.
    */
-  title: Title;
+  item: ITabItem;
 
   /**
    * The DOM node for the tab being dragged.
