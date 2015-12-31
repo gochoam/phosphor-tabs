@@ -112,14 +112,31 @@ const TRANSITION_DURATION = 150;  // Keep in sync with CSS.
 
 
 /**
- *
+ * An object which can be added to a tab bar.
  */
 export
 interface ITabItem {
   /**
-   *
+   * The title object which supplies the data for the tab.
    */
   title: Title;
+}
+
+
+/**
+ * The arguments object for various tab bar signals.
+ */
+export
+interface ITabIndexArgs {
+  /**
+   * The index of the tab.
+   */
+  index: number;
+
+  /**
+   * The tab item for the tab.
+   */
+  item: ITabItem;
 }
 
 
@@ -137,6 +154,11 @@ interface ITabMovedArgs {
    * The current index of the tab.
    */
   toIndex: number;
+
+  /**
+   * The tab item for the tab.
+   */
+  item: ITabItem;
 }
 
 
@@ -146,7 +168,12 @@ interface ITabMovedArgs {
 export
 interface ITabDetachArgs {
   /**
-   * The item being dragged by the user.
+   * The index of the tab being dragged.
+   */
+  index: number;
+
+  /**
+   * The tab item for the tab being dragged.
    */
   item: ITabItem;
 
@@ -168,7 +195,7 @@ interface ITabDetachArgs {
 
 
 /**
- * A widget which displays titles as a row of selectable tabs.
+ * A widget which displays tab items as a row of tabs.
  */
 export
 class TabBar extends Widget {
@@ -206,7 +233,15 @@ class TabBar extends Widget {
   dispose(): void {
     this._releaseMouse();
     this._items.length = 0;
+    this._current = null;
     super.dispose();
+  }
+
+  /**
+   * A signal emitted when the current tab is changed.
+   */
+  get currentChanged(): ISignal<TabBar, ITabIndexArgs> {
+    return TabBarPrivate.currentChangedSignal.bind(this);
   }
 
   /**
@@ -219,7 +254,7 @@ class TabBar extends Widget {
   /**
    * A signal emitted when the user clicks a tab's close icon.
    */
-  get tabCloseRequested(): ISignal<TabBar, ITabItem> {
+  get tabCloseRequested(): ISignal<TabBar, ITabIndexArgs> {
     return TabBarPrivate.tabCloseRequestedSignal.bind(this);
   }
 
@@ -231,24 +266,28 @@ class TabBar extends Widget {
   }
 
   /**
-   * A signal emitted when the current title is changed.
-   */
-  get currentChanged(): ISignal<TabBar, IChangedArgs<ITabItem>> {
-    return TabBarPrivate.currentChangedSignal.bind(this);
-  }
-
-  /**
    * Get the currently selected tab item.
    */
   get currentItem(): ITabItem {
-    return TabBarPrivate.currentItemProperty.get(this);
+    return this._current;
   }
 
   /**
    * Set the currently selected tab item.
    */
   set currentItem(value: ITabItem) {
-    TabBarPrivate.currentItemProperty.set(this, value);
+    let item = value || null;
+    if (this._current === item) {
+      return;
+    }
+    let index = this._items.indexOf(item);
+    if (item && index === -1) {
+      console.warn('Tab item not contained in tab bar.');
+      return;
+    }
+    this._current = item;
+    this.currentChanged.emit({ index, item });
+    this.update();
   }
 
   /**
@@ -479,9 +518,9 @@ class TabBar extends Widget {
    * A message handler invoked on a `'before-detach'` message.
    */
   protected onBeforeDetach(msg: Message): void {
-    this._releaseMouse();
     this.node.removeEventListener('click', this);
     this.node.removeEventListener('mousedown', this);
+    this._releaseMouse();
   }
 
   /**
@@ -523,8 +562,8 @@ class TabBar extends Widget {
     }
 
     // Do nothing if the click is not on a tab.
-    let i = TabBarPrivate.hitTestTabs(this, event.clientX, event.clientY);
-    if (i < 0) {
+    let index = TabBarPrivate.hitTestTabs(this, event.clientX, event.clientY);
+    if (index < 0) {
       return;
     }
 
@@ -533,19 +572,19 @@ class TabBar extends Widget {
     event.stopPropagation();
 
     // Ignore the click if the title is not closable.
-    let item = this._items[i];
+    let item = this._items[index];
     if (!item.title.closable) {
       return;
     }
 
     // Ignore the click if the close icon wasn't clicked.
-    let icon = TabBarPrivate.closeIconNode(this, i);
+    let icon = TabBarPrivate.closeIconNode(this, index);
     if (!icon.contains(event.target as HTMLElement)) {
       return;
     }
 
     // Emit the tab close requested signal.
-    this.tabCloseRequested.emit(item);
+    this.tabCloseRequested.emit({ index, item });
   }
 
   /**
@@ -563,8 +602,8 @@ class TabBar extends Widget {
     }
 
     // Do nothing if the press is not on a tab.
-    let i = TabBarPrivate.hitTestTabs(this, event.clientX, event.clientY);
-    if (i < 0) {
+    let index = TabBarPrivate.hitTestTabs(this, event.clientX, event.clientY);
+    if (index < 0) {
       return;
     }
 
@@ -573,14 +612,14 @@ class TabBar extends Widget {
     event.stopPropagation();
 
     // Ignore the press if it was on a close icon.
-    let icon = TabBarPrivate.closeIconNode(this, i);
+    let icon = TabBarPrivate.closeIconNode(this, index);
     if (icon.contains(event.target as HTMLElement)) {
       return;
     }
 
     // Setup the drag data if the tabs are movable.
     if (this._tabsMovable) {
-      this._dragData = TabBarPrivate.initDrag(i, event);
+      this._dragData = TabBarPrivate.initDrag(index, event);
       document.addEventListener('mousemove', this, true);
       document.addEventListener('mouseup', this, true);
       document.addEventListener('keydown', this, true);
@@ -588,7 +627,7 @@ class TabBar extends Widget {
     }
 
     // Update the current item.
-    this.currentItem = this._items[i];
+    this.currentItem = this._items[index];
   }
 
   /**
@@ -668,7 +707,7 @@ class TabBar extends Widget {
     let children = content.children;
     arrays.move(this._items, i, j);
     content.insertBefore(children[i], children[k]);
-    this.tabMoved.emit({ fromIndex: i, toIndex: j });
+    this.tabMoved.emit({ fromIndex: i, toIndex: j, item: this._items[j] });
     this.update();
   }
 
@@ -683,6 +722,7 @@ class TabBar extends Widget {
   private _dirty = false;
   private _tabsMovable = false;
   private _items: ITabItem[] = [];
+  private _current: ITabItem = null;
   private _dragData: DragData = null;
 }
 
@@ -792,7 +832,7 @@ namespace TabBarPrivate {
    * A signal emitted when the current title is changed.
    */
   export
-  const currentChangedSignal = new Signal<TabBar, IChangedArgs<ITabItem>>();
+  const currentChangedSignal = new Signal<TabBar, ITabIndexArgs>();
 
   /**
    * A signal emitted when a tab is moved by the user.
@@ -804,25 +844,13 @@ namespace TabBarPrivate {
    * A signal emitted when the user clicks a tab's close icon.
    */
   export
-  const tabCloseRequestedSignal = new Signal<TabBar, ITabItem>();
+  const tabCloseRequestedSignal = new Signal<TabBar, ITabIndexArgs>();
 
   /**
    * A signal emitted when a tab is dragged beyond the detach threshold.
    */
   export
   const tabDetachRequestedSignal = new Signal<TabBar, ITabDetachArgs>();
-
-  /**
-   * The property descriptor for the currently selected title.
-   */
-  export
-  const currentItemProperty = new Property<TabBar, ITabItem>({
-    name: 'currentItem',
-    value: null,
-    coerce: coerceCurrentItem,
-    changed: onCurrentItemChanged,
-    notify: currentChangedSignal,
-  });
 
   /**
    * Get the close icon node for the tab at the specified index.
@@ -941,10 +969,11 @@ namespace TabBarPrivate {
     // Emit the detach request signal if the threshold is exceeded.
     if (!data.detachRequested && detachExceeded(data.contentRect, event)) {
       let node = data.tab;
+      let index = data.tabIndex;
       let clientX = event.clientX;
       let clientY = event.clientY;
-      let item = owner.itemAt(data.tabIndex);
-      owner.tabDetachRequested.emit({ item, node, clientX, clientY });
+      let item = owner.itemAt(index);
+      owner.tabDetachRequested.emit({ item, index, node, clientX, clientY });
       data.detachRequested = true;
       if (data.dragAborted) {
         return;
@@ -1079,20 +1108,6 @@ namespace TabBarPrivate {
     data.cursorGrab.dispose();
     data.tab.classList.remove(DRAGGING_CLASS);
     owner.removeClass(DRAGGING_CLASS);
-  }
-
-  /**
-   * The coerce handler for the `currentItem` property.
-   */
-  function coerceCurrentItem(owner: TabBar, value: ITabItem): ITabItem {
-    return (value && owner.itemIndex(value) !== -1) ? value : null;
-  }
-
-  /**
-   * The change handler for the `currentItem` property.
-   */
-  function onCurrentItemChanged(owner: TabBar): void {
-    owner.update();
   }
 
   /**
