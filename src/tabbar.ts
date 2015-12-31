@@ -35,8 +35,6 @@ import {
 } from 'phosphor-widget';
 
 
-// TODO - need better solution for storing these class names
-
 /**
  * The class name added to TabBar instances.
  */
@@ -207,7 +205,7 @@ class TabBar extends Widget {
    */
   dispose(): void {
     this._releaseMouse();
-    this._titles.length = 0;
+    this._items.length = 0;
     super.dispose();
   }
 
@@ -221,7 +219,7 @@ class TabBar extends Widget {
   /**
    * A signal emitted when the user clicks a tab's close icon.
    */
-  get tabCloseRequested(): ISignal<TabBar, Title> {
+  get tabCloseRequested(): ISignal<TabBar, ITabItem> {
     return TabBarPrivate.tabCloseRequestedSignal.bind(this);
   }
 
@@ -235,22 +233,22 @@ class TabBar extends Widget {
   /**
    * A signal emitted when the current title is changed.
    */
-  get currentChanged(): ISignal<TabBar, IChangedArgs<Title>> {
+  get currentChanged(): ISignal<TabBar, IChangedArgs<ITabItem>> {
     return TabBarPrivate.currentChangedSignal.bind(this);
   }
 
   /**
-   * Get the currently selected title.
+   * Get the currently selected tab item.
    */
-  get currentTitle(): Title {
-    return TabBarPrivate.currentTitleProperty.get(this);
+  get currentItem(): ITabItem {
+    return TabBarPrivate.currentItemProperty.get(this);
   }
 
   /**
-   * Set the currently selected title.
+   * Set the currently selected tab item.
    */
-  set currentTitle(value: Title) {
-    TabBarPrivate.currentTitleProperty.set(this, value);
+  set currentItem(value: ITabItem) {
+    TabBarPrivate.currentItemProperty.set(this, value);
   }
 
   /**
@@ -316,74 +314,75 @@ class TabBar extends Widget {
   }
 
   /**
-   * Get the number of title objects in the tab bar.
+   * Get the number of tab items in the tab bar.
    *
-   * @returns The number of title objects in the tab bar.
+   * @returns The number of tab items in the tab bar.
    */
-  titleCount(): number {
-    return this._titles.length;
+  itemCount(): number {
+    return this._items.length;
   }
 
   /**
-   * Get the title object at the specified index.
+   * Get the tab item at the specified index.
    *
-   * @param index - The index of the title object of interest.
+   * @param index - The index of the tab item of interest.
    *
-   * @returns The title at the specified index, or `undefined`.
+   * @returns The tab item at the specified index, or `undefined`.
    */
-  titleAt(index: number): Title {
-    return this._titles[index];
+  itemAt(index: number): ITabItem {
+    return this._items[index];
   }
 
   /**
-   * Get the index of the specified title object.
+   * Get the index of the specified tab item.
    *
-   * @param title - The title object of interest.
+   * @param item - The tab item of interest.
    *
-   * @returns The index of the specified title, or `-1`.
+   * @returns The index of the specified item, or `-1`.
    */
-  titleIndex(title: Title): number {
-    return this._titles.indexOf(title);
+  itemIndex(item: ITabItem): number {
+    return this._items.indexOf(item);
   }
 
   /**
-   * Add a title object to the end of the tab bar.
+   * Add a tab item to the end of the tab bar.
    *
-   * @param title - The title object to add to the tab bar.
+   * @param item - The tab item to add to the tab bar.
    *
    * #### Notes
-   * If the title is already added to the tab bar, it will be moved.
+   * If the item is already added to the tab bar, it will be moved.
    */
-  addTitle(title: Title): void {
-    this.insertTitle(this.titleCount(), title);
+  addItem(item: ITabItem): void {
+    this.insertItem(this.itemCount(), item);
   }
 
   /**
-   * Insert a title object at the specified index.
+   * Insert a tab item at the specified index.
    *
-   * @param index - The index at which to insert the title.
+   * @param index - The index at which to insert the item.
    *
-   * @param title - The title object to insert into to the tab bar.
+   * @param item - The tab item to insert into to the tab bar.
    *
    * #### Notes
-   * If the title is already added to the tab bar, it will be moved.
+   * If the item is already added to the tab bar, it will be moved.
    */
-  insertTitle(index: number, title: Title): void {
+  insertItem(index: number, item: ITabItem): void {
     // Release the mouse before making changes.
     this._releaseMouse();
 
-    // Insert the new title or move an existing title.
-    let n = this.titleCount();
-    let i = this.titleIndex(title);
+    // Insert the new item or move an existing item.
+    let n = this._items.length;
+    let i = this._items.indexOf(item);
     let j = Math.max(0, Math.min(index | 0, n));
     if (i !== -1) {
       if (j === n) j--;
       if (i === j) return;
-      arrays.move(this._titles, i, j);
+      arrays.move(this._items, i, j);
     } else {
-      arrays.insert(this._titles, j, title);
-      title.changed.connect(this._onTitleChanged, this);
-      if (!this.currentTitle) this.currentTitle = title;
+      arrays.insert(this._items, j, item);
+      // XXX
+      item.title.changed.connect(this._onTitleChanged, this);
+      if (!this.currentItem) this.currentItem = item;
     }
 
     // Flip the dirty flag and schedule a full update.
@@ -392,29 +391,30 @@ class TabBar extends Widget {
   }
 
   /**
-   * Remove a title object from the tab bar.
+   * Remove a tab item from the tab bar.
    *
-   * @param title - The title object to remove from the tab bar.
+   * @param item - The tab item to remove from the tab bar.
    *
    * #### Notes
-   * If the title is not in the tab bar, this is a no-op.
+   * If the item is not in the tab bar, this is a no-op.
    */
-  removeTitle(title: Title): void {
+  removeItem(item: ITabItem): void {
     // Release the mouse before making changes.
     this._releaseMouse();
 
-    // Remove the specified title, or bail if it doesn't exist.
-    let i = arrays.remove(this._titles, title);
+    // Remove the specified item, or bail if it doesn't exist.
+    let i = arrays.remove(this._items, item);
     if (i === -1) {
       return;
     }
 
     // Disconnect the title changed handler.
-    title.changed.disconnect(this._onTitleChanged, this);
+    // XXX
+    item.title.changed.disconnect(this._onTitleChanged, this);
 
     // Selected the next best tab if removing the current tab.
-    if (this.currentTitle === title) {
-      this.currentTitle = this._titles[i] || this._titles[i - 1];
+    if (this.currentItem === item) {
+      this.currentItem = this._items[i] || this._items[i - 1];
     }
 
     // Flip the dirty flag and schedule a full update.
@@ -533,8 +533,8 @@ class TabBar extends Widget {
     event.stopPropagation();
 
     // Ignore the click if the title is not closable.
-    let title = this._titles[i];
-    if (!title.closable) {
+    let item = this._items[i];
+    if (!item.title.closable) {
       return;
     }
 
@@ -545,7 +545,7 @@ class TabBar extends Widget {
     }
 
     // Emit the tab close requested signal.
-    this.tabCloseRequested.emit(title);
+    this.tabCloseRequested.emit(item);
   }
 
   /**
@@ -587,8 +587,8 @@ class TabBar extends Widget {
       document.addEventListener('contextmenu', this, true);
     }
 
-    // Update the current title.
-    this.currentTitle = this._titles[i];
+    // Update the current item.
+    this.currentItem = this._items[i];
   }
 
   /**
@@ -666,7 +666,7 @@ class TabBar extends Widget {
     let k = j < i ? j : j + 1;
     let content = this.contentNode;
     let children = content.children;
-    arrays.move(this._titles, i, j);
+    arrays.move(this._items, i, j);
     content.insertBefore(children[i], children[k]);
     this.tabMoved.emit({ fromIndex: i, toIndex: j });
     this.update();
@@ -682,7 +682,7 @@ class TabBar extends Widget {
 
   private _dirty = false;
   private _tabsMovable = false;
-  private _titles: Title[] = [];
+  private _items: ITabItem[] = [];
   private _dragData: DragData = null;
 }
 
@@ -792,7 +792,7 @@ namespace TabBarPrivate {
    * A signal emitted when the current title is changed.
    */
   export
-  const currentChangedSignal = new Signal<TabBar, IChangedArgs<Title>>();
+  const currentChangedSignal = new Signal<TabBar, IChangedArgs<ITabItem>>();
 
   /**
    * A signal emitted when a tab is moved by the user.
@@ -804,7 +804,7 @@ namespace TabBarPrivate {
    * A signal emitted when the user clicks a tab's close icon.
    */
   export
-  const tabCloseRequestedSignal = new Signal<TabBar, Title>();
+  const tabCloseRequestedSignal = new Signal<TabBar, ITabItem>();
 
   /**
    * A signal emitted when a tab is dragged beyond the detach threshold.
@@ -816,11 +816,11 @@ namespace TabBarPrivate {
    * The property descriptor for the currently selected title.
    */
   export
-  const currentTitleProperty = new Property<TabBar, Title>({
-    name: 'currentTitle',
+  const currentItemProperty = new Property<TabBar, ITabItem>({
+    name: 'currentItem',
     value: null,
-    coerce: coerceCurrentTitle,
-    changed: onCurrentTitleChanged,
+    coerce: coerceCurrentItem,
+    changed: onCurrentItemChanged,
     notify: currentChangedSignal,
   });
 
@@ -851,7 +851,7 @@ namespace TabBarPrivate {
    */
   export
   function updateTabs(owner: TabBar) {
-    let count = owner.titleCount();
+    let count = owner.itemCount();
     let content = owner.contentNode;
     let children = content.children;
     while (children.length > count) {
@@ -862,7 +862,7 @@ namespace TabBarPrivate {
     }
     for (let i = 0; i < count; ++i) {
       let node = children[i] as HTMLElement;
-      updateTabNode(node, owner.titleAt(i));
+      updateTabNode(node, owner.itemAt(i));
     }
     updateZOrder(owner);
   }
@@ -875,13 +875,13 @@ namespace TabBarPrivate {
    */
   export
   function updateZOrder(owner: TabBar) {
-    let count = owner.titleCount();
+    let count = owner.itemCount();
     let content = owner.contentNode;
     let children = content.children;
-    let current = owner.currentTitle;
+    let current = owner.currentItem;
     for (let i = 0; i < count; ++i) {
       let node = children[i] as HTMLElement;
-      if (owner.titleAt(i) === current) {
+      if (owner.itemAt(i) === current) {
         node.classList.add(CURRENT_CLASS);
         node.style.zIndex = count + '';
       } else {
@@ -943,8 +943,8 @@ namespace TabBarPrivate {
       let node = data.tab;
       let clientX = event.clientX;
       let clientY = event.clientY;
-      let title = owner.titleAt(data.tabIndex);
-      owner.tabDetachRequested.emit({ title, node, clientX, clientY });
+      let item = owner.itemAt(data.tabIndex);
+      owner.tabDetachRequested.emit({ item, node, clientX, clientY });
       data.detachRequested = true;
       if (data.dragAborted) {
         return;
@@ -1082,16 +1082,16 @@ namespace TabBarPrivate {
   }
 
   /**
-   * The coerce handler for the `currentTitle` property.
+   * The coerce handler for the `currentItem` property.
    */
-  function coerceCurrentTitle(owner: TabBar, value: Title): Title {
-    return (value && owner.titleIndex(value) !== -1) ? value : null;
+  function coerceCurrentItem(owner: TabBar, value: ITabItem): ITabItem {
+    return (value && owner.itemIndex(value) !== -1) ? value : null;
   }
 
   /**
-   * The change handler for the `currentTitle` property.
+   * The change handler for the `currentItem` property.
    */
-  function onCurrentTitleChanged(owner: TabBar): void {
+  function onCurrentItemChanged(owner: TabBar): void {
     owner.update();
   }
 
@@ -1112,9 +1112,10 @@ namespace TabBarPrivate {
   }
 
   /**
-   * Update a tab node to reflect the state of a title.
+   * Update a tab node to reflect the state of a tab item.
    */
-  function updateTabNode(node: HTMLElement, title: Title): void {
+  function updateTabNode(node: HTMLElement, item: ITabItem): void {
+    let title = item.title;
     let icon = node.firstChild as HTMLElement;
     let text = icon.nextSibling as HTMLElement;
     let suffix = title.closable ? ' ' + CLOSABLE_CLASS : '';
