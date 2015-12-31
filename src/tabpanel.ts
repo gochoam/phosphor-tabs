@@ -12,10 +12,6 @@ import {
 } from 'phosphor-boxpanel';
 
 import {
-  IChangedArgs
-} from 'phosphor-properties';
-
-import {
   StackedPanel
 } from 'phosphor-stackedpanel';
 
@@ -24,7 +20,7 @@ import {
 } from 'phosphor-widget';
 
 import {
-  ITabItem, ITabMovedArgs, TabBar
+  ITabIndexArgs, ITabMovedArgs, TabBar
 } from './tabbar';
 
 
@@ -66,7 +62,9 @@ class TabPanel extends Widget {
    * This may be reimplemented by subclasses for custom tab bars.
    */
   static createTabBar(): TabBar {
-    return new TabBar();
+    let tabBar = new TabBar();
+    tabBar.addClass(TAB_BAR_CLASS);
+    return tabBar;
   }
 
   /**
@@ -78,7 +76,9 @@ class TabPanel extends Widget {
    * This may be reimplemented by subclasses for custom stacks.
    */
   static createStackedPanel(): StackedPanel {
-    return new StackedPanel();
+    let stackedPanel = new StackedPanel();
+    stackedPanel.addClass(STACKED_PANEL_CLASS);
+    return stackedPanel;
   }
 
   /**
@@ -92,13 +92,10 @@ class TabPanel extends Widget {
     this._tabBar = type.createTabBar();
     this._stackedPanel = type.createStackedPanel();
 
-    this._tabBar.addClass(TAB_BAR_CLASS);
-    this._stackedPanel.addClass(STACKED_PANEL_CLASS);
-
-    this._tabBar.tabMoved.connect(this.onTabMoved, this);
-    this._tabBar.currentChanged.connect(this.onCurrentChanged, this);
-    this._tabBar.tabCloseRequested.connect(this.onTabCloseRequested, this);
-    this._stackedPanel.widgetRemoved.connect(this.onWidgetRemoved, this);
+    this._tabBar.tabMoved.connect(this._onTabMoved, this);
+    this._tabBar.currentChanged.connect(this._onCurrentChanged, this);
+    this._tabBar.tabCloseRequested.connect(this._onTabCloseRequested, this);
+    this._stackedPanel.widgetRemoved.connect(this._onWidgetRemoved, this);
 
     let layout = new BoxLayout();
     layout.direction = BoxLayout.TopToBottom;
@@ -119,6 +116,7 @@ class TabPanel extends Widget {
   dispose(): void {
     this._tabBar = null;
     this._stackedPanel = null;
+    this._currentWidget = null;
     super.dispose();
   }
 
@@ -132,8 +130,8 @@ class TabPanel extends Widget {
   /**
    * Set the currently selected widget.
    */
-  set currentWidget(widget: Widget) {
-    this._tabBar.currentItem = widget;
+  set currentWidget(value: Widget) {
+    this._tabBar.currentItem = value;
   }
 
   /**
@@ -146,8 +144,8 @@ class TabPanel extends Widget {
   /**
    * Set whether the tabs are movable by the user.
    */
-  set tabsMovable(movable: boolean) {
-    this._tabBar.tabsMovable = movable;
+  set tabsMovable(value: boolean) {
+    this._tabBar.tabsMovable = value;
   }
 
   /**
@@ -237,55 +235,46 @@ class TabPanel extends Widget {
    * If the child is already contained in the panel, it will be moved.
    */
   insertChild(index: number, child: Widget): void {
-    if (child.parent !== this._stackedPanel) child.hide();
+    if (child !== this._currentWidget) child.hide();
     this._stackedPanel.insertChild(index, child);
     this._tabBar.insertItem(index, child);
   }
 
   /**
    * Handle the `currentChanged` signal from the tab bar.
-   *
-   * #### Notes
-   * The default implementation updates the visible child widget.
    */
-  protected onCurrentChanged(sender: TabBar, args: IChangedArgs<ITabItem>): void {
-    let oldWidget = args.oldValue as Widget;
-    let newWidget = args.newValue as Widget;
+  private _onCurrentChanged(sender: TabBar, args: ITabIndexArgs): void {
+    let oldWidget = this._currentWidget;
+    let newWidget = args.item as Widget;
+    if (oldWidget === newWidget) return;
+    this._currentWidget = newWidget;
     if (oldWidget) oldWidget.hide();
     if (newWidget) newWidget.show();
   }
 
   /**
-   * Handle the `tabMoved` signal from the tab bar.
-   *
-   * #### Notes
-   * The default implementation moves the child widget in the stack.
+   * Handle the `tabCloseRequested` signal from the tab bar.
    */
-  protected onTabMoved(sender: TabBar, args: ITabMovedArgs): void {
-    let child = this._stackedPanel.childAt(args.fromIndex);
-    this._stackedPanel.insertChild(args.toIndex, child);
+  private _onTabCloseRequested(sender: TabBar, args: ITabIndexArgs): void {
+    (args.item as Widget).close();
   }
 
   /**
-   * Handle the `tabCloseRequested` signal from the tab bar.
-   *
-   * #### Notes
-   * The default implementation invokes the widget's `close` method.
+   * Handle the `tabMoved` signal from the tab bar.
    */
-  protected onTabCloseRequested(sender: TabBar, item: ITabItem): void {
-    (item as Widget).close();
+  private _onTabMoved(sender: TabBar, args: ITabMovedArgs): void {
+    this._stackedPanel.insertChild(args.toIndex, args.item as Widget);
   }
 
   /**
    * Handle the `widgetRemoved` signal from the stacked panel.
-   *
-   * #### Notes
-   * The default implementation removes the widget from the tab bar.
    */
-  protected onWidgetRemoved(sender: StackedPanel, widget: Widget): void {
+  private _onWidgetRemoved(sender: StackedPanel, widget: Widget): void {
+    if (this._currentWidget === widget) this._currentWidget = null;
     this._tabBar.removeItem(widget);
   }
 
   private _tabBar: TabBar;
   private _stackedPanel: StackedPanel;
+  private _currentWidget: Widget = null;
 }
