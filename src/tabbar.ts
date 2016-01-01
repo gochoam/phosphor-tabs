@@ -251,6 +251,11 @@ class TabBar extends Widget {
   }
 
   /**
+   * The static type of the constructor.
+   */
+  "constructor": typeof TabBar;
+
+  /**
    * Construct a new tab bar.
    */
   constructor() {
@@ -428,8 +433,7 @@ class TabBar extends Widget {
       arrays.move(this._items, i, j);
       this.contentNode.insertBefore(this._tabs[j], this._tabs[j + 1]);
     } else {
-      let subtype = this.constructor as typeof TabBar;
-      let tab = subtype.createTab(item.title);
+      let tab = this.constructor.createTab(item.title);
       arrays.insert(this._tabs, j, tab);
       arrays.insert(this._items, j, item);
       this.contentNode.insertBefore(tab, this._tabs[j + 1]);
@@ -545,12 +549,12 @@ class TabBar extends Widget {
     let items = this._items;
     let dirty = this._dirtySet;
     let current = this._currentItem;
-    let subtype = this.constructor as typeof TabBar;
+    let constructor = this.constructor;
     for (let i = 0, n = tabs.length; i < n; ++i) {
       let tab = tabs[i];
       let item = items[i];
       if (dirty.has(item.title)) {
-        subtype.updateTab(tab, item.title);
+        constructor.updateTab(tab, item.title);
       }
       if (item === current) {
         tab.classList.add(CURRENT_CLASS);
@@ -608,8 +612,7 @@ class TabBar extends Widget {
     }
 
     // Ignore the click if it was not on a close icon.
-    let subtype = this.constructor as typeof TabBar;
-    let icon = subtype.tabCloseIcon(this._tabs[i]);
+    let icon = this.constructor.tabCloseIcon(this._tabs[i]);
     if (!icon.contains(event.target as HTMLElement)) {
       return;
     }
@@ -645,8 +648,7 @@ class TabBar extends Widget {
     event.stopPropagation();
 
     // Ignore the press if it was on a close icon.
-    let subtype = this.constructor as typeof TabBar;
-    let icon = subtype.tabCloseIcon(this._tabs[i]);
+    let icon = this.constructor.tabCloseIcon(this._tabs[i]);
     if (icon.contains(event.target as HTMLElement)) {
       return;
     }

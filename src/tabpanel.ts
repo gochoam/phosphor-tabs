@@ -82,15 +82,19 @@ class TabPanel extends Widget {
   }
 
   /**
+   * The static type of the constructor.
+   */
+  "constructor": typeof TabPanel;
+
+  /**
    * Construct a new tab panel.
    */
   constructor() {
     super();
     this.addClass(TAB_PANEL_CLASS);
 
-    let subtype = this.constructor as typeof TabPanel;
-    this._tabBar = subtype.createTabBar();
-    this._stackedPanel = subtype.createStackedPanel();
+    this._tabBar = this.constructor.createTabBar();
+    this._stackedPanel = this.constructor.createStackedPanel();
 
     this._tabBar.tabMoved.connect(this._onTabMoved, this);
     this._tabBar.currentChanged.connect(this._onCurrentChanged, this);
