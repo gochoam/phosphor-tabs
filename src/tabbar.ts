@@ -41,27 +41,17 @@ import {
 const TAB_BAR_CLASS = 'p-TabBar';
 
 /**
- * The class name added to the tab bar header node.
- */
-const HEADER_CLASS = 'p-TabBar-header';
-
-/**
- * The class name added to the tab bar body node.
+ * The class name added to a tab bar body node.
  */
 const BODY_CLASS = 'p-TabBar-body';
 
 /**
- * The class name added to the tab bar content node.
+ * The class name added to a tab bar content node.
  */
 const CONTENT_CLASS = 'p-TabBar-content';
 
 /**
- * The class name added to the tab bar footer node.
- */
-const FOOTER_CLASS = 'p-TabBar-footer';
-
-/**
- * The class name added to a tab.
+ * The class name added to a tab bar tab.
  */
 const TAB_CLASS = 'p-TabBar-tab';
 
@@ -166,22 +156,7 @@ interface ITabMovedArgs {
  * The arguments object for a `tabDetachRequested` signal.
  */
 export
-interface ITabDetachArgs {
-  /**
-   * The index of the tab being dragged.
-   */
-  index: number;
-
-  /**
-   * The tab item for the tab being dragged.
-   */
-  item: ITabItem;
-
-  /**
-   * The DOM node for the tab being dragged.
-   */
-  node: HTMLElement;
-
+interface ITabDetachArgs extends ITabIndexArgs {
   /**
    * The current client X position of the mouse.
    */
@@ -204,19 +179,75 @@ class TabBar extends Widget {
    */
   static createNode(): HTMLElement {
     let node = document.createElement('div');
-    let header = document.createElement('div');
     let body = document.createElement('div');
     let content = document.createElement('ul');
-    let footer = document.createElement('div');
-    header.className = HEADER_CLASS;
     body.className = BODY_CLASS;
     content.className = CONTENT_CLASS;
-    footer.className = FOOTER_CLASS;
     body.appendChild(content);
-    node.appendChild(header);
     node.appendChild(body);
-    node.appendChild(footer);
     return node;
+  }
+
+  /**
+   * Create and initialize a tab node for a tab bar.
+   *
+   * @param title - The title to use for the initial tab data.
+   *
+   * @returns A new DOM node to use as a tab in a tab bar.
+   *
+   * #### Notes
+   * It is not necessary to subscribe to the `changed` signal of the
+   * title. The tab bar subscribes to that signal and will call the
+   * [[updateTab]] static method automatically as needed.
+   *
+   * This method may be reimplemented to create custom tabs.
+   */
+  static createTab(title: Title): HTMLElement {
+    let node = document.createElement('li');
+    let icon = document.createElement('span');
+    let text = document.createElement('span');
+    let close = document.createElement('span');
+    node.className = TAB_CLASS;
+    icon.className = ICON_CLASS;
+    text.className = TEXT_CLASS;
+    close.className = CLOSE_CLASS;
+    node.appendChild(icon);
+    node.appendChild(text);
+    node.appendChild(close);
+    this.updateTab(node, title);
+    return node;
+  }
+
+  /**
+   * Update a tab node to reflect the current state of a title.
+   *
+   * @param tab - A tab node created by a call to [[createTab]].
+   *
+   * @param title - The title object to use for the tab state.
+   *
+   * #### Notes
+   * This is called automatically when the title state changes in
+   * order to update the state of the tab.
+   *
+   * If the [[createTab]] method is reimplemented, this method should
+   * also be reimplemented so that the tab state is properly updated.
+   */
+  static updateTab(tab: HTMLElement, title: Title): void {
+    let tabSuffix = title.closable ? ' ' + CLOSABLE_CLASS : '';
+    let tabInfix = title.className ? ' ' + title.className : '';
+    let iconSuffix = title.icon ? ' ' + title.icon : '';
+    let icon = tab.firstChild as HTMLElement;
+    let text = icon.nextSibling as HTMLElement;
+    tab.className = TAB_CLASS + tabInfix + tabSuffix;
+    icon.className = ICON_CLASS + iconSuffix;
+    text.textContent = title.text;
+  }
+
+  /**
+   *
+   */
+  static tabCloseIcon(tab: HTMLElement): HTMLElement {
+    return tab.lastChild as HTMLElement;
   }
 
   /**
@@ -232,8 +263,10 @@ class TabBar extends Widget {
    */
   dispose(): void {
     this._releaseMouse();
+    this._tabs.length = 0;
     this._items.length = 0;
-    this._current = null;
+    this._dirtySet.clear();
+    this._currentItem = null;
     super.dispose();
   }
 
@@ -269,7 +302,7 @@ class TabBar extends Widget {
    * Get the currently selected tab item.
    */
   get currentItem(): ITabItem {
-    return this._current;
+    return this._currentItem;
   }
 
   /**
@@ -277,15 +310,15 @@ class TabBar extends Widget {
    */
   set currentItem(value: ITabItem) {
     let item = value || null;
-    if (this._current === item) {
+    if (this._currentItem === item) {
       return;
     }
-    let index = this._items.indexOf(item);
+    let index = item ? this._items.indexOf(item) : -1;
     if (item && index === -1) {
       console.warn('Tab item not contained in tab bar.');
       return;
     }
-    this._current = item;
+    this._currentItem = item;
     this.currentChanged.emit({ index, item });
     this.update();
   }
@@ -305,22 +338,10 @@ class TabBar extends Widget {
   }
 
   /**
-   * Get the tab bar header node.
-   *
-   * #### Notes
-   * This can be used to add extra header content.
-   *
-   * This is a read-only property.
-   */
-  get headerNode(): HTMLElement {
-    return this.node.getElementsByClassName(HEADER_CLASS)[0] as HTMLElement;
-  }
-
-  /**
    * Get the tab bar body node.
    *
    * #### Notes
-   * This can be used to add extra body content.
+   * This node can be used to add extra content beside the tabs.
    *
    * This is a read-only property.
    */
@@ -332,24 +353,14 @@ class TabBar extends Widget {
    * Get the tab bar content node.
    *
    * #### Notes
-   * Modifying this node can lead to undefined behavior.
+   * This is the node which holds the tab nodes.
+   *
+   * Modifying this node directly can lead to undefined behavior.
    *
    * This is a read-only property.
    */
   get contentNode(): HTMLElement {
     return this.node.getElementsByClassName(CONTENT_CLASS)[0] as HTMLElement;
-  }
-
-  /**
-   * Get the tab bar footer node.
-   *
-   * #### Notes
-   * This can be used to add extra footer content.
-   *
-   * This is a read-only property.
-   */
-  get footerNode(): HTMLElement {
-    return this.node.getElementsByClassName(FOOTER_CLASS)[0] as HTMLElement;
   }
 
   /**
@@ -400,32 +411,31 @@ class TabBar extends Widget {
    *
    * @param index - The index at which to insert the item.
    *
-   * @param item - The tab item to insert into to the tab bar.
+   * @param item - The tab item to insert into the tab bar.
    *
    * #### Notes
    * If the item is already added to the tab bar, it will be moved.
    */
   insertItem(index: number, item: ITabItem): void {
-    // Release the mouse before making changes.
     this._releaseMouse();
-
-    // Insert the new item or move an existing item.
     let n = this._items.length;
     let i = this._items.indexOf(item);
     let j = Math.max(0, Math.min(index | 0, n));
     if (i !== -1) {
       if (j === n) j--;
       if (i === j) return;
+      arrays.move(this._tabs, i, j);
       arrays.move(this._items, i, j);
+      this.contentNode.insertBefore(this._tabs[j], this._tabs[j + 1]);
     } else {
+      let subtype = this.constructor as typeof TabBar;
+      let tab = subtype.createTab(item.title);
+      arrays.insert(this._tabs, j, tab);
       arrays.insert(this._items, j, item);
-      // XXX
+      this.contentNode.insertBefore(tab, this._tabs[j + 1]);
       item.title.changed.connect(this._onTitleChanged, this);
       if (!this.currentItem) this.currentItem = item;
     }
-
-    // Flip the dirty flag and schedule a full update.
-    this._dirty = true;
     this.update();
   }
 
@@ -438,27 +448,31 @@ class TabBar extends Widget {
    * If the item is not in the tab bar, this is a no-op.
    */
   removeItem(item: ITabItem): void {
-    // Release the mouse before making changes.
     this._releaseMouse();
-
-    // Remove the specified item, or bail if it doesn't exist.
     let i = arrays.remove(this._items, item);
     if (i === -1) {
       return;
     }
-
-    // Disconnect the title changed handler.
-    // XXX
+    this._dirtySet.delete(item.title);
     item.title.changed.disconnect(this._onTitleChanged, this);
-
-    // Selected the next best tab if removing the current tab.
+    this.contentNode.removeChild(arrays.removeAt(this._tabs, i));
     if (this.currentItem === item) {
-      this.currentItem = this._items[i] || this._items[i - 1];
+      let next = this._items[i];
+      let prev = this._items[i - 1];
+      this.currentItem = next || prev;
     }
-
-    // Flip the dirty flag and schedule a full update.
-    this._dirty = true;
     this.update();
+  }
+
+  /**
+   * Get the tab node for the item at the given index.
+   *
+   * @param index - The index of the tab item of interest.
+   *
+   * @returns The tab node for the item, or `undefined`.
+   */
+  tabAt(index: number): HTMLElement {
+    return this._tabs[index];
   }
 
   /**
@@ -527,12 +541,26 @@ class TabBar extends Widget {
    * A message handler invoked on an `'update-request'` message.
    */
   protected onUpdateRequest(msg: Message): void {
-    if (this._dirty) {
-      this._dirty = false;
-      TabBarPrivate.updateTabs(this);
-    } else {
-      TabBarPrivate.updateZOrder(this);
+    let tabs = this._tabs;
+    let items = this._items;
+    let dirty = this._dirtySet;
+    let current = this._currentItem;
+    let subtype = this.constructor as typeof TabBar;
+    for (let i = 0, n = tabs.length; i < n; ++i) {
+      let tab = tabs[i];
+      let item = items[i];
+      if (dirty.has(item.title)) {
+        subtype.updateTab(tab, item.title);
+      }
+      if (item === current) {
+        tab.classList.add(CURRENT_CLASS);
+        tab.style.zIndex = `${n}`;
+      } else {
+        tab.classList.remove(CURRENT_CLASS);
+        tab.style.zIndex = `${n - i - 1}`;
+      }
     }
+    dirty.clear();
   }
 
   /**
@@ -562,8 +590,10 @@ class TabBar extends Widget {
     }
 
     // Do nothing if the click is not on a tab.
-    let index = TabBarPrivate.hitTestTabs(this, event.clientX, event.clientY);
-    if (index < 0) {
+    let x = event.clientX;
+    let y = event.clientY;
+    let i = arrays.findIndex(this._tabs, tab => hitTest(tab, x, y));
+    if (i < 0) {
       return;
     }
 
@@ -572,19 +602,20 @@ class TabBar extends Widget {
     event.stopPropagation();
 
     // Ignore the click if the title is not closable.
-    let item = this._items[index];
+    let item = this._items[i];
     if (!item.title.closable) {
       return;
     }
 
-    // Ignore the click if the close icon wasn't clicked.
-    let icon = TabBarPrivate.closeIconNode(this, index);
+    // Ignore the click if it was not on a close icon.
+    let subtype = this.constructor as typeof TabBar;
+    let icon = subtype.tabCloseIcon(this._tabs[i]);
     if (!icon.contains(event.target as HTMLElement)) {
       return;
     }
 
     // Emit the tab close requested signal.
-    this.tabCloseRequested.emit({ index, item });
+    this.tabCloseRequested.emit({ index: i, item });
   }
 
   /**
@@ -602,8 +633,10 @@ class TabBar extends Widget {
     }
 
     // Do nothing if the press is not on a tab.
-    let index = TabBarPrivate.hitTestTabs(this, event.clientX, event.clientY);
-    if (index < 0) {
+    let x = event.clientX;
+    let y = event.clientY;
+    let i = arrays.findIndex(this._tabs, tab => hitTest(tab, x, y));
+    if (i < 0) {
       return;
     }
 
@@ -612,22 +645,23 @@ class TabBar extends Widget {
     event.stopPropagation();
 
     // Ignore the press if it was on a close icon.
-    let icon = TabBarPrivate.closeIconNode(this, index);
+    let subtype = this.constructor as typeof TabBar;
+    let icon = subtype.tabCloseIcon(this._tabs[i]);
     if (icon.contains(event.target as HTMLElement)) {
       return;
     }
 
     // Setup the drag data if the tabs are movable.
     if (this._tabsMovable) {
-      this._dragData = TabBarPrivate.initDrag(index, event);
+      this._dragData = TabBarPrivate.initDrag(i, event);
       document.addEventListener('mousemove', this, true);
       document.addEventListener('mouseup', this, true);
       document.addEventListener('keydown', this, true);
       document.addEventListener('contextmenu', this, true);
     }
 
-    // Update the current item.
-    this.currentItem = this._items[index];
+    // Update the current item to the pressed item.
+    this.currentItem = this._items[i];
   }
 
   /**
@@ -672,7 +706,7 @@ class TabBar extends Widget {
     document.removeEventListener('contextmenu', this, true);
 
     // End the drag operation.
-    TabBarPrivate.endDrag(this, this._dragData, event, {
+    TabBarPrivate.endDrag(this, this._dragData, {
       clear: () => { this._dragData = null; },
       move: (i, j) => { this._moveTab(i, j); },
     });
@@ -702,11 +736,9 @@ class TabBar extends Widget {
    * Move a tab from one index to another.
    */
   private _moveTab(i: number, j: number): void {
-    let k = j < i ? j : j + 1;
-    let content = this.contentNode;
-    let children = content.children;
+    arrays.move(this._tabs, i, j);
     arrays.move(this._items, i, j);
-    content.insertBefore(children[i], children[k]);
+    this.contentNode.insertBefore(this._tabs[j], this._tabs[j + 1]);
     this.tabMoved.emit({ fromIndex: i, toIndex: j, item: this._items[j] });
     this.update();
   }
@@ -715,15 +747,17 @@ class TabBar extends Widget {
    * Handle the `changed` signal of a title object.
    */
   private _onTitleChanged(sender: Title): void {
-    this._dirty = true;
+    this._dirtySet.add(sender);
+    this._releaseMouse();
     this.update();
   }
 
-  private _dirty = false;
   private _tabsMovable = false;
   private _items: ITabItem[] = [];
-  private _current: ITabItem = null;
+  private _tabs: HTMLElement[] = [];
   private _dragData: DragData = null;
+  private _dirtySet = new Set<Title>();
+  private _currentItem: ITabItem = null;
 }
 
 
@@ -829,7 +863,7 @@ interface ITabLayout {
  */
 namespace TabBarPrivate {
   /**
-   * A signal emitted when the current title is changed.
+   * A signal emitted when the current tab item is changed.
    */
   export
   const currentChangedSignal = new Signal<TabBar, ITabIndexArgs>();
@@ -853,81 +887,14 @@ namespace TabBarPrivate {
   const tabDetachRequestedSignal = new Signal<TabBar, ITabDetachArgs>();
 
   /**
-   * Get the close icon node for the tab at the specified index.
-   */
-  export
-  function closeIconNode(owner: TabBar, index: number): HTMLElement {
-    return owner.contentNode.children[index].lastChild as HTMLElement;
-  }
-
-  /**
-   * Get the index of the tab node at a client position, or `-1`.
-   */
-  export
-  function hitTestTabs(owner: TabBar, x: number, y: number): number {
-    let nodes = owner.contentNode.children;
-    for (let i = 0, n = nodes.length; i < n; ++i) {
-      if (hitTest(nodes[i] as HTMLElement, x, y)) return i;
-    }
-    return -1;
-  }
-
-  /**
-   * Update the tab bar tabs to match the current titles.
-   *
-   * This is a full update which also updates the tab Z order.
-   */
-  export
-  function updateTabs(owner: TabBar) {
-    let count = owner.itemCount();
-    let content = owner.contentNode;
-    let children = content.children;
-    while (children.length > count) {
-      content.removeChild(content.lastChild);
-    }
-    while (children.length < count) {
-      content.appendChild(createTabNode());
-    }
-    for (let i = 0; i < count; ++i) {
-      let node = children[i] as HTMLElement;
-      updateTabNode(node, owner.itemAt(i));
-    }
-    updateZOrder(owner);
-  }
-
-  /**
-   * Update the Z order of the tabs to match the current titles.
-   *
-   * This is a partial update which updates the Z order and the current
-   * tab class. It assumes the tab count is the same as the title count.
-   */
-  export
-  function updateZOrder(owner: TabBar) {
-    let count = owner.itemCount();
-    let content = owner.contentNode;
-    let children = content.children;
-    let current = owner.currentItem;
-    for (let i = 0; i < count; ++i) {
-      let node = children[i] as HTMLElement;
-      if (owner.itemAt(i) === current) {
-        node.classList.add(CURRENT_CLASS);
-        node.style.zIndex = count + '';
-      } else {
-        node.classList.remove(CURRENT_CLASS);
-        node.style.zIndex = count - i - 1 + '';
-      }
-    }
-  }
-
-  /**
    * Initialize a new drag data object for a tab bar.
    *
    * This should be called on 'mousedown' event.
    */
   export
-  function initDrag(tabIndex: number, event: MouseEvent): DragData {
+  function initDrag(index: number, event: MouseEvent): DragData {
     let data = new DragData();
-    data.tabIndex = tabIndex;
+    data.tabIndex = index;
     data.pressX = event.clientX;
     data.pressY = event.clientY;
     return data;
@@ -949,15 +916,14 @@ namespace TabBarPrivate {
       }
 
       // Fill in the missing drag data measurements.
-      let content = owner.contentNode;
-      let tab = content.children[data.tabIndex] as HTMLElement;
+      let tab = owner.tabAt(data.tabIndex);
       let tabRect = tab.getBoundingClientRect();
       data.tab = tab;
       data.tabLeft = tab.offsetLeft;
       data.tabWidth = tabRect.width;
       data.tabPressX = data.pressX - tabRect.left;
-      data.contentRect = content.getBoundingClientRect();
       data.tabLayout = snapTabLayout(owner);
+      data.contentRect = owner.contentNode.getBoundingClientRect();
       data.cursorGrab = overrideCursor('default');
 
       // Style the tab bar and tab for relative position dragging.
@@ -968,12 +934,11 @@ namespace TabBarPrivate {
 
     // Emit the detach request signal if the threshold is exceeded.
     if (!data.detachRequested && detachExceeded(data.contentRect, event)) {
-      let node = data.tab;
       let index = data.tabIndex;
       let clientX = event.clientX;
       let clientY = event.clientY;
       let item = owner.itemAt(index);
-      owner.tabDetachRequested.emit({ item, index, node, clientX, clientY });
+      owner.tabDetachRequested.emit({ index, item, clientX, clientY });
       data.detachRequested = true;
       if (data.dragAborted) {
         return;
@@ -989,10 +954,9 @@ namespace TabBarPrivate {
     data.targetIndex = data.tabIndex;
 
     // Update the non-drag tab positions and the tab target index.
-    let tabs = owner.contentNode.children;
-    for (let i = 0, n = tabs.length; i < n; ++i) {
+    for (let i = 0, n = owner.itemCount(); i < n; ++i) {
       let layout = data.tabLayout[i];
-      let style = (tabs[i] as HTMLElement).style;
+      let style = owner.tabAt(i).style;
       let threshold = layout.left + (layout.width >> 1);
       if (i < data.tabIndex && targetLeft < threshold) {
         style.left = data.tabWidth + data.tabLayout[i + 1].margin + 'px';
@@ -1034,7 +998,7 @@ namespace TabBarPrivate {
    * This should be called on a `'mouseup'` event.
    */
   export
-  function endDrag(owner: TabBar, data: DragData, event: MouseEvent, handler: IEndHandler): void {
+  function endDrag(owner: TabBar, data: DragData, handler: IEndHandler): void {
     // Bail early if the drag is not active.
     if (!data.dragActive) {
       handler.clear();
@@ -1111,49 +1075,11 @@ namespace TabBarPrivate {
   }
 
   /**
-   * Create an uninitialized DOM node for a tab.
-   */
-  function createTabNode(): HTMLElement {
-    let node = document.createElement('li');
-    let icon = document.createElement('span');
-    let text = document.createElement('span');
-    let close = document.createElement('span');
-    text.className = TEXT_CLASS;
-    close.className = CLOSE_CLASS;
-    node.appendChild(icon);
-    node.appendChild(text);
-    node.appendChild(close);
-    return node;
-  }
-
-  /**
-   * Update a tab node to reflect the state of a tab item.
-   */
-  function updateTabNode(node: HTMLElement, item: ITabItem): void {
-    let title = item.title;
-    let icon = node.firstChild as HTMLElement;
-    let text = icon.nextSibling as HTMLElement;
-    let suffix = title.closable ? ' ' + CLOSABLE_CLASS : '';
-    if (title.className) {
-      node.className = TAB_CLASS + ' ' + title.className + suffix;
-    } else {
-      node.className = TAB_CLASS + suffix;
-    }
-    if (title.icon) {
-      icon.className = ICON_CLASS + ' ' + title.icon;
-    } else {
-      icon.className = ICON_CLASS;
-    }
-    text.textContent = title.text;
-  }
-
-  /**
    * Reset the tabs to their unadjusted positions.
    */
   function resetTabPositions(owner: TabBar): void {
-    let children = owner.contentNode.children;
-    for (let i = 0, n = children.length; i < n; ++i) {
-      (children[i] as HTMLElement).style.left = '';
+    for (let i = 0, n = owner.itemCount(); i < n; ++i) {
+      owner.tabAt(i).style.left = '';
     }
   }
 
@@ -1162,9 +1088,8 @@ namespace TabBarPrivate {
    */
   function snapTabLayout(owner: TabBar): ITabLayout[] {
     let layout: ITabLayout[] = [];
-    let children = owner.contentNode.children;
-    for (let i = 0, n = children.length; i < n; ++i) {
-      let node = children[i] as HTMLElement;
+    for (let i = 0, n = owner.itemCount(); i < n; ++i) {
+      let node = owner.tabAt(i);
       let left = node.offsetLeft;
       let width = node.offsetWidth;
       let cstyle = window.getComputedStyle(node);
