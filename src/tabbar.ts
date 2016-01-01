@@ -103,7 +103,7 @@ const TRANSITION_DURATION = 150;  // Keep in sync with CSS.
 export
 interface ITabItem {
   /**
-   * The title object which supplies the data for the tab.
+   * The title object which supplies the data for a tab.
    */
   title: Title;
 }
@@ -187,7 +187,7 @@ class TabBar extends Widget {
   /**
    * Create and initialize a tab node for a tab bar.
    *
-   * @param title - The title to use for the initial tab data.
+   * @param title - The title to use for the initial tab state.
    *
    * @returns A new DOM node to use as a tab in a tab bar.
    *
@@ -222,15 +222,14 @@ class TabBar extends Widget {
    * @param title - The title object to use for the tab state.
    *
    * #### Notes
-   * This is called automatically when the title state changes in
-   * order to update the state of the tab.
+   * This is called automatically when the title state changes.
    *
    * If the [[createTab]] method is reimplemented, this method should
    * also be reimplemented so that the tab state is properly updated.
    */
   static updateTab(tab: HTMLElement, title: Title): void {
-    let tabSuffix = title.closable ? ' ' + CLOSABLE_CLASS : '';
     let tabInfix = title.className ? ' ' + title.className : '';
+    let tabSuffix = title.closable ? ' ' + CLOSABLE_CLASS : '';
     let iconSuffix = title.icon ? ' ' + title.icon : '';
     let icon = tab.firstChild as HTMLElement;
     let text = icon.nextSibling as HTMLElement;
@@ -240,7 +239,17 @@ class TabBar extends Widget {
   }
 
   /**
+   * Get the close icon node for a given tab node.
    *
+   * @param tab - A tab node created by a call to [[createTab]].
+   *
+   * @returns The close icon node for the tab node.
+   *
+   * #### Notes
+   * The close icon node is used to correctly process click events.
+   *
+   * If the [[createTab]] method is reimplemented, this method should
+   * also be reimplemented so that the correct icon node is returned.
    */
   static tabCloseIcon(tab: HTMLElement): HTMLElement {
     return tab.lastChild as HTMLElement;
@@ -319,6 +328,7 @@ class TabBar extends Widget {
       console.warn('Tab item not contained in tab bar.');
       return;
     }
+    this._releaseMouse();
     this._currentItem = item;
     this.currentChanged.emit({ index, item });
     this.update();
@@ -342,7 +352,7 @@ class TabBar extends Widget {
    * Get the tab bar body node.
    *
    * #### Notes
-   * This node can be used to add extra content beside the tabs.
+   * This node can be used to add extra content beside the tab nodes.
    *
    * This is a read-only property.
    */
@@ -651,7 +661,10 @@ class TabBar extends Widget {
 
     // Setup the drag data if the tabs are movable.
     if (this._tabsMovable) {
-      this._dragData = TabBarPrivate.initDrag(i, event);
+      let data = this._dragData = new DragData();
+      data.tabIndex = i;
+      data.pressX = event.clientX;
+      data.pressY = event.clientY;
       document.addEventListener('mousemove', this, true);
       document.addEventListener('mouseup', this, true);
       document.addEventListener('keydown', this, true);
@@ -675,8 +688,74 @@ class TabBar extends Widget {
     event.preventDefault();
     event.stopPropagation();
 
-    // Update the tab drag positions.
-    TabBarPrivate.moveDrag(this, this._dragData, event);
+    // Ensure the drag threshold is exceeded before moving the tab.
+    let data = this._dragData;
+    if (!data.dragActive) {
+      let dx = Math.abs(event.clientX - data.pressX);
+      let dy = Math.abs(event.clientY - data.pressY);
+      if (dx < DRAG_THRESHOLD && dy < DRAG_THRESHOLD) {
+        return;
+      }
+
+      // Fill in the missing drag data measurements.
+      let tab = this._tabs[data.tabIndex];
+      let tabRect = tab.getBoundingClientRect();
+      data.tab = tab;
+      data.tabLeft = tab.offsetLeft;
+      data.tabWidth = tabRect.width;
+      data.tabPressX = data.pressX - tabRect.left;
+      data.tabLayout = TabBarPrivate.snapTabLayout(this._tabs);
+      data.contentRect = this.contentNode.getBoundingClientRect();
+      data.cursorGrab = overrideCursor('default');
+
+      // Style the tab bar and tab for relative position dragging.
+      tab.classList.add(DRAGGING_CLASS);
+      this.addClass(DRAGGING_CLASS);
+      data.dragActive = true;
+    }
+
+    // Emit the detach request signal if the threshold is exceeded.
+    if (!data.detachRequested && TabBarPrivate.detachExceeded(data.contentRect, event)) {
+      let index = data.tabIndex;
+      let item = this._items[index];
+      let clientX = event.clientX;
+      let clientY = event.clientY;
+      this.tabDetachRequested.emit({ index, item, clientX, clientY });
+      data.detachRequested = true;
+      if (data.dragAborted) {
+        return;
+      }
+    }
+
+    // Compute the target bounds of the drag tab.
+    let offsetLeft = event.clientX - data.contentRect.left;
+    let targetLeft = offsetLeft - data.tabPressX;
+    let targetRight = targetLeft + data.tabWidth;
+
+    // Reset the target tab index.
+    data.targetIndex = data.tabIndex;
+
+    // Update the non-drag tab positions and the tab target index.
+    for (let i = 0, n = this._tabs.length; i < n; ++i) {
+      let layout = data.tabLayout[i];
+      let style = this._tabs[i].style;
+      let threshold = layout.left + (layout.width >> 1);
+      if (i < data.tabIndex && targetLeft < threshold) {
+        style.left = data.tabWidth + data.tabLayout[i + 1].margin + 'px';
+        data.targetIndex = Math.min(data.targetIndex, i);
+      } else if (i > data.tabIndex && targetRight > threshold) {
+        style.left = -data.tabWidth - layout.margin + 'px';
+        data.targetIndex = i;
+      } else if (i !== data.tabIndex) {
+        style.left = '';
+      }
+    }
+
+    // Update the drag tab position.
+    let idealLeft = event.clientX - data.pressX;
+    let maxLeft = data.contentRect.width - (data.tabLeft + data.tabWidth);
+    let adjustedLeft = Math.max(-data.tabLeft, Math.min(idealLeft, maxLeft));
+    data.tab.style.left = adjustedLeft + 'px';
   }
 
   /**
@@ -703,11 +782,61 @@ class TabBar extends Widget {
     document.removeEventListener('keydown', this, true);
     document.removeEventListener('contextmenu', this, true);
 
-    // End the drag operation.
-    TabBarPrivate.endDrag(this, this._dragData, {
-      clear: () => { this._dragData = null; },
-      move: (i, j) => { this._moveTab(i, j); },
-    });
+    // Bail early if the drag is not active.
+    let data = this._dragData;
+    if (!data.dragActive) {
+      this._dragData = null;
+      return;
+    }
+
+    // Compute the approximate final relative tab offset.
+    let idealLeft: number;
+    if (data.targetIndex === data.tabIndex) {
+      idealLeft = 0;
+    } else if (data.targetIndex > data.tabIndex) {
+      let tl = data.tabLayout[data.targetIndex];
+      idealLeft = tl.left + tl.width - data.tabWidth - data.tabLeft;
+    } else {
+      let tl = data.tabLayout[data.targetIndex];
+      idealLeft = tl.left - data.tabLeft;
+    }
+
+    // Position the tab to its final position, subject to limits.
+    let maxLeft = data.contentRect.width - (data.tabLeft + data.tabWidth);
+    let adjustedLeft = Math.max(-data.tabLeft, Math.min(idealLeft, maxLeft));
+    data.tab.style.left = adjustedLeft + 'px';
+
+    // Remove the dragging class from the tab so it can be transitioned.
+    data.tab.classList.remove(DRAGGING_CLASS);
+
+    // Complete the release on a timer to allow the tab to transition.
+    setTimeout(() => {
+      // Do nothing if the drag has been aborted.
+      if (data.dragAborted) {
+        return;
+      }
+
+      // Clear the drag data reference.
+      this._dragData = null;
+
+      // Reset the positions of the tabs.
+      this._tabs.forEach(tab => { tab.style.left = ''; });
+
+      // Clear the cursor grab and drag styles.
+      data.cursorGrab.dispose();
+      this.removeClass(DRAGGING_CLASS);
+
+      // Finally, move the tab to its new location if needed.
+      let i = data.tabIndex;
+      let j = data.targetIndex;
+      if (j !== -1 && i !== j) {
+        arrays.move(this._tabs, i, j);
+        arrays.move(this._items, i, j);
+        this.contentNode.insertBefore(this._tabs[j], this._tabs[j + 1]);
+        this.tabMoved.emit({ fromIndex: i, toIndex: j, item: this._items[j] });
+        this.update();
+      }
+    }, TRANSITION_DURATION);
   }
 
   /**
@@ -725,20 +854,26 @@ class TabBar extends Widget {
     document.removeEventListener('keydown', this, true);
     document.removeEventListener('contextmenu', this, true);
 
-    // Abort the drag operation and clear the drag data.
-    TabBarPrivate.abortDrag(this, this._dragData);
+    // Clear the drag data reference.
+    let data = this._dragData;
     this._dragData = null;
-  }
 
-  /**
-   * Move a tab from one index to another.
-   */
-  private _moveTab(i: number, j: number): void {
-    arrays.move(this._tabs, i, j);
-    arrays.move(this._items, i, j);
-    this.contentNode.insertBefore(this._tabs[j], this._tabs[j + 1]);
-    this.tabMoved.emit({ fromIndex: i, toIndex: j, item: this._items[j] });
-    this.update();
+    // Indicate the drag has been aborted. This allows the mouse
+    // event handlers to return early when the drag is canceled.
+    data.dragAborted = true;
+
+    // If the drag is not active, there's nothing more to do.
+    if (!data.dragActive) {
+      return;
+    }
+
+    // Reset the tabs to their non-dragged positions.
+    this._tabs.forEach(tab => { tab.style.left = ''; });
+
+    // Clear the cursor override and extra styling classes.
+    data.cursorGrab.dispose();
+    data.tab.classList.remove(DRAGGING_CLASS);
+    this.removeClass(DRAGGING_CLASS);
   }
 
   /**
@@ -885,214 +1020,18 @@ namespace TabBarPrivate {
   const tabDetachRequestedSignal = new Signal<TabBar, ITabDetachArgs>();
 
   /**
-   * Initialize a new drag data object for a tab bar.
-   *
-   * This should be called on 'mousedown' event.
-   */
-  export
-  function initDrag(index: number, event: MouseEvent): DragData {
-    let data = new DragData();
-    data.tabIndex = index;
-    data.pressX = event.clientX;
-    data.pressY = event.clientY;
-    return data;
-  }
-
-  /**
-   * Update the drag positions of the tabs for a tab bar.
-   *
-   * This should be called on a `'mousemove'` event.
-   */
-  export
-  function moveDrag(owner: TabBar, data: DragData, event: MouseEvent): void {
-    // Ensure the drag threshold is exceeded before moving the tab.
-    if (!data.dragActive) {
-      let dx = Math.abs(event.clientX - data.pressX);
-      let dy = Math.abs(event.clientY - data.pressY);
-      if (dx < DRAG_THRESHOLD && dy < DRAG_THRESHOLD) {
-        return;
-      }
-
-      // Fill in the missing drag data measurements.
-      let tab = owner.tabAt(data.tabIndex);
-      let tabRect = tab.getBoundingClientRect();
-      data.tab = tab;
-      data.tabLeft = tab.offsetLeft;
-      data.tabWidth = tabRect.width;
-      data.tabPressX = data.pressX - tabRect.left;
-      data.tabLayout = snapTabLayout(owner);
-      data.contentRect = owner.contentNode.getBoundingClientRect();
-      data.cursorGrab = overrideCursor('default');
-
-      // Style the tab bar and tab for relative position dragging.
-      tab.classList.add(DRAGGING_CLASS);
-      owner.addClass(DRAGGING_CLASS);
-      data.dragActive = true;
-    }
-
-    // Emit the detach request signal if the threshold is exceeded.
-    if (!data.detachRequested && detachExceeded(data.contentRect, event)) {
-      let index = data.tabIndex;
-      let clientX = event.clientX;
-      let clientY = event.clientY;
-      let item = owner.itemAt(index);
-      owner.tabDetachRequested.emit({ index, item, clientX, clientY });
-      data.detachRequested = true;
-      if (data.dragAborted) {
-        return;
-      }
-    }
-
-    // Compute the target bounds of the drag tab.
-    let offsetLeft = event.clientX - data.contentRect.left;
-    let targetLeft = offsetLeft - data.tabPressX;
-    let targetRight = targetLeft + data.tabWidth;
-
-    // Reset the target tab index.
-    data.targetIndex = data.tabIndex;
-
-    // Update the non-drag tab positions and the tab target index.
-    for (let i = 0, n = owner.itemCount(); i < n; ++i) {
-      let layout = data.tabLayout[i];
-      let style = owner.tabAt(i).style;
-      let threshold = layout.left + (layout.width >> 1);
-      if (i < data.tabIndex && targetLeft < threshold) {
-        style.left = data.tabWidth + data.tabLayout[i + 1].margin + 'px';
-        data.targetIndex = Math.min(data.targetIndex, i);
-      } else if (i > data.tabIndex && targetRight > threshold) {
-        style.left = -data.tabWidth - layout.margin + 'px';
-        data.targetIndex = i;
-      } else if (i !== data.tabIndex) {
-        style.left = '';
-      }
-    }
-
-    // Update the drag tab position.
-    let idealLeft = event.clientX - data.pressX;
-    let maxLeft = data.contentRect.width - (data.tabLeft + data.tabWidth);
-    let adjustedLeft = Math.max(-data.tabLeft, Math.min(idealLeft, maxLeft));
-    data.tab.style.left = adjustedLeft + 'px';
-  }
-
-  /**
-   * A handler object for drag end callbacks.
-   */
-  export
-  interface IEndHandler {
-    /**
-     * Clear the the drag data reference.
-     */
-    clear: () => void;
-
-    /**
-     * Move a tab from one index to another.
-     */
-    move: (i: number, j: number) => void;
-  }
-
-  /**
-   * End the drag operation for a tab bar.
-   *
-   * This should be called on a `'mouseup'` event.
-   */
-  export
-  function endDrag(owner: TabBar, data: DragData, handler: IEndHandler): void {
-    // Bail early if the drag is not active.
-    if (!data.dragActive) {
-      handler.clear();
-      return;
-    }
-
-    // Compute the approximate final relative tab offset.
-    let idealLeft: number;
-    if (data.targetIndex === data.tabIndex) {
-      idealLeft = 0;
-    } else if (data.targetIndex > data.tabIndex) {
-      let tl = data.tabLayout[data.targetIndex];
-      idealLeft = tl.left + tl.width - data.tabWidth - data.tabLeft;
-    } else {
-      let tl = data.tabLayout[data.targetIndex];
-      idealLeft = tl.left - data.tabLeft;
-    }
-
-    // Position the tab to its final position, subject to limits.
-    let maxLeft = data.contentRect.width - (data.tabLeft + data.tabWidth);
-    let adjustedLeft = Math.max(-data.tabLeft, Math.min(idealLeft, maxLeft));
-    data.tab.style.left = adjustedLeft + 'px';
-
-    // Remove the dragging class from the tab so it can be transitioned.
-    data.tab.classList.remove(DRAGGING_CLASS);
-
-    // Complete the release on a timer to allow the tab to transition.
-    setTimeout(() => {
-      // Do nothing if the drag has been aborted.
-      if (data.dragAborted) {
-        return;
-      }
-
-      // Clear the drag data reference.
-      handler.clear();
-
-      // Reset the positions of the tabs.
-      resetTabPositions(owner);
-
-      // Clear the cursor grab and drag styles.
-      data.cursorGrab.dispose();
-      owner.removeClass(DRAGGING_CLASS);
-
-      // Finally, move the tab to its new location.
-      if (data.targetIndex !== -1 && data.tabIndex !== data.targetIndex) {
-        handler.move(data.tabIndex, data.targetIndex);
-      }
-    }, TRANSITION_DURATION);
-  }
-
-  /**
-   * Abort the drag operation for a tab bar.
-   *
-   * This should be called to cancel a drag immediately.
-   */
-  export
-  function abortDrag(owner: TabBar, data: DragData): void {
-    // Indicate the drag has been aborted, which allows the drag
-    // end handler and detach request emitter to return early.
-    data.dragAborted = true;
-
-    // If the drag is not active, there's nothing more to do.
-    if (!data.dragActive) {
-      return;
-    }
-
-    // Reset the tabs to their non-dragged positions.
-    resetTabPositions(owner);
-
-    // Clear the cursor override and extra styling classes.
-    data.cursorGrab.dispose();
-    data.tab.classList.remove(DRAGGING_CLASS);
-    owner.removeClass(DRAGGING_CLASS);
-  }
-
-  /**
-   * Reset the tabs to their unadjusted positions.
-   */
-  function resetTabPositions(owner: TabBar): void {
-    for (let i = 0, n = owner.itemCount(); i < n; ++i) {
-      owner.tabAt(i).style.left = '';
-    }
-  }
-
-  /**
    * Get a snapshot of the current tab layout values.
    */
-  function snapTabLayout(owner: TabBar): ITabLayout[] {
-    let layout: ITabLayout[] = [];
-    for (let i = 0, n = owner.itemCount(); i < n; ++i) {
-      let node = owner.tabAt(i);
+  export
+  function snapTabLayout(tabs: HTMLElement[]): ITabLayout[] {
+    let layout = new Array<ITabLayout>(tabs.length);
+    for (let i = 0, n = tabs.length; i < n; ++i) {
+      let node = tabs[i];
       let left = node.offsetLeft;
       let width = node.offsetWidth;
       let cstyle = window.getComputedStyle(node);
       let margin = parseInt(cstyle.marginLeft, 10) || 0;
-      layout.push({ margin, left, width });
+      layout[i] = { margin, left, width };
     }
     return layout;
   }
@@ -1100,6 +1039,7 @@ namespace TabBarPrivate {
   /**
    * Test if a mouse position exceeds the detach threshold.
    */
+  export
   function detachExceeded(rect: ClientRect, event: MouseEvent): boolean {
     return (
       (event.clientX < rect.left - DETACH_THRESHOLD) ||
