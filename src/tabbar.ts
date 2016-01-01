@@ -660,7 +660,7 @@ class TabBar extends Widget {
 
     // Setup the drag data if the tabs are movable.
     if (this._tabsMovable) {
-      this._dragData = new DragData();
+      this._dragData = new TabBarPrivate.DragData();
       this._dragData.index = i;
       this._dragData.tab = this._tabs[i];
       this._dragData.pressX = event.clientX;
@@ -853,106 +853,9 @@ class TabBar extends Widget {
   private _tabsMovable = false;
   private _items: ITabItem[] = [];
   private _tabs: HTMLElement[] = [];
-  private _dragData: DragData = null;
   private _dirtySet = new Set<Title>();
   private _currentItem: ITabItem = null;
-}
-
-
-/**
- * A struct which holds the drag data for a tab bar.
- */
-class DragData {
-  /**
-   * The tab node being dragged.
-   */
-  tab: HTMLElement = null;
-
-  /**
-   * The index of the tab being dragged.
-   */
-  index = -1;
-
-  /**
-   * The offset left of the tab being dragged.
-   */
-  tabLeft = -1;
-
-  /**
-   * The offset width of the tab being dragged.
-   */
-  tabWidth = -1;
-
-  /**
-   * The original mouse X position in tab coordinates.
-   */
-  tabPressX = -1;
-
-  /**
-   * The tab target index upon mouse release.
-   */
-  targetIndex = -1;
-
-  /**
-   * The array of tab layout objects snapped at drag start.
-   */
-  tabLayout: ITabLayout[] = null;
-
-  /**
-   * The mouse press client X position.
-   */
-  pressX = -1;
-
-  /**
-   * The mouse press client Y position.
-   */
-  pressY = -1;
-
-  /**
-   * The bounding client rect of the tab bar content node.
-   */
-  contentRect: ClientRect = null;
-
-  /**
-   * The disposable to clean up the cursor override.
-   */
-  override: IDisposable = null;
-
-  /**
-   * Whether the drag is currently active.
-   */
-  dragActive = false;
-
-  /**
-   * Whether the drag has been aborted.
-   */
-  dragAborted = false;
-
-  /**
-   * Whether a detach request as been made.
-   */
-  detachRequested = false;
-}
-
-
-/**
- * An object which holds layout data for a tab.
- */
-interface ITabLayout {
-  /**
-   * The left margin value for the tab.
-   */
-  margin: number;
-
-  /**
-   * The offset left position of the tab.
-   */
-  left: number;
-
-  /**
-   * The offset width of the tab.
-   */
-  width: number;
+  private _dragData: TabBarPrivate.DragData = null;
 }
 
 
@@ -983,6 +886,103 @@ namespace TabBarPrivate {
    */
   export
   const tabDetachRequestedSignal = new Signal<TabBar, ITabDetachArgs>();
+
+  /**
+   * A struct which holds the drag data for a tab bar.
+   */
+  export
+  class DragData {
+    /**
+     * The tab node being dragged.
+     */
+    tab: HTMLElement = null;
+
+    /**
+     * The index of the tab being dragged.
+     */
+    index = -1;
+
+    /**
+     * The offset left of the tab being dragged.
+     */
+    tabLeft = -1;
+
+    /**
+     * The offset width of the tab being dragged.
+     */
+    tabWidth = -1;
+
+    /**
+     * The original mouse X position in tab coordinates.
+     */
+    tabPressX = -1;
+
+    /**
+     * The tab target index upon mouse release.
+     */
+    targetIndex = -1;
+
+    /**
+     * The array of tab layout objects snapped at drag start.
+     */
+    tabLayout: ITabLayout[] = null;
+
+    /**
+     * The mouse press client X position.
+     */
+    pressX = -1;
+
+    /**
+     * The mouse press client Y position.
+     */
+    pressY = -1;
+
+    /**
+     * The bounding client rect of the tab bar content node.
+     */
+    contentRect: ClientRect = null;
+
+    /**
+     * The disposable to clean up the cursor override.
+     */
+    override: IDisposable = null;
+
+    /**
+     * Whether the drag is currently active.
+     */
+    dragActive = false;
+
+    /**
+     * Whether the drag has been aborted.
+     */
+    dragAborted = false;
+
+    /**
+     * Whether a detach request as been made.
+     */
+    detachRequested = false;
+  }
+
+  /**
+   * An object which holds layout data for a tab.
+   */
+  export
+  interface ITabLayout {
+    /**
+     * The left margin value for the tab.
+     */
+    margin: number;
+
+    /**
+     * The offset left position of the tab.
+     */
+    left: number;
+
+    /**
+     * The offset width of the tab.
+     */
+    width: number;
+  }
 
   /**
    * Get a snapshot of the current tab layout values.
