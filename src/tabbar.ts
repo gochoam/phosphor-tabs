@@ -19,12 +19,8 @@ import {
 } from 'phosphor-domutil';
 
 import {
-  Message, sendMessage
+  Message
 } from 'phosphor-messaging';
-
-import {
-  IChangedArgs, Property
-} from 'phosphor-properties';
 
 import {
   ISignal, Signal
@@ -66,7 +62,7 @@ const TEXT_CLASS = 'p-TabBar-tabText';
 const ICON_CLASS = 'p-TabBar-tabIcon';
 
 /**
- * The class name added to a tab close node.
+ * The class name added to a tab close icon node.
  */
 const CLOSE_CLASS = 'p-TabBar-tabCloseIcon';
 
