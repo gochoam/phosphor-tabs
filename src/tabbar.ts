@@ -58,17 +58,17 @@ const TAB_CLASS = 'p-TabBar-tab';
 /**
  * The class name added to a tab text node.
  */
-const TEXT_CLASS = 'p-TabBar-tab-text';
+const TEXT_CLASS = 'p-TabBar-tabText';
 
 /**
  * The class name added to a tab icon node.
  */
-const ICON_CLASS = 'p-TabBar-tab-icon';
+const ICON_CLASS = 'p-TabBar-tabIcon';
 
 /**
  * The class name added to a tab close node.
  */
-const CLOSE_CLASS = 'p-TabBar-tab-close';
+const CLOSE_CLASS = 'p-TabBar-tabCloseIcon';
 
 /**
  * The class name added to a tab bar and tab when dragging.

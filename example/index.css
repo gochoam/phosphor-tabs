@@ -23,17 +23,13 @@ body {
 
 .p-TabBar {
   min-height: 24px;
+  max-height: 24px;
 }
 
 
-.p-TabBar-body {
-  bottom: 1px;
-}
-
-
-.p-TabBar-footer {
-  display: block;
-  height: 1px;
+.p-TabBar::after {
+  content: '';
+  flex: 0 0 1px;
   background: #C0C0C0;
 }
 
@@ -44,8 +40,9 @@ body {
 
 
 .p-TabBar-tab {
-  flex-basis: 125px;
-  max-height: 21px;
+  flex: 0 1 125px;
+  min-height: 20px;
+  max-height: 20px;
   margin-left: -1px;
   border: 1px solid #C0C0C0;
   border-bottom: none;
@@ -61,7 +58,8 @@ body {
 
 
 .p-TabBar-tab.p-mod-current {
-  min-height: 24px;
+  min-height: 23px;
+  max-height: 23px;
   background: white;
   transform: translateY(1px);
 }
@@ -72,10 +70,21 @@ body {
 }
 
 
-.p-TabBar-tab-icon,
-.p-TabBar-tab-text,
-.p-TabBar-tab-close {
-  line-height: 21px;
+.p-TabBar-tabIcon,
+.p-TabBar-tabText,
+.p-TabBar-tabCloseIcon {
+  line-height: 20px;
+}
+
+
+.p-TabBar-tab.p-mod-closable > .p-TabBar-tabCloseIcon {
+  margin-left: 4px;
+}
+
+
+.p-TabBar-tab.p-mod-closable > .p-TabBar-tabCloseIcon:before {
+  content: '\f00d';
+  font-family: FontAwesome;
 }
 
 
@@ -109,15 +118,4 @@ body {
 
 .blue {
   background: #3498DB;
-}
-
-
-.p-TabBar-tab.p-mod-closable > .p-TabBar-tab-close {
-  margin-left: 4px;
-}
-
-
-.p-TabBar-tab.p-mod-closable > .p-TabBar-tab-close:before {
-  content: '\f00d';
-  font-family: FontAwesome;
 }
