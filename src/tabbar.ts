@@ -351,7 +351,7 @@ class TabBar extends Widget {
    * Get the tab bar body node.
    *
    * #### Notes
-   * This node can be used to add extra content beside the tab nodes.
+   * This node can be used to add extra content to the tab bar.
    *
    * This is a read-only property.
    */
@@ -846,7 +846,6 @@ class TabBar extends Widget {
    */
   private _onTitleChanged(sender: Title): void {
     this._dirtySet.add(sender);
-    this._releaseMouse();
     this.update();
   }
 
