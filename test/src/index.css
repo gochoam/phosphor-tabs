@@ -21,14 +21,10 @@ body {
 
 .p-TabBar {
   min-height: 24px;
-}
-
-
-.p-TabBar-content {
-  align-items: stretch;
+  max-height: 24px;
 }
 
 
 .p-TabBar-tab {
-  flex-basis: 125px;
+  flex: 0 1 125px;
 }
