@@ -70,7 +70,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>A widget which displays titles as a row of selectable tabs.</p>
+						<p>A widget which displays tab items as a row of tabs.</p>
 					</div>
 				</div>
 			</section>
@@ -105,18 +105,15 @@
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-external">
-							<h3>Constructors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="tabbar.html#constructor" class="tsd-kind-icon">constructor</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section tsd-is-external">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="tabbar.html#_dirty" class="tsd-kind-icon">_dirty</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="tabbar.html#_currentitem" class="tsd-kind-icon">_current<wbr>Item</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="tabbar.html#_dirtyset" class="tsd-kind-icon">_dirty<wbr>Set</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="tabbar.html#_dragdata" class="tsd-kind-icon">_drag<wbr>Data</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="tabbar.html#_items" class="tsd-kind-icon">_items</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="tabbar.html#_tabs" class="tsd-kind-icon">_tabs</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="tabbar.html#_tabsmovable" class="tsd-kind-icon">_tabs<wbr>Movable</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="tabbar.html#_titles" class="tsd-kind-icon">_titles</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="tabbar.html#constructor" class="tsd-kind-icon">constructor</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#disposed" class="tsd-kind-icon">disposed</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#id" class="tsd-kind-icon">id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#isattached" class="tsd-kind-icon">is<wbr>Attached</a></li>
@@ -135,9 +132,7 @@
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#bodynode" class="tsd-kind-icon">body<wbr>Node</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#contentnode" class="tsd-kind-icon">content<wbr>Node</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#currentchanged" class="tsd-kind-icon">current<wbr>Changed</a></li>
-								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#currenttitle" class="tsd-kind-icon">current<wbr>Title</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#footernode" class="tsd-kind-icon">footer<wbr>Node</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#headernode" class="tsd-kind-icon">header<wbr>Node</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#currentitem" class="tsd-kind-icon">current<wbr>Item</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#tabcloserequested" class="tsd-kind-icon">tab<wbr>Close<wbr>Requested</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#tabdetachrequested" class="tsd-kind-icon">tab<wbr>Detach<wbr>Requested</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#tabmoved" class="tsd-kind-icon">tab<wbr>Moved</a></li>
@@ -152,11 +147,10 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="tabbar.html#_evtmousedown" class="tsd-kind-icon">_evt<wbr>Mouse<wbr>Down</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="tabbar.html#_evtmousemove" class="tsd-kind-icon">_evt<wbr>Mouse<wbr>Move</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="tabbar.html#_evtmouseup" class="tsd-kind-icon">_evt<wbr>Mouse<wbr>Up</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="tabbar.html#_movetab" class="tsd-kind-icon">_move<wbr>Tab</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="tabbar.html#_ontitlechanged" class="tsd-kind-icon">_on<wbr>Title<wbr>Changed</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="tabbar.html#_releasemouse" class="tsd-kind-icon">_release<wbr>Mouse</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#addclass" class="tsd-kind-icon">add<wbr>Class</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#addtitle" class="tsd-kind-icon">add<wbr>Title</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#additem" class="tsd-kind-icon">add<wbr>Item</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#attach" class="tsd-kind-icon">attach</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#clearflag" class="tsd-kind-icon">clear<wbr>Flag</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#close" class="tsd-kind-icon">close</a></li>
@@ -168,40 +162,106 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#handleevent" class="tsd-kind-icon">handle<wbr>Event</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#hasclass" class="tsd-kind-icon">has<wbr>Class</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#hide" class="tsd-kind-icon">hide</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#inserttitle" class="tsd-kind-icon">insert<wbr>Title</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#insertitem" class="tsd-kind-icon">insert<wbr>Item</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#itemat" class="tsd-kind-icon">item<wbr>At</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#itemcount" class="tsd-kind-icon">item<wbr>Count</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#itemindex" class="tsd-kind-icon">item<wbr>Index</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external"><a href="tabbar.html#notifylayout" class="tsd-kind-icon">notify<wbr>Layout</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected tsd-is-external"><a href="tabbar.html#onafterattach" class="tsd-kind-icon">on<wbr>After<wbr>Attach</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external"><a href="tabbar.html#onaftershow" class="tsd-kind-icon">on<wbr>After<wbr>Show</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected tsd-is-external"><a href="tabbar.html#onbeforedetach" class="tsd-kind-icon">on<wbr>Before<wbr>Detach</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external"><a href="tabbar.html#onbeforehide" class="tsd-kind-icon">on<wbr>Before<wbr>Hide</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external"><a href="tabbar.html#onchildadded" class="tsd-kind-icon">on<wbr>Child<wbr>Added</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external"><a href="tabbar.html#onchildremoved" class="tsd-kind-icon">on<wbr>Child<wbr>Removed</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external"><a href="tabbar.html#oncloserequest" class="tsd-kind-icon">on<wbr>Close<wbr>Request</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external"><a href="tabbar.html#onresize" class="tsd-kind-icon">on<wbr>Resize</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected tsd-is-external"><a href="tabbar.html#onupdaterequest" class="tsd-kind-icon">on<wbr>Update<wbr>Request</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#processmessage" class="tsd-kind-icon">process<wbr>Message</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#releasemouse" class="tsd-kind-icon">release<wbr>Mouse</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#removeclass" class="tsd-kind-icon">remove<wbr>Class</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#removetitle" class="tsd-kind-icon">remove<wbr>Title</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#removeitem" class="tsd-kind-icon">remove<wbr>Item</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#setflag" class="tsd-kind-icon">set<wbr>Flag</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#sethidden" class="tsd-kind-icon">set<wbr>Hidden</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#show" class="tsd-kind-icon">show</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#tabat" class="tsd-kind-icon">tab<wbr>At</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#testflag" class="tsd-kind-icon">test<wbr>Flag</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#titleat" class="tsd-kind-icon">title<wbr>At</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#titlecount" class="tsd-kind-icon">title<wbr>Count</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="tabbar.html#titleindex" class="tsd-kind-icon">title<wbr>Index</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#toggleclass" class="tsd-kind-icon">toggle<wbr>Class</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="tabbar.html#update" class="tsd-kind-icon">update</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-static tsd-is-external"><a href="tabbar.html#createnode" class="tsd-kind-icon">create<wbr>Node</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static tsd-is-external"><a href="tabbar.html#createtab" class="tsd-kind-icon">create<wbr>Tab</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static tsd-is-external"><a href="tabbar.html#tabcloseicon" class="tsd-kind-icon">tab<wbr>Close<wbr>Icon</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static tsd-is-external"><a href="tabbar.html#updatetab" class="tsd-kind-icon">update<wbr>Tab</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
-				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+					<a name="_currentitem" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _current<wbr>Item</h3>
+					<div class="tsd-signature tsd-kind-icon">_current<wbr>Item<span class="tsd-signature-symbol">:</span> <a href="../interfaces/itabitem.html" class="tsd-signature-type">ITabItem</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L856">tabbar.ts:856</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+					<a name="_dirtyset" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _dirty<wbr>Set</h3>
+					<div class="tsd-signature tsd-kind-icon">_dirty<wbr>Set<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Title</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L855">tabbar.ts:855</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+					<a name="_dragdata" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _drag<wbr>Data</h3>
+					<div class="tsd-signature tsd-kind-icon">_drag<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">DragData</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L857">tabbar.ts:857</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+					<a name="_items" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _items</h3>
+					<div class="tsd-signature tsd-kind-icon">_items<span class="tsd-signature-symbol">:</span> <a href="../interfaces/itabitem.html" class="tsd-signature-type">ITabItem</a><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L853">tabbar.ts:853</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+					<a name="_tabs" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _tabs</h3>
+					<div class="tsd-signature tsd-kind-icon">_tabs<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L854">tabbar.ts:854</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+					<a name="_tabsmovable" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _tabs<wbr>Movable</h3>
+					<div class="tsd-signature tsd-kind-icon">_tabs<wbr>Movable<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L852">tabbar.ts:852</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
+					<ul class="tsd-signatures tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 						<li class="tsd-signature tsd-kind-icon">new <wbr>Tab<wbr>Bar<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="tabbar.html" class="tsd-signature-type">TabBar</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
@@ -209,7 +269,7 @@
 							<aside class="tsd-sources">
 								<p>Overwrites Widget.__constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L183">tabbar.ts:183</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L261">tabbar.ts:261</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -220,49 +280,6 @@
 							<h4 class="tsd-returns-title">Returns <a href="tabbar.html" class="tsd-signature-type">TabBar</a></h4>
 						</li>
 					</ul>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-external">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-					<a name="_dirty" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _dirty</h3>
-					<div class="tsd-signature tsd-kind-icon">_dirty<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L671">tabbar.ts:671</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-					<a name="_dragdata" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _drag<wbr>Data</h3>
-					<div class="tsd-signature tsd-kind-icon">_drag<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">DragData</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L674">tabbar.ts:674</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-					<a name="_tabsmovable" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _tabs<wbr>Movable</h3>
-					<div class="tsd-signature tsd-kind-icon">_tabs<wbr>Movable<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L672">tabbar.ts:672</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-					<a name="_titles" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _titles</h3>
-					<div class="tsd-signature tsd-kind-icon">_titles<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Title</span><span class="tsd-signature-symbol">[]</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L673">tabbar.ts:673</a></li>
-						</ul>
-					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 					<a name="disposed" class="tsd-anchor"></a>
@@ -288,7 +305,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from NodeWrapper.id</p>
 						<ul>
-							<li>Defined in /home/travis/build/phosphorjs/phosphor-tabs/node_modules/phosphor-widget/node_modules/phosphor-nodewrapper/lib/index.d.ts:29</li>
+							<li>Defined in /home/travis/build/phosphorjs/phosphor-tabs/node_modules/phosphor-widget/node_modules/phosphor-nodewrapper/lib/index.d.ts:37</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -402,7 +419,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from NodeWrapper.node</p>
 						<ul>
-							<li>Defined in /home/travis/build/phosphorjs/phosphor-tabs/node_modules/phosphor-widget/node_modules/phosphor-nodewrapper/lib/index.d.ts:22</li>
+							<li>Defined in /home/travis/build/phosphorjs/phosphor-tabs/node_modules/phosphor-widget/node_modules/phosphor-nodewrapper/lib/index.d.ts:30</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -466,7 +483,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L278">tabbar.ts:278</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L358">tabbar.ts:358</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -474,7 +491,7 @@
 									<p>Get the tab bar body node.</p>
 								</div>
 								<h4 id="notes">Notes</h4>
-								<p>This can be used to add extra body content.</p>
+								<p>This node can be used to add extra content to the tab bar.</p>
 								<p>This is a read-only property.</p>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HTMLElement</span></h4>
@@ -491,7 +508,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L290">tabbar.ts:290</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L372">tabbar.ts:372</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -499,7 +516,8 @@
 									<p>Get the tab bar content node.</p>
 								</div>
 								<h4 id="notes">Notes</h4>
-								<p>Modifying this node can lead to undefined behavior.</p>
+								<p>This is the node which holds the tab nodes.</p>
+								<p>Modifying this node directly can lead to undefined behavior.</p>
 								<p>This is a read-only property.</p>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HTMLElement</span></h4>
@@ -510,60 +528,60 @@
 					<a name="currentchanged" class="tsd-anchor"></a>
 					<h3>current<wbr>Changed</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> currentChanged<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ISignal</span><span class="tsd-signature-symbol">&lt;</span><a href="tabbar.html" class="tsd-signature-type">TabBar</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">IChangedArgs</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Title</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> currentChanged<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ISignal</span><span class="tsd-signature-symbol">&lt;</span><a href="tabbar.html" class="tsd-signature-type">TabBar</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/itabindexargs.html" class="tsd-signature-type">ITabIndexArgs</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L226">tabbar.ts:226</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L286">tabbar.ts:286</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>A signal emitted when the current title is changed.</p>
+									<p>A signal emitted when the current tab is changed.</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ISignal</span><span class="tsd-signature-symbol">&lt;</span><a href="tabbar.html" class="tsd-signature-type">TabBar</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">IChangedArgs</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Title</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ISignal</span><span class="tsd-signature-symbol">&lt;</span><a href="tabbar.html" class="tsd-signature-type">TabBar</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/itabindexargs.html" class="tsd-signature-type">ITabIndexArgs</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class tsd-is-external">
-					<a name="currenttitle" class="tsd-anchor"></a>
-					<h3>current<wbr>Title</h3>
+					<a name="currentitem" class="tsd-anchor"></a>
+					<h3>current<wbr>Item</h3>
 					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> currentTitle<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Title</span></li>
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> currentTitle<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Title</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> currentItem<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/itabitem.html" class="tsd-signature-type">ITabItem</a></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> currentItem<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><a href="../interfaces/itabitem.html" class="tsd-signature-type">ITabItem</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L233">tabbar.ts:233</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L314">tabbar.ts:314</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Get the currently selected title.</p>
+									<p>Get the currently selected tab item.</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Title</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/itabitem.html" class="tsd-signature-type">ITabItem</a></h4>
 						</li>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L240">tabbar.ts:240</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L321">tabbar.ts:321</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Set the currently selected title.</p>
+									<p>Set the currently selected tab item.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>value: <span class="tsd-signature-type">Title</span></h5>
+									<h5>value: <a href="../interfaces/itabitem.html" class="tsd-signature-type">ITabItem</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -571,66 +589,16 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
-					<a name="footernode" class="tsd-anchor"></a>
-					<h3>footer<wbr>Node</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> footerNode<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L302">tabbar.ts:302</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Get the tab bar footer node.</p>
-								</div>
-								<h4 id="notes">Notes</h4>
-								<p>This can be used to add extra footer content.</p>
-								<p>This is a read-only property.</p>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HTMLElement</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
-					<a name="headernode" class="tsd-anchor"></a>
-					<h3>header<wbr>Node</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> headerNode<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L266">tabbar.ts:266</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Get the tab bar header node.</p>
-								</div>
-								<h4 id="notes">Notes</h4>
-								<p>This can be used to add extra header content.</p>
-								<p>This is a read-only property.</p>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HTMLElement</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
 					<a name="tabcloserequested" class="tsd-anchor"></a>
 					<h3>tab<wbr>Close<wbr>Requested</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> tabCloseRequested<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ISignal</span><span class="tsd-signature-symbol">&lt;</span><a href="tabbar.html" class="tsd-signature-type">TabBar</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Title</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> tabCloseRequested<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ISignal</span><span class="tsd-signature-symbol">&lt;</span><a href="tabbar.html" class="tsd-signature-type">TabBar</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/itabindexargs.html" class="tsd-signature-type">ITabIndexArgs</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L212">tabbar.ts:212</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L300">tabbar.ts:300</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -638,7 +606,7 @@
 									<p>A signal emitted when the user clicks a tab&#39;s close icon.</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ISignal</span><span class="tsd-signature-symbol">&lt;</span><a href="tabbar.html" class="tsd-signature-type">TabBar</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Title</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ISignal</span><span class="tsd-signature-symbol">&lt;</span><a href="tabbar.html" class="tsd-signature-type">TabBar</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/itabindexargs.html" class="tsd-signature-type">ITabIndexArgs</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -652,7 +620,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L219">tabbar.ts:219</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L307">tabbar.ts:307</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -674,7 +642,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L205">tabbar.ts:205</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L293">tabbar.ts:293</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -697,7 +665,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L247">tabbar.ts:247</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L339">tabbar.ts:339</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -710,7 +678,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L254">tabbar.ts:254</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L346">tabbar.ts:346</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -741,7 +709,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L502">tabbar.ts:502</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L590">tabbar.ts:590</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -769,7 +737,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L490">tabbar.ts:490</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L578">tabbar.ts:578</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -797,7 +765,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L542">tabbar.ts:542</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L632">tabbar.ts:632</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -825,7 +793,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L585">tabbar.ts:585</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L681">tabbar.ts:681</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -853,7 +821,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L602">tabbar.ts:602</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L738">tabbar.ts:738</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -872,37 +840,6 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external">
-					<a name="_movetab" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _move<wbr>Tab</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">_move<wbr>Tab<span class="tsd-signature-symbol">(</span>i<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, j<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L653">tabbar.ts:653</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Move a tab from one index to another.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>i: <span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li>
-									<h5>j: <span class="tsd-signature-type">number</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external">
 					<a name="_ontitlechanged" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _on<wbr>Title<wbr>Changed</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external">
@@ -912,7 +849,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L666">tabbar.ts:666</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L847">tabbar.ts:847</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -940,7 +877,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L633">tabbar.ts:633</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L810">tabbar.ts:810</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -963,7 +900,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from NodeWrapper.addClass</p>
 								<ul>
-									<li>Defined in /home/travis/build/phosphorjs/phosphor-tabs/node_modules/phosphor-widget/node_modules/phosphor-nodewrapper/lib/index.d.ts:46</li>
+									<li>Defined in /home/travis/build/phosphorjs/phosphor-tabs/node_modules/phosphor-widget/node_modules/phosphor-nodewrapper/lib/index.d.ts:54</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -987,31 +924,31 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
-					<a name="addtitle" class="tsd-anchor"></a>
-					<h3>add<wbr>Title</h3>
+					<a name="additem" class="tsd-anchor"></a>
+					<h3>add<wbr>Item</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Title<span class="tsd-signature-symbol">(</span>title<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Title</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Item<span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><a href="../interfaces/itabitem.html" class="tsd-signature-type">ITabItem</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L345">tabbar.ts:345</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L415">tabbar.ts:415</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Add a title object to the end of the tab bar.</p>
+									<p>Add a tab item to the end of the tab bar.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>title: <span class="tsd-signature-type">Title</span></h5>
+									<h5>item: <a href="../interfaces/itabitem.html" class="tsd-signature-type">ITabItem</a></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The title object to add to the tab bar.</p>
+										<p>The tab item to add to the tab bar.</p>
 										<h4 id="notes">Notes</h4>
-										<p>If the title is already added to the tab bar, it will be moved.</p>
+										<p>If the item is already added to the tab bar, it will be moved.</p>
 									</div>
 								</li>
 							</ul>
@@ -1227,7 +1164,7 @@
 							<aside class="tsd-sources">
 								<p>Overwrites Widget.dispose</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L196">tabbar.ts:196</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L274">tabbar.ts:274</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1273,7 +1210,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L434">tabbar.ts:434</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L508">tabbar.ts:508</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1309,7 +1246,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from NodeWrapper.hasClass</p>
 								<ul>
-									<li>Defined in /home/travis/build/phosphorjs/phosphor-tabs/node_modules/phosphor-widget/node_modules/phosphor-nodewrapper/lib/index.d.ts:37</li>
+									<li>Defined in /home/travis/build/phosphorjs/phosphor-tabs/node_modules/phosphor-widget/node_modules/phosphor-nodewrapper/lib/index.d.ts:45</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1357,21 +1294,21 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
-					<a name="inserttitle" class="tsd-anchor"></a>
-					<h3>insert<wbr>Title</h3>
+					<a name="insertitem" class="tsd-anchor"></a>
+					<h3>insert<wbr>Item</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">insert<wbr>Title<span class="tsd-signature-symbol">(</span>index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, title<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Title</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">insert<wbr>Item<span class="tsd-signature-symbol">(</span>index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, item<span class="tsd-signature-symbol">: </span><a href="../interfaces/itabitem.html" class="tsd-signature-type">ITabItem</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L359">tabbar.ts:359</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L429">tabbar.ts:429</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Insert a title object at the specified index.</p>
+									<p>Insert a tab item at the specified index.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1379,19 +1316,106 @@
 								<li>
 									<h5>index: <span class="tsd-signature-type">number</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The index at which to insert the title.</p>
+										<p>The index at which to insert the item.</p>
 									</div>
 								</li>
 								<li>
-									<h5>title: <span class="tsd-signature-type">Title</span></h5>
+									<h5>item: <a href="../interfaces/itabitem.html" class="tsd-signature-type">ITabItem</a></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The title object to insert into to the tab bar.</p>
+										<p>The tab item to insert into the tab bar.</p>
 										<h4 id="notes">Notes</h4>
-										<p>If the title is already added to the tab bar, it will be moved.</p>
+										<p>If the item is already added to the tab bar, it will be moved.</p>
 									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+					<a name="itemat" class="tsd-anchor"></a>
+					<h3>item<wbr>At</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">item<wbr>At<span class="tsd-signature-symbol">(</span>index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/itabitem.html" class="tsd-signature-type">ITabItem</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L392">tabbar.ts:392</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the tab item at the specified index.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>index: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The index of the tab item of interest.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/itabitem.html" class="tsd-signature-type">ITabItem</a></h4>
+							<p>The tab item at the specified index, or <code>undefined</code>.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+					<a name="itemcount" class="tsd-anchor"></a>
+					<h3>item<wbr>Count</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">item<wbr>Count<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L381">tabbar.ts:381</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the number of tab items in the tab bar.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							<p>The number of tab items in the tab bar.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+					<a name="itemindex" class="tsd-anchor"></a>
+					<h3>item<wbr>Index</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">item<wbr>Index<span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><a href="../interfaces/itabitem.html" class="tsd-signature-type">ITabItem</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L403">tabbar.ts:403</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the index of the specified tab item.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>item: <a href="../interfaces/itabitem.html" class="tsd-signature-type">ITabItem</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The tab item of interest.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							<p>The index of the specified item, or <code>-1</code>.</p>
 						</li>
 					</ul>
 				</section>
@@ -1440,7 +1464,7 @@
 							<aside class="tsd-sources">
 								<p>Overwrites Widget.onAfterAttach</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L461">tabbar.ts:461</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L535">tabbar.ts:535</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1500,7 +1524,7 @@
 							<aside class="tsd-sources">
 								<p>Overwrites Widget.onBeforeDetach</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L469">tabbar.ts:469</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L543">tabbar.ts:543</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1543,6 +1567,68 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>msg: <span class="tsd-signature-type">Message</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external">
+					<a name="onchildadded" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> on<wbr>Child<wbr>Added</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">on<wbr>Child<wbr>Added<span class="tsd-signature-symbol">(</span>msg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ChildMessage</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from Widget.onChildAdded</p>
+								<ul>
+									<li>Defined in /home/travis/build/phosphorjs/phosphor-tabs/node_modules/phosphor-widget/lib/widget.d.ts:301</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>A message handler invoked on a <code>&#39;child-added&#39;</code> message.</p>
+								</div>
+								<p>The default implementation of this handler is a no-op.</p>
+								<p><strong>See also:</strong> [[ChildMessage]]</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>msg: <span class="tsd-signature-type">ChildMessage</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external">
+					<a name="onchildremoved" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> on<wbr>Child<wbr>Removed</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">on<wbr>Child<wbr>Removed<span class="tsd-signature-symbol">(</span>msg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ChildMessage</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from Widget.onChildRemoved</p>
+								<ul>
+									<li>Defined in /home/travis/build/phosphorjs/phosphor-tabs/node_modules/phosphor-widget/lib/widget.d.ts:309</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>A message handler invoked on a <code>&#39;child-removed&#39;</code> message.</p>
+								</div>
+								<p>The default implementation of this handler is a no-op.</p>
+								<p><strong>See also:</strong> [[ChildMessage]]</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>msg: <span class="tsd-signature-type">ChildMessage</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1623,7 +1709,7 @@
 							<aside class="tsd-sources">
 								<p>Overwrites Widget.onUpdateRequest</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L478">tabbar.ts:478</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L552">tabbar.ts:552</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1685,7 +1771,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L420">tabbar.ts:420</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L494">tabbar.ts:494</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1711,7 +1797,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from NodeWrapper.removeClass</p>
 								<ul>
-									<li>Defined in /home/travis/build/phosphorjs/phosphor-tabs/node_modules/phosphor-widget/node_modules/phosphor-nodewrapper/lib/index.d.ts:55</li>
+									<li>Defined in /home/travis/build/phosphorjs/phosphor-tabs/node_modules/phosphor-widget/node_modules/phosphor-nodewrapper/lib/index.d.ts:63</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1735,31 +1821,31 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
-					<a name="removetitle" class="tsd-anchor"></a>
-					<h3>remove<wbr>Title</h3>
+					<a name="removeitem" class="tsd-anchor"></a>
+					<h3>remove<wbr>Item</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">remove<wbr>Title<span class="tsd-signature-symbol">(</span>title<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Title</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">remove<wbr>Item<span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><a href="../interfaces/itabitem.html" class="tsd-signature-type">ITabItem</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L390">tabbar.ts:390</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L459">tabbar.ts:459</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Remove a title object from the tab bar.</p>
+									<p>Remove a tab item from the tab bar.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>title: <span class="tsd-signature-type">Title</span></h5>
+									<h5>item: <a href="../interfaces/itabitem.html" class="tsd-signature-type">ITabItem</a></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The title object to remove from the tab bar.</p>
+										<p>The tab item to remove from the tab bar.</p>
 										<h4 id="notes">Notes</h4>
-										<p>If the title is not in the tab bar, this is a no-op.</p>
+										<p>If the item is not in the tab bar, this is a no-op.</p>
 									</div>
 								</li>
 							</ul>
@@ -1858,6 +1944,38 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+					<a name="tabat" class="tsd-anchor"></a>
+					<h3>tab<wbr>At</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">tab<wbr>At<span class="tsd-signature-symbol">(</span>index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L483">tabbar.ts:483</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the tab node for the item at the given index.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>index: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The index of the tab item of interest.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HTMLElement</span></h4>
+							<p>The tab node for the item, or <code>undefined</code>.</p>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 					<a name="testflag" class="tsd-anchor"></a>
 					<h3>test<wbr>Flag</h3>
@@ -1889,93 +2007,6 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
-					<a name="titleat" class="tsd-anchor"></a>
-					<h3>title<wbr>At</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">title<wbr>At<span class="tsd-signature-symbol">(</span>index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Title</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L322">tabbar.ts:322</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Get the title object at the specified index.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>index: <span class="tsd-signature-type">number</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The index of the title object of interest.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Title</span></h4>
-							<p>The title at the specified index, or <code>undefined</code>.</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
-					<a name="titlecount" class="tsd-anchor"></a>
-					<h3>title<wbr>Count</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">title<wbr>Count<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L311">tabbar.ts:311</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Get the number of title objects in the tab bar.</p>
-								</div>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
-							<p>The number of title objects in the tab bar.</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
-					<a name="titleindex" class="tsd-anchor"></a>
-					<h3>title<wbr>Index</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">title<wbr>Index<span class="tsd-signature-symbol">(</span>title<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Title</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L333">tabbar.ts:333</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Get the index of the specified title object.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>title: <span class="tsd-signature-type">Title</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The title object of interest.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
-							<p>The index of the specified title, or <code>-1</code>.</p>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 					<a name="toggleclass" class="tsd-anchor"></a>
 					<h3>toggle<wbr>Class</h3>
@@ -1987,7 +2018,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from NodeWrapper.toggleClass</p>
 								<ul>
-									<li>Defined in /home/travis/build/phosphorjs/phosphor-tabs/node_modules/phosphor-widget/node_modules/phosphor-nodewrapper/lib/index.d.ts:67</li>
+									<li>Defined in /home/travis/build/phosphorjs/phosphor-tabs/node_modules/phosphor-widget/node_modules/phosphor-nodewrapper/lib/index.d.ts:75</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2052,7 +2083,7 @@
 							<aside class="tsd-sources">
 								<p>Overwrites NodeWrapper.createNode</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L168">tabbar.ts:168</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L176">tabbar.ts:176</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2061,6 +2092,120 @@
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HTMLElement</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static tsd-is-external">
+					<a name="createtab" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> create<wbr>Tab</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Tab<span class="tsd-signature-symbol">(</span>title<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Title</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L201">tabbar.ts:201</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Create and initialize a tab node for a tab bar.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>title: <span class="tsd-signature-type">Title</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The title to use for the initial tab state.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HTMLElement</span></h4>
+							<p>A new DOM node to use as a tab in a tab bar.</p>
+							<h4 id="notes">Notes</h4>
+							<p>It is not necessary to subscribe to the <code>changed</code> signal of the
+								title. The tab bar subscribes to that signal and will call the
+							<a href="tabbar.html#updatetab">updateTab</a> static method automatically as needed.</p>
+							<p>This method may be reimplemented to create custom tabs.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static tsd-is-external">
+					<a name="tabcloseicon" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> tab<wbr>Close<wbr>Icon</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">tab<wbr>Close<wbr>Icon<span class="tsd-signature-symbol">(</span>tab<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L254">tabbar.ts:254</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the close icon node for a given tab node.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>tab: <span class="tsd-signature-type">HTMLElement</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A tab node created by a call to <a href="tabbar.html#createtab">createTab</a>.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HTMLElement</span></h4>
+							<p>The close icon node for the tab node.</p>
+							<h4 id="notes">Notes</h4>
+							<p>The close icon node is used to correctly process click events.</p>
+							<p>If the <a href="tabbar.html#createtab">createTab</a> method is reimplemented, this method should
+							also be reimplemented so that the correct icon node is returned.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static tsd-is-external">
+					<a name="updatetab" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> update<wbr>Tab</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">update<wbr>Tab<span class="tsd-signature-symbol">(</span>tab<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span>, title<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Title</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L230">tabbar.ts:230</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Update a tab node to reflect the current state of a title.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>tab: <span class="tsd-signature-type">HTMLElement</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A tab node created by a call to <a href="tabbar.html#createtab">createTab</a>.</p>
+									</div>
+								</li>
+								<li>
+									<h5>title: <span class="tsd-signature-type">Title</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The title object to use for the tab state.</p>
+										<h4 id="notes">Notes</h4>
+										<p>This is called automatically when the title state changes.</p>
+										<p>If the <a href="tabbar.html#createtab">createTab</a> method is reimplemented, this method should
+										also be reimplemented so that the tab state is properly updated.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -2081,20 +2226,26 @@
 					<li class="current tsd-kind-class tsd-is-external">
 						<a href="tabbar.html" class="tsd-kind-icon">Tab<wbr>Bar</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
-								<a href="tabbar.html#constructor" class="tsd-kind-icon">constructor</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+								<a href="tabbar.html#_currentitem" class="tsd-kind-icon">_current<wbr>Item</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-								<a href="tabbar.html#_dirty" class="tsd-kind-icon">_dirty</a>
+								<a href="tabbar.html#_dirtyset" class="tsd-kind-icon">_dirty<wbr>Set</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
 								<a href="tabbar.html#_dragdata" class="tsd-kind-icon">_drag<wbr>Data</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-								<a href="tabbar.html#_tabsmovable" class="tsd-kind-icon">_tabs<wbr>Movable</a>
+								<a href="tabbar.html#_items" class="tsd-kind-icon">_items</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-								<a href="tabbar.html#_titles" class="tsd-kind-icon">_titles</a>
+								<a href="tabbar.html#_tabs" class="tsd-kind-icon">_tabs</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+								<a href="tabbar.html#_tabsmovable" class="tsd-kind-icon">_tabs<wbr>Movable</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
+								<a href="tabbar.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 								<a href="tabbar.html#disposed" class="tsd-kind-icon">disposed</a>
@@ -2136,13 +2287,7 @@
 								<a href="tabbar.html#currentchanged" class="tsd-kind-icon">current<wbr>Changed</a>
 							</li>
 							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-external">
-								<a href="tabbar.html#currenttitle" class="tsd-kind-icon">current<wbr>Title</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
-								<a href="tabbar.html#footernode" class="tsd-kind-icon">footer<wbr>Node</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
-								<a href="tabbar.html#headernode" class="tsd-kind-icon">header<wbr>Node</a>
+								<a href="tabbar.html#currentitem" class="tsd-kind-icon">current<wbr>Item</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
 								<a href="tabbar.html#tabcloserequested" class="tsd-kind-icon">tab<wbr>Close<wbr>Requested</a>
@@ -2172,9 +2317,6 @@
 								<a href="tabbar.html#_evtmouseup" class="tsd-kind-icon">_evt<wbr>Mouse<wbr>Up</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external">
-								<a href="tabbar.html#_movetab" class="tsd-kind-icon">_move<wbr>Tab</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external">
 								<a href="tabbar.html#_ontitlechanged" class="tsd-kind-icon">_on<wbr>Title<wbr>Changed</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external">
@@ -2184,7 +2326,7 @@
 								<a href="tabbar.html#addclass" class="tsd-kind-icon">add<wbr>Class</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
-								<a href="tabbar.html#addtitle" class="tsd-kind-icon">add<wbr>Title</a>
+								<a href="tabbar.html#additem" class="tsd-kind-icon">add<wbr>Item</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 								<a href="tabbar.html#attach" class="tsd-kind-icon">attach</a>
@@ -2220,7 +2362,16 @@
 								<a href="tabbar.html#hide" class="tsd-kind-icon">hide</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
-								<a href="tabbar.html#inserttitle" class="tsd-kind-icon">insert<wbr>Title</a>
+								<a href="tabbar.html#insertitem" class="tsd-kind-icon">insert<wbr>Item</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+								<a href="tabbar.html#itemat" class="tsd-kind-icon">item<wbr>At</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+								<a href="tabbar.html#itemcount" class="tsd-kind-icon">item<wbr>Count</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+								<a href="tabbar.html#itemindex" class="tsd-kind-icon">item<wbr>Index</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external">
 								<a href="tabbar.html#notifylayout" class="tsd-kind-icon">notify<wbr>Layout</a>
@@ -2236,6 +2387,12 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external">
 								<a href="tabbar.html#onbeforehide" class="tsd-kind-icon">on<wbr>Before<wbr>Hide</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external">
+								<a href="tabbar.html#onchildadded" class="tsd-kind-icon">on<wbr>Child<wbr>Added</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external">
+								<a href="tabbar.html#onchildremoved" class="tsd-kind-icon">on<wbr>Child<wbr>Removed</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external">
 								<a href="tabbar.html#oncloserequest" class="tsd-kind-icon">on<wbr>Close<wbr>Request</a>
@@ -2256,7 +2413,7 @@
 								<a href="tabbar.html#removeclass" class="tsd-kind-icon">remove<wbr>Class</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
-								<a href="tabbar.html#removetitle" class="tsd-kind-icon">remove<wbr>Title</a>
+								<a href="tabbar.html#removeitem" class="tsd-kind-icon">remove<wbr>Item</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 								<a href="tabbar.html#setflag" class="tsd-kind-icon">set<wbr>Flag</a>
@@ -2267,17 +2424,11 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 								<a href="tabbar.html#show" class="tsd-kind-icon">show</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+								<a href="tabbar.html#tabat" class="tsd-kind-icon">tab<wbr>At</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 								<a href="tabbar.html#testflag" class="tsd-kind-icon">test<wbr>Flag</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
-								<a href="tabbar.html#titleat" class="tsd-kind-icon">title<wbr>At</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
-								<a href="tabbar.html#titlecount" class="tsd-kind-icon">title<wbr>Count</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
-								<a href="tabbar.html#titleindex" class="tsd-kind-icon">title<wbr>Index</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 								<a href="tabbar.html#toggleclass" class="tsd-kind-icon">toggle<wbr>Class</a>
@@ -2288,6 +2439,15 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-static tsd-is-external">
 								<a href="tabbar.html#createnode" class="tsd-kind-icon">create<wbr>Node</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static tsd-is-external">
+								<a href="tabbar.html#createtab" class="tsd-kind-icon">create<wbr>Tab</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static tsd-is-external">
+								<a href="tabbar.html#tabcloseicon" class="tsd-kind-icon">tab<wbr>Close<wbr>Icon</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static tsd-is-external">
+								<a href="tabbar.html#updatetab" class="tsd-kind-icon">update<wbr>Tab</a>
+							</li>
 						</ul>
 					</li>
 				</ul>
@@ -2297,6 +2457,12 @@
 					</li>
 					<li class=" tsd-kind-interface tsd-is-external">
 						<a href="../interfaces/itabdetachargs.html" class="tsd-kind-icon">ITab<wbr>Detach<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-external">
+						<a href="../interfaces/itabindexargs.html" class="tsd-kind-icon">ITab<wbr>Index<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-external">
+						<a href="../interfaces/itabitem.html" class="tsd-kind-icon">ITab<wbr>Item</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-is-external">
 						<a href="../interfaces/itabmovedargs.html" class="tsd-kind-icon">ITab<wbr>Moved<wbr>Args</a>

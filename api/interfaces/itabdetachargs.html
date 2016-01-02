@@ -78,7 +78,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ITabDetachArgs</span>
+						<a href="itabindexargs.html" class="tsd-signature-type">ITabIndexArgs</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">ITabDetachArgs</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -91,8 +96,8 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="itabdetachargs.html#clientx" class="tsd-kind-icon">clientX</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="itabdetachargs.html#clienty" class="tsd-kind-icon">clientY</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="itabdetachargs.html#node" class="tsd-kind-icon">node</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="itabdetachargs.html#title" class="tsd-kind-icon">title</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external"><a href="itabdetachargs.html#index" class="tsd-kind-icon">index</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external"><a href="itabdetachargs.html#item" class="tsd-kind-icon">item</a></li>
 							</ul>
 						</section>
 					</div>
@@ -106,7 +111,7 @@
 					<div class="tsd-signature tsd-kind-icon">clientX<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L151">tabbar.ts:151</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L159">tabbar.ts:159</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -121,7 +126,7 @@
 					<div class="tsd-signature tsd-kind-icon">clientY<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L156">tabbar.ts:156</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L164">tabbar.ts:164</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -130,33 +135,35 @@
 						</div>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-					<a name="node" class="tsd-anchor"></a>
-					<h3>node</h3>
-					<div class="tsd-signature tsd-kind-icon">node<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLElement</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
+					<a name="index" class="tsd-anchor"></a>
+					<h3>index</h3>
+					<div class="tsd-signature tsd-kind-icon">index<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="itabindexargs.html">ITabIndexArgs</a>.<a href="itabindexargs.html#index">index</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L146">tabbar.ts:146</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L120">tabbar.ts:120</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The DOM node for the tab being dragged.</p>
+							<p>The index of the tab.</p>
 						</div>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-					<a name="title" class="tsd-anchor"></a>
-					<h3>title</h3>
-					<div class="tsd-signature tsd-kind-icon">title<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Title</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
+					<a name="item" class="tsd-anchor"></a>
+					<h3>item</h3>
+					<div class="tsd-signature tsd-kind-icon">item<span class="tsd-signature-symbol">:</span> <a href="itabitem.html" class="tsd-signature-type">ITabItem</a></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="itabindexargs.html">ITabIndexArgs</a>.<a href="itabindexargs.html#item">item</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L141">tabbar.ts:141</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-tabs/blob/HEAD/src/tabbar.ts#L125">tabbar.ts:125</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The title being dragged by the user.</p>
+							<p>The tab item for the tab.</p>
 						</div>
 					</div>
 				</section>
@@ -189,16 +196,22 @@
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
 								<a href="itabdetachargs.html#clienty" class="tsd-kind-icon">clientY</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="itabdetachargs.html#node" class="tsd-kind-icon">node</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
+								<a href="itabdetachargs.html#index" class="tsd-kind-icon">index</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="itabdetachargs.html#title" class="tsd-kind-icon">title</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
+								<a href="itabdetachargs.html#item" class="tsd-kind-icon">item</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-is-external">
+						<a href="itabindexargs.html" class="tsd-kind-icon">ITab<wbr>Index<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-external">
+						<a href="itabitem.html" class="tsd-kind-icon">ITab<wbr>Item</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-is-external">
 						<a href="itabmovedargs.html" class="tsd-kind-icon">ITab<wbr>Moved<wbr>Args</a>
 					</li>
