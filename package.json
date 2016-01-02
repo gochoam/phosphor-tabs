@@ -72,8 +72,7 @@
     "tabpanel",
     "tabs",
     "ui",
-    "widget",
-    "widgets"
+    "widget"
   ],
   "author": "S. Chris Colbert <sccolbert@gmail.com>",
   "license": "BSD-3-Clause",
