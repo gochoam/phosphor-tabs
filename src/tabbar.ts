@@ -725,11 +725,8 @@ class TabBar extends Widget {
       }
     }
 
-    // Update the non-drag tab layout and compute target index.
-    data.targetIndex = TabBarPrivate.layoutTabs(this._tabs, data, event);
-
-    // Update the drag tab position.
-    data.tab.style.left = TabBarPrivate.dragTabPosition(data, event) + 'px';
+    // Update the tab layout and computed target index.
+    TabBarPrivate.layoutTabs(this._tabs, data, event);
   }
 
   /**
@@ -763,8 +760,8 @@ class TabBar extends Widget {
       return;
     }
 
-    // Position the tab at its final position, subject to limits.
-    data.tab.style.left = TabBarPrivate.finalTabPosition(data) + 'px';
+    // Position the tab at its final resting position.
+    TabBarPrivate.finalizeTabPosition(data);
 
     // Remove the dragging class from the tab so it can be transitioned.
     data.tab.classList.remove(DRAGGING_CLASS);
@@ -1015,12 +1012,10 @@ namespace TabBarPrivate {
   }
 
   /**
-   * Update the relative positions of the tabs.
-   *
-   * Returns the computed target index of the drag tab.
+   * Update the relative tab positions and computed target index.
    */
   export
-  function layoutTabs(tabs: HTMLElement[], data: DragData, event: MouseEvent): number {
+  function layoutTabs(tabs: HTMLElement[], data: DragData, event: MouseEvent): void {
     let targetIndex = data.index;
     let targetLeft = event.clientX - data.contentRect.left - data.tabPressX;
     let targetRight = targetLeft + data.tabWidth;
@@ -1034,28 +1029,22 @@ namespace TabBarPrivate {
       } else if (i > data.index && targetRight > threshold) {
         style.left = -data.tabWidth - layout.margin + 'px';
         targetIndex = Math.max(targetIndex, i);
-      } else if (i !== data.index) {
+      } else if (i === data.index) {
+        let ideal = event.clientX - data.pressX;
+        let limit = data.contentRect.width - (data.tabLeft + data.tabWidth);
+        style.left = Math.max(-data.tabLeft, Math.min(ideal, limit)) + 'px';
+      } else {
         style.left = '';
       }
     }
-    return targetIndex;
+    data.targetIndex = targetIndex;
   }
 
   /**
-   * Compute the relative drag position for the drag tab.
+   * Position the drag tab at its final resting relative position.
    */
   export
-  function dragTabPosition(data: DragData, event: MouseEvent): number {
-    let ideal = event.clientX - data.pressX;
-    let limit = data.contentRect.width - (data.tabLeft + data.tabWidth);
-    return Math.max(-data.tabLeft, Math.min(ideal, limit));
-  }
-
-  /**
-   * Compute the final resting relative position for the drag tab.
-   */
-  export
-  function finalTabPosition(data: DragData): number {
+  function finalizeTabPosition(data: DragData): void {
     let ideal: number;
     if (data.targetIndex === data.index) {
       ideal = 0;
@@ -1066,8 +1055,9 @@ namespace TabBarPrivate {
       let tgt = data.tabLayout[data.targetIndex];
       ideal = tgt.left - data.tabLeft;
     }
+    let style = data.tab.style;
     let limit = data.contentRect.width - (data.tabLeft + data.tabWidth);
-    return Math.max(-data.tabLeft, Math.min(ideal, limit));
+    style.left = Math.max(-data.tabLeft, Math.min(ideal, limit)) + 'px';
   }
 
   /**
