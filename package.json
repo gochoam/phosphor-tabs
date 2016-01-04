@@ -42,7 +42,7 @@
     "build:example": "webpack --config example/webpack.conf.js",
     "build:css": "node scripts/copycss.js",
     "build:src": "tsc --project src",
-    "build": "npm run build:source && npm run build:css",
+    "build": "npm run build:src && npm run build:css",
     "docs": "rimraf docs/api && typedoc --options scripts/tdoptions.json",
     "postinstall": "npm dedupe",
     "prepublish": "npm run build",
