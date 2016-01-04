@@ -27,8 +27,12 @@ body {
 }
 
 
-.p-TabBar::after {
-  content: '';
+.p-TabBar-header {
+  display: none;
+}
+
+
+.p-TabBar-footer {
   flex: 0 0 1px;
   background: #C0C0C0;
 }

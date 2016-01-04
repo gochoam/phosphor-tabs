@@ -42,9 +42,19 @@ const TAB_BAR_CLASS = 'p-TabBar';
 const BODY_CLASS = 'p-TabBar-body';
 
 /**
+ * The class name added to a tab bar header node.
+ */
+const HEADER_CLASS = 'p-TabBar-header';
+
+/**
  * The class name added to a tab bar content node.
  */
 const CONTENT_CLASS = 'p-TabBar-content';
+
+/**
+ * The class name added to a tab bar footer node.
+ */
+const FOOTER_CLASS = 'p-TabBar-footer';
 
 /**
  * The class name added to a tab bar tab.
@@ -175,12 +185,18 @@ class TabBar extends Widget {
    */
   static createNode(): HTMLElement {
     let node = document.createElement('div');
+    let header = document.createElement('div');
     let body = document.createElement('div');
+    let footer = document.createElement('div');
     let content = document.createElement('ul');
+    header.className = HEADER_CLASS;
     body.className = BODY_CLASS;
+    footer.className = FOOTER_CLASS;
     content.className = CONTENT_CLASS;
     body.appendChild(content);
+    node.appendChild(header);
     node.appendChild(body);
+    node.appendChild(footer);
     return node;
   }
 
@@ -348,6 +364,18 @@ class TabBar extends Widget {
   }
 
   /**
+   * Get the tab bar header node.
+   *
+   * #### Notes
+   * This node can be used to add extra content to the tab bar header.
+   *
+   * This is a read-only property.
+   */
+  get headerNode(): HTMLElement {
+    return this.node.getElementsByClassName(HEADER_CLASS)[0] as HTMLElement;
+  }
+
+  /**
    * Get the tab bar body node.
    *
    * #### Notes
@@ -357,6 +385,18 @@ class TabBar extends Widget {
    */
   get bodyNode(): HTMLElement {
     return this.node.getElementsByClassName(BODY_CLASS)[0] as HTMLElement;
+  }
+
+  /**
+   * Get the tab bar footer node.
+   *
+   * #### Notes
+   * This node can be used to add extra content to the tab bar footer.
+   *
+   * This is a read-only property.
+   */
+  get footerNode(): HTMLElement {
+    return this.node.getElementsByClassName(FOOTER_CLASS)[0] as HTMLElement;
   }
 
   /**
