@@ -39,6 +39,7 @@ body {
 
 
 .p-TabBar-content {
+  min-width: 0;
   align-items: flex-end;
 }
 
