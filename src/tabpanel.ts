@@ -84,7 +84,7 @@ class TabPanel extends Widget {
   /**
    * The static type of the constructor.
    */
-  "constructor": typeof TabPanel;
+  'constructor': typeof TabPanel;
 
   /**
    * Construct a new tab panel.

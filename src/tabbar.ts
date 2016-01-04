@@ -258,7 +258,7 @@ class TabBar extends Widget {
   /**
    * The static type of the constructor.
    */
-  "constructor": typeof TabBar;
+  'constructor': typeof TabBar;
 
   /**
    * Construct a new tab bar.
