@@ -61,11 +61,6 @@
     "lib/*.d.ts",
     "lib/*.js"
   ],
-  "browserify": {
-    "transform": [
-      "browserify-css"
-    ]
-  },
   "keywords": [
     "panel",
     "tab",
