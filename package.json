@@ -1,6 +1,6 @@
 {
   "name": "phosphor-tabs",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "Phosphor widgets for creating tab bars and tab panels.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
