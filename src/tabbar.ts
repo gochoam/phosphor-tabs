@@ -201,20 +201,14 @@ class TabBar extends Widget {
   }
 
   /**
-   * Create and initialize a tab node for a tab bar.
-   *
-   * @param title - The title to use for the initial tab state.
+   * Create a new tab node for a tab bar.
    *
    * @returns A new DOM node to use as a tab in a tab bar.
    *
    * #### Notes
-   * It is not necessary to subscribe to the `changed` signal of the
-   * title. The tab bar subscribes to that signal and will call the
-   * [[updateTab]] static method automatically as needed.
-   *
    * This method may be reimplemented to create custom tabs.
    */
-  static createTab(title: Title): HTMLElement {
+  static createTab(): HTMLElement {
     let node = document.createElement('li');
     let icon = document.createElement('span');
     let text = document.createElement('span');
@@ -226,7 +220,6 @@ class TabBar extends Widget {
     node.appendChild(icon);
     node.appendChild(text);
     node.appendChild(close);
-    this.updateTab(node, title);
     return node;
   }
 
@@ -238,7 +231,7 @@ class TabBar extends Widget {
    * @param title - The title object to use for the tab state.
    *
    * #### Notes
-   * This is called automatically when the title state changes.
+   * This is called automatically when the tab should be updated.
    *
    * If the [[createTab]] method is reimplemented, this method should
    * also be reimplemented so that the tab state is properly updated.
@@ -473,7 +466,9 @@ class TabBar extends Widget {
       arrays.move(this._items, i, j);
       this.contentNode.insertBefore(this._tabs[j], this._tabs[j + 1]);
     } else {
-      let tab = (this.constructor as typeof TabBar).createTab(item.title);
+      let constructor = this.constructor as typeof TabBar;
+      let tab = constructor.createTab();
+      constructor.updateTab(tab, item.title);
       arrays.insert(this._tabs, j, tab);
       arrays.insert(this._items, j, item);
       this.contentNode.insertBefore(tab, this._tabs[j + 1]);
